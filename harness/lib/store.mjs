@@ -17,8 +17,10 @@ const runsDirPath = () => process.env.BUMPLOG_RUNS_DIR || join(HARNESS_DIR, 'run
 const PUBLISHED = () => join(stateDir(), 'published-entries.json'); // slug -> last entry
 const EXPERIMENT = () => join(stateDir(), 'experiment.json');
 // Public journal lives in the site so it's crawlable. The agent renders entries
-// from this data file via src/pages/journal/[date].astro.
-const JOURNAL = join(REPO_ROOT, 'src', 'data', 'journal.json');
+// from this data file via src/pages/journal/[date].astro. Test isolation:
+// dry_run.mjs sets BUMPLOG_JOURNAL_FILE (mirrors the state/runs/blockers overrides)
+// so exercising the loop never mutates the committed journal.
+const journalFile = () => process.env.BUMPLOG_JOURNAL_FILE || join(REPO_ROOT, 'src', 'data', 'journal.json');
 
 function ensureDir(d) {
   if (!existsSync(d)) mkdirSync(d, { recursive: true });
@@ -60,11 +62,12 @@ export function setPublishedEntry(slug, entry) {
 
 /** Append a dated entry to the public journal (idempotent per date). */
 export function appendJournalEntry(entry) {
-  ensureDir(dirname(JOURNAL));
-  const journal = readJson(JOURNAL, []);
+  const jf = journalFile();
+  ensureDir(dirname(jf));
+  const journal = readJson(jf, []);
   const without = journal.filter((e) => e.date !== entry.date);
   const next = [...without, entry].sort((a, b) => (a.date < b.date ? 1 : -1));
-  writeFileSync(JOURNAL, JSON.stringify(next, null, 2));
+  writeFileSync(jf, JSON.stringify(next, null, 2));
   return next.length;
 }
 

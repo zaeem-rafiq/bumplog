@@ -139,7 +139,15 @@ export async function runLoop(opts = {}) {
         // Enforced in code: a pivot inside the window halts the run.
         throw haltErr(`pivot disallowed — ${pivot.reason}`, 'pivot-hysteresis', safeWriteBlocker('pivot-hysteresis', pivot));
       }
-      if (!dryRun) recordPivot(date, journalDraft.pivot_rationale ?? '');
+      // recordPivot re-checks the window (defense-in-depth vs a concurrent run or
+      // a mid-cycle state change). If that re-check throws, classify it as a
+      // GOVERNED halt with a blocker — not an unexpected crash.
+      const doRecordPivot = opts.recordPivot ?? (dryRun ? () => {} : recordPivot);
+      try {
+        doRecordPivot(date, journalDraft.pivot_rationale ?? '');
+      } catch (e) {
+        throw haltErr(`pivot record failed — ${e.message}`, 'pivot-hysteresis', safeWriteBlocker('pivot-hysteresis', { reason: e.message }));
+      }
       record.pivoted = true;
     }
 

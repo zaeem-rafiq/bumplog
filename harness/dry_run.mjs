@@ -34,6 +34,7 @@ const HARNESS_DIR = dirname(fileURLToPath(import.meta.url));
 process.env.BUMPLOG_BLOCKERS_DIR = mkdtempSync(join(tmpdir(), 'bumplog-blockers-'));
 process.env.BUMPLOG_RUNS_DIR = mkdtempSync(join(tmpdir(), 'bumplog-runs-'));
 process.env.BUMPLOG_STATE_DIR = mkdtempSync(join(tmpdir(), 'bumplog-state-'));
+process.env.BUMPLOG_JOURNAL_FILE = join(mkdtempSync(join(tmpdir(), 'bumplog-journal-')), 'journal.json');
 const results = [];
 const add = (id, status, evidence) => results.push({ id, status, evidence });
 const haveCreds = ['POSTHOG_PERSONAL_API_KEY', 'POSTHOG_PROJECT_ID', 'POSTHOG_HOST'].every((k) => process.env[k]);
@@ -210,8 +211,10 @@ async function main() {
     const fakeHost = checkProvenance({ slug: 'immich', name: 'Immich', tagName: 'v1', provenance: { source: 'github', url: 'https://attacker.example/anything' } });
     const wrongTag = checkProvenance({ slug: 'immich', name: 'Immich', tagName: 'v9.9.9', provenance: { source: 'github', url: 'https://github.com/immich-app/immich/releases/tag/v1.0.0' } });
     const good = checkProvenance({ slug: 'immich', name: 'Immich', tagName: 'v1.0.0', provenance: { source: 'github', url: 'https://github.com/immich-app/immich/releases/tag/v1.0.0' } });
-    const ok = !fakeHost.ok && !wrongTag.ok && good.ok;
-    add('provenance_host', ok ? 'pass' : 'fail', `non_github_blocked=${!fakeHost.ok}; wrong_tag_blocked=${!wrongTag.ok}; real_github_ok=${good.ok}`);
+    // substring false-positive must be blocked: tag "v1" must NOT match ".../tag/v1.10.0"
+    const substr = checkProvenance({ slug: 'immich', name: 'Immich', tagName: 'v1', provenance: { source: 'github', url: 'https://github.com/immich-app/immich/releases/tag/v1.10.0' } });
+    const ok = !fakeHost.ok && !wrongTag.ok && good.ok && !substr.ok;
+    add('provenance_host', ok ? 'pass' : 'fail', `non_github_blocked=${!fakeHost.ok}; wrong_tag_blocked=${!wrongTag.ok}; substring_blocked=${!substr.ok}; real_github_ok=${good.ok}`);
   }
 
   // 15) freshness can't be FABRICATED via the agent-supplied contentHash ----
@@ -268,6 +271,21 @@ async function main() {
     add('pivot_loop_blocked', 'pending', 'needs frozen locks');
   }
 
+  // 16b) recordPivot defense-in-depth throw → GOVERNED halt (+blocker), not a crash
+  if (locksFrozen) {
+    const { mkdirSync, writeFileSync: wf } = await import('node:fs');
+    mkdirSync(process.env.BUMPLOG_STATE_DIR, { recursive: true });
+    wf(join(process.env.BUMPLOG_STATE_DIR, 'pivots.json'), JSON.stringify({ lastPivotDate: null, history: [] }, null, 2)); // canPivot allows
+    const telem = { primary_metric: 3, returning_engaged_series: [{ day: 'd', returning_engaged: 3 }], reported_not_gated: { raw_pageviews: 50, total_uniques: 20, sessions: 25 }, channels: { rows: [], total_engaged_uniques: 5, max_source_share: 0.4, top_source: 'x' }, new_vs_returning: { new: 3, returning: 2 } };
+    const draftOverride = () => ({ metrics: { primary_metric: 3, returning_engaged_today: 3, raw_pageviews: 50, total_uniques: 20, max_source_share: 0.4 }, public: { title: 'probe', summary: 's' }, intent_to_pivot: true, pivot_rationale: 'x', proposed_entries: [], proposed_retention_mechanics: [] });
+    // canPivot allows, but recordPivot throws (simulated TOCTOU / concurrent mutation)
+    const rec = await runLoop({ dryRun: true, now: new Date('2026-06-27T08:00:00Z'), pullMetrics: async () => telem, draftOverride, recordPivot: () => { throw new Error('simulated window violation at record time'); } });
+    const ok = rec.status === 'halted' && rec.halt?.code === 'pivot-hysteresis' && !!rec.halt?.blocker;
+    add('pivot_record_governed', ok ? 'pass' : 'fail', `status=${rec.status}; halt.code=${rec.halt?.code}; blocker=${rec.halt?.blocker ? 'written' : 'none'}`);
+  } else {
+    add('pivot_record_governed', 'pending', 'needs frozen locks');
+  }
+
   // 17) full metric SQL executes live (returning-engaged + channel cap etc.) -
   if (haveCreds) {
     try {
@@ -303,6 +321,7 @@ const CHECKLIST = [
   ['provenance_host', 'provenance must be a github.com release URL referencing the version'],
   ['freshness_no_fabrication', 'agent-supplied contentHash ignored — only a real source change publishes'],
   ['pivot_loop_blocked', 'pivot intent inside the window → loop HALTS (code-enforced)'],
+  ['pivot_record_governed', 'recordPivot defense-in-depth throw → governed halt + blocker (not a crash)'],
   ['metric_sql_executes', 'full metric SQL (returning-engaged + channel cap) executes live'],
 ];
 

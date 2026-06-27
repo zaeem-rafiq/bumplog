@@ -70,8 +70,13 @@ function isGitHubHost(url) {
 }
 
 function urlReferencesTag(url, tag) {
+  // The tag must be the exact release path segment, not just any substring
+  // (so "v1" does not match ".../tag/v1.10.0" and a tag in the owner segment
+  // does not count). Accepts the raw and percent-encoded forms.
+  const esc = (s) => String(s).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const t = String(tag);
-  return url.includes(t) || url.includes(encodeURIComponent(t));
+  const re = new RegExp(`/releases/tag/(?:${esc(t)}|${esc(encodeURIComponent(t))})(?:[/?#]|$)`);
+  return re.test(url);
 }
 
 const PLACEHOLDERS = new Set([
