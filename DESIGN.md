@@ -37,3 +37,19 @@ Status is semantic and always paired with a label or glyph, never color alone: s
 ## Bans (from impeccable, enforced)
 
 No side-stripe rails, no uppercase tracked eyebrows, no warm cream or beige body background, no overused fonts (Inter, Geist, Mona Sans, Plus Jakarta, Space Grotesk, etc.), at most two em-dashes per page. `impeccable detect` runs clean.
+
+## Figma source
+
+Editable design source: https://www.figma.com/design/tYMYEoskEbbG9kIgk509zr ("Bumplog — Design"). Holds a `Bumplog` color variable collection with Light + Dark modes, text styles (serif display / sans UI / mono data), the `StatusChip` / `AppRow` / `Header` components (bound to the variables), and Home / Verdict / Stacks / Journal screens in both modes.
+
+### Component mapping (Figma → code)
+
+| Figma component | node | Astro component |
+| --- | --- | --- |
+| StatusChip (Safe/Caution/Breaking/Pending) | `4:10` | `src/components/SafeToUpdateBadge.astro` |
+| AppRow | `4:11` | `src/components/AppRow.astro` |
+| Header | `8:3` | `src/components/Header.astro` |
+| Color variables (Light/Dark) | collection `Bumplog` | tokens in `src/styles/global.css` |
+
+These mappings are recorded here because **Code Connect publishing requires a Figma Dev/Full seat on an Organization or Enterprise plan** — the current account is a student team plan, so the mappings can't be pushed to Figma via the API yet. To activate Code Connect later: upgrade the seat, then re-run the mapping (the node IDs and source paths above are ready to use).
+

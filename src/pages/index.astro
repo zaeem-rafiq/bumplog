@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import SafeToUpdateBadge from '../components/SafeToUpdateBadge.astro';
+import AppRow from '../components/AppRow.astro';
 import apps from '../data/apps.json';
 import { toBadgeStatus, type App, type SafeToUpdate } from '../data/types';
 
@@ -82,27 +82,7 @@ const activeFilters = FILTERS.filter((f) => f.key === 'all' || counts[f.key as S
     <div class="empty-state"><p>No apps are being tracked yet. Check back soon.</p></div>
   ) : (
     <ul class="app-list" id="app-grid" aria-labelledby="tracked-heading">
-      {sorted.map((app) => {
-        const status = toBadgeStatus(app.safeToUpdate);
-        return (
-          <li class="app-list__item" data-status={status}>
-            <a class="app-row" href={`/apps/${app.slug}/`}>
-              <span class="app-row__main">
-                <span class="app-row__name">{app.name}</span>
-                <span class="app-row__repo mono">{app.repo}</span>
-              </span>
-              <span class="app-row__meta">
-                {app.latestVersion ? (
-                  <span class="app-row__version mono">{app.latestVersion}</span>
-                ) : (
-                  <span class="app-row__version mono placeholder">pending</span>
-                )}
-                <SafeToUpdateBadge status={status} size="sm" />
-              </span>
-            </a>
-          </li>
-        );
-      })}
+      {sorted.map((app) => <AppRow app={app} />)}
     </ul>
   )}
 
@@ -187,44 +167,5 @@ const activeFilters = FILTERS.filter((f) => f.key === 'all' || counts[f.key as S
   }
   .app-list__item[hidden] {
     display: none;
-  }
-
-  .app-row {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.4rem 1.25rem;
-    padding: 0.95rem 1.15rem;
-    text-decoration: none;
-    color: inherit;
-    transition: background var(--dur) var(--ease);
-  }
-  .app-row:hover {
-    background: var(--color-surface-2);
-  }
-  .app-row__main {
-    display: flex;
-    flex-direction: column;
-    gap: 0.1rem;
-    min-width: 0;
-  }
-  .app-row__name {
-    font-weight: 540;
-    letter-spacing: -0.01em;
-  }
-  .app-row__repo {
-    font-size: var(--text-xs);
-    color: var(--color-text-muted);
-  }
-  .app-row__meta {
-    display: flex;
-    align-items: center;
-    gap: 0.9rem;
-  }
-  .app-row__version {
-    font-size: var(--text-sm);
-    color: var(--color-text-muted);
-    white-space: nowrap;
   }
 </style>
