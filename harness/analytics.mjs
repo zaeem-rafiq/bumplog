@@ -119,12 +119,35 @@ function dayStr(now, offsetDaysAgo) {
   return d.toISOString().slice(0, 10);
 }
 
-const RETURNING_ENGAGED_SQL = `
+// PostHog HogQL resolves `{filters}` (date range + test-account exclusion) from
+// the `filters` field, but treats any OTHER `{x}` as a `values` lookup — and the
+// two mechanisms conflict (passing `values` makes it look for `{filters}` there
+// and fail). So we keep `{filters}` as the SOLE placeholder and interpolate the
+// harness-controlled constants (engaged-seconds, window dates) directly. These
+// are NOT user input (a lock number + ISO dates we generate); both are validated
+// below to foreclose any injection.
+function dateLit(s) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(s))) throw new Error(`unsafe date literal: ${s}`);
+  return s;
+}
+function intLit(n) {
+  const v = Number(n);
+  if (!Number.isFinite(v)) throw new Error(`unsafe numeric literal: ${n}`);
+  return Math.trunc(v);
+}
+
+// One engaged-day PER SESSION (attributed to the session's start day, in UTC),
+// NOT per pageview — so a single session straddling midnight cannot manufacture a
+// second "engaged day" and read as a return. All event→date conversions are
+// UTC-pinned (toTimeZone) so SQL day labels always match the UTC JS day keys
+// regardless of the PostHog project timezone.
+const returningEngagedSQL = (es, ws, we) => `
 WITH
 sess AS (
   SELECT
     person_id,
     $session_id AS sid,
+    toDate(toTimeZone(min(timestamp), 'UTC')) AS day,
     dateDiff('second', min(timestamp), max(timestamp)) AS secs,
     countIf(event = '$autocapture') AS interactions,
     countIf(event = '$pageview') AS pvs
@@ -132,52 +155,43 @@ sess AS (
   WHERE {filters} AND notEmpty($session_id)
   GROUP BY person_id, sid
 ),
-engaged_sids AS (
-  SELECT person_id, sid FROM sess
-  WHERE pvs > 0 AND (secs > {engaged_seconds} OR interactions > 0)
-),
 epd AS (
-  SELECT DISTINCT ev.person_id AS person_id, toDate(ev.timestamp) AS day
-  FROM events ev
-  INNER JOIN engaged_sids e ON e.sid = ev.$session_id AND e.person_id = ev.person_id
-  WHERE ev.event = '$pageview' AND {filters}
+  SELECT DISTINCT person_id, day FROM sess
+  WHERE pvs > 0 AND (secs > ${intLit(es)} OR interactions > 0)
 ),
 firsts AS (SELECT person_id, min(day) AS first_day FROM epd GROUP BY person_id)
 SELECT epd.day AS day, count(DISTINCT epd.person_id) AS returning_engaged
 FROM epd
 INNER JOIN firsts ON firsts.person_id = epd.person_id
 WHERE epd.day > firsts.first_day
-  AND epd.day >= toDate({window_start})
-  AND epd.day <= toDate({window_end})
+  AND epd.day >= toDate('${dateLit(ws)}')
+  AND epd.day <= toDate('${dateLit(we)}')
 GROUP BY day
 ORDER BY day
 `;
 
 /**
  * The trailing-N daily returning-engaged series + the primary metric (median).
- * Missing days are real zeros and are included in the median.
+ * The window is the N most recent COMPLETE UTC days (today is excluded — a
+ * still-in-progress day is not a "daily count" and would bias the median down).
+ * Days with no qualifying visitors are real zeros and are included in the median.
  * @param {{ days?: number, lookbackDays?: number, now?: Date }} [opts]
  */
 export async function getReturningEngaged(opts = {}) {
   const days = opts.days ?? 7;
   const lookbackDays = opts.lookbackDays ?? 90;
   const now = opts.now ?? new Date();
-  const windowEnd = dayStr(now, 0);
-  const windowStart = dayStr(now, days - 1);
+  const windowEnd = dayStr(now, 1); // yesterday — last complete UTC day
+  const windowStart = dayStr(now, days); // N complete days back
 
-  const { rows } = await hogql(RETURNING_ENGAGED_SQL, {
+  const { rows } = await hogql(returningEngagedSQL(engagedSeconds(), windowStart, windowEnd), {
     label: 'returning_engaged',
     filters: windowFilters(days, lookbackDays),
-    values: {
-      engaged_seconds: engagedSeconds(),
-      window_start: windowStart,
-      window_end: windowEnd,
-    },
   });
 
   const byDay = new Map(rows.map((r) => [String(r.day).slice(0, 10), Number(r.returning_engaged)]));
   const series = [];
-  for (let i = days - 1; i >= 0; i--) {
+  for (let i = days; i >= 1; i--) {
     const d = dayStr(now, i);
     series.push({ day: d, returning_engaged: byDay.get(d) ?? 0 });
   }
@@ -190,39 +204,53 @@ export async function getReturningEngaged(opts = {}) {
   };
 }
 
-const CHANNEL_SQL = `
+// Channel-cap denominator must be the TRUE distinct count of engaged persons, not
+// the sum of per-(channel,referrer) distinct counts (which double-counts a person
+// who arrives via multiple sources and understates the cap — making it under-fire).
+// Each engaged person is attributed to ONE source (first-touch: the referrer of
+// their earliest engaged session), so per-source counts are mutually exclusive and
+// sum to the true distinct total.
+const channelSQL = (es) => `
 WITH
 sess AS (
   SELECT person_id, $session_id AS sid,
     dateDiff('second', min(timestamp), max(timestamp)) AS secs,
     countIf(event = '$autocapture') AS interactions,
     countIf(event = '$pageview') AS pvs,
-    argMin(properties.$channel_type, timestamp) AS channel,
-    argMin(properties.$referring_domain, timestamp) AS referrer
+    min(timestamp) AS sess_start,
+    argMin(coalesce(nullIf(properties.$channel_type, ''), 'Direct'), timestamp) AS channel,
+    argMin(coalesce(nullIf(properties.$referring_domain, ''), '$direct'), timestamp) AS referrer
   FROM events
   WHERE {filters} AND notEmpty($session_id)
   GROUP BY person_id, sid
+),
+engaged AS (
+  SELECT person_id, sess_start, channel, referrer FROM sess
+  WHERE pvs > 0 AND (secs > ${intLit(es)} OR interactions > 0)
+),
+person_source AS (
+  SELECT person_id,
+    argMin(referrer, sess_start) AS referrer,
+    argMin(channel, sess_start) AS channel
+  FROM engaged GROUP BY person_id
 )
-SELECT coalesce(nullIf(channel, ''), 'Direct') AS channel,
-       coalesce(nullIf(referrer, ''), '$direct') AS referrer,
-       count(DISTINCT person_id) AS engaged_uniques
-FROM sess
-WHERE pvs > 0 AND (secs > {engaged_seconds} OR interactions > 0)
-GROUP BY channel, referrer
+SELECT referrer, channel, count(DISTINCT person_id) AS engaged_uniques
+FROM person_source
+GROUP BY referrer, channel
 ORDER BY engaged_uniques DESC
 `;
 
-/** Engaged-uniques broken down by channel + referrer, plus the max single-source share. */
+/** Engaged-uniques by first-touch source, plus the max single-source share. */
 export async function getChannelBreakdown(opts = {}) {
   const days = opts.days ?? 7;
-  const { rows } = await hogql(CHANNEL_SQL, {
+  const { rows } = await hogql(channelSQL(engagedSeconds()), {
     label: 'channel_breakdown',
     filters: windowFilters(days, 0),
-    values: { engaged_seconds: engagedSeconds() },
   });
+  // Rows are one-source-per-person → counts are mutually exclusive, so the sum IS
+  // the true distinct engaged-person total (the correct cap denominator).
   const total = rows.reduce((a, r) => a + Number(r.engaged_uniques), 0);
-  // Aggregate by referrer for the channel_cap check (a "source" = referring domain).
-  const bySource = new Map();
+  const bySource = new Map(); // a "source" = referring domain
   for (const r of rows) {
     const key = r.referrer || r.channel;
     bySource.set(key, (bySource.get(key) ?? 0) + Number(r.engaged_uniques));
@@ -239,38 +267,36 @@ export async function getChannelBreakdown(opts = {}) {
   return { rows, total_engaged_uniques: total, max_source_share: maxShare, top_source: topSource };
 }
 
-const NEW_VS_RETURNING_SQL = `
+const newVsReturningSQL = (es, ws) => `
 WITH
 sess AS (
   SELECT person_id, $session_id AS sid,
+    toDate(toTimeZone(min(timestamp), 'UTC')) AS day,
     dateDiff('second', min(timestamp), max(timestamp)) AS secs,
     countIf(event = '$autocapture') AS interactions,
     countIf(event = '$pageview') AS pvs
   FROM events WHERE {filters} AND notEmpty($session_id)
   GROUP BY person_id, sid
 ),
-engaged_sids AS (SELECT person_id, sid FROM sess WHERE pvs > 0 AND (secs > {engaged_seconds} OR interactions > 0)),
 epd AS (
-  SELECT DISTINCT ev.person_id AS person_id, toDate(ev.timestamp) AS day
-  FROM events ev INNER JOIN engaged_sids e ON e.sid = ev.$session_id AND e.person_id = ev.person_id
-  WHERE ev.event = '$pageview' AND {filters}
+  SELECT DISTINCT person_id, day FROM sess
+  WHERE pvs > 0 AND (secs > ${intLit(es)} OR interactions > 0)
 ),
 firsts AS (SELECT person_id, min(day) AS first_day FROM epd GROUP BY person_id)
 SELECT
-  countIf(first_day >= toDate({window_start})) AS new_persons,
-  countIf(first_day <  toDate({window_start})) AS returning_persons
+  countIf(first_day >= toDate('${dateLit(ws)}')) AS new_persons,
+  countIf(first_day <  toDate('${dateLit(ws)}')) AS returning_persons
 FROM firsts
-WHERE person_id IN (SELECT person_id FROM epd WHERE day >= toDate({window_start}))
+WHERE person_id IN (SELECT person_id FROM epd WHERE day >= toDate('${dateLit(ws)}'))
 `;
 
-/** New vs returning engaged persons over the window. */
+/** New vs returning engaged persons over the window (complete days). */
 export async function getNewVsReturning(opts = {}) {
   const days = opts.days ?? 7;
   const now = opts.now ?? new Date();
-  const { rows } = await hogql(NEW_VS_RETURNING_SQL, {
+  const { rows } = await hogql(newVsReturningSQL(engagedSeconds(), dayStr(now, days)), {
     label: 'new_vs_returning',
     filters: windowFilters(days, 90),
-    values: { engaged_seconds: engagedSeconds(), window_start: dayStr(now, days - 1) },
   });
   const r = rows[0] ?? {};
   return { new: Number(r.new_persons ?? 0), returning: Number(r.returning_persons ?? 0) };
@@ -309,7 +335,7 @@ export async function getReportedNotGated(opts = {}) {
 export async function schemaProbe(opts = {}) {
   const days = opts.days ?? 7;
   const sql = `
-    SELECT toDate(timestamp) AS day,
+    SELECT toDate(toTimeZone(timestamp, 'UTC')) AS day,
            count(DISTINCT person_id) AS distinct_persons,
            countIf(event = '$pageview') AS pageviews,
            countIf(event = '$pageleave') AS pageleaves,

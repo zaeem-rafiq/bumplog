@@ -19,8 +19,17 @@ export function checkProvenance(entry) {
   if (!prov || typeof prov !== 'object') {
     violations.push('missing provenance object');
   } else {
-    if (!isHttpsUrl(prov.url)) violations.push('provenance.url missing or not an https link');
-    if (!prov.source) violations.push('provenance.source missing (e.g. "github")');
+    if (!isHttpsUrl(prov.url)) {
+      violations.push('provenance.url missing or not an https link');
+    } else if (!isGitHubHost(prov.url)) {
+      // The source of truth is the GitHub API — the link must point at github.com,
+      // not just any https URL.
+      violations.push('provenance.url host is not github.com — the datum must link to a GitHub release/tag');
+    } else if (!isBlankOrPlaceholder(entry.tagName) && !urlReferencesTag(prov.url, entry.tagName)) {
+      // The link must actually reference the claimed version, not a generic page.
+      violations.push(`provenance.url does not reference the claimed version "${entry.tagName}" — link must point to that release/tag`);
+    }
+    if (prov.source !== 'github') violations.push('provenance.source must be "github"');
   }
 
   // Concrete data must trace to the source — no invented/placeholder values.
@@ -30,16 +39,39 @@ export function checkProvenance(entry) {
   for (const field of ['name', 'slug']) {
     if (isBlankOrPlaceholder(entry[field])) violations.push(`${field} missing/placeholder`);
   }
-  // A published entry must not carry the raw release body verbatim.
+  // A published entry must not carry the raw release body verbatim, under the
+  // literal key OR aliased into another text field (a long blob ~= wholesale
+  // republish, which violates the "summarize, don't republish" rule).
   if (entry._doNotPublishRaw === true || 'raw_body' in entry) {
     violations.push('entry still carries raw_body — summarize and strip raw_body before publishing');
+  }
+  for (const field of ['summary', 'changelogSummary', 'body', 'notes']) {
+    const v = entry[field];
+    if (typeof v === 'string' && v.length > MAX_SUMMARY_CHARS) {
+      violations.push(`${field} is ${v.length} chars (> ${MAX_SUMMARY_CHARS}) — looks like wholesale republish, not a summary`);
+    }
   }
 
   return { ok: violations.length === 0, violations };
 }
 
+const MAX_SUMMARY_CHARS = 2000;
+
 function isHttpsUrl(v) {
   return typeof v === 'string' && /^https:\/\/[^\s]+$/.test(v);
+}
+
+function isGitHubHost(url) {
+  try {
+    return new URL(url).hostname.toLowerCase().replace(/^www\./, '') === 'github.com';
+  } catch {
+    return false;
+  }
+}
+
+function urlReferencesTag(url, tag) {
+  const t = String(tag);
+  return url.includes(t) || url.includes(encodeURIComponent(t));
 }
 
 const PLACEHOLDERS = new Set([

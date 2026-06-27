@@ -18,10 +18,11 @@ import { verifyLocks } from './lib/locks.mjs';
 import { writeBlocker, assertAllowed } from './lib/guards.mjs';
 import { RunBudget } from './lib/caps.mjs';
 import { pullAllMetrics, RateLimitError, BillingChangeError } from './analytics.mjs';
+import { buildReleaseRecord, loadAppRegistry } from './releases.mjs';
 import { readFeedback, wrapFeedbackForPrompt } from './lib/feedback.mjs';
 import { evaluateGate } from './lib/gate.mjs';
 import { reconcileJournal } from './lib/journal.mjs';
-import { canPivot } from './lib/hysteresis.mjs';
+import { canPivot, recordPivot } from './lib/hysteresis.mjs';
 import { judgeFreshness } from './judges/freshness_theater.mjs';
 import { judgeDarkPattern } from './judges/dark_pattern.mjs';
 import { experimentDay, getPublishedEntry, appendJournalEntry, emitRunRecord, setPublishedEntry } from './lib/store.mjs';
@@ -30,9 +31,19 @@ function todayUTC(now = new Date()) {
   return now.toISOString().slice(0, 10);
 }
 
+/** writeBlocker that never throws — a secondary I/O failure must not erase the run record. */
+function safeWriteBlocker(kind, detail) {
+  try {
+    return writeBlocker(kind, detail);
+  } catch (e) {
+    return null; // best-effort; the run record (emitted in finally) still captures the halt
+  }
+}
+
 /**
  * Run one daily cycle.
- * @param {{ now?: Date, dryRun?: boolean, llm?: Function }} [opts]
+ * @param {{ now?: Date, dryRun?: boolean, llm?: Function, pullMetrics?: Function,
+ *           draftOverride?: Function, buildRecord?: Function }} [opts]
  * @returns {Promise<object>} the run record
  */
 export async function runLoop(opts = {}) {
@@ -52,7 +63,7 @@ export async function runLoop(opts = {}) {
     const auth = assertSubscriptionAuth();
     log('auth-guard', { ok: auth.ok, reason: auth.reason });
     if (!auth.ok) {
-      throw haltErr(auth.reason, 'reprice', writeBlocker('reprice', { reason: auth.reason }));
+      throw haltErr(auth.reason, 'reprice', safeWriteBlocker('reprice', { reason: auth.reason }));
     }
 
     // ── Step 1: verify frozen locks ──────────────────────────────────────────
@@ -60,7 +71,7 @@ export async function runLoop(opts = {}) {
     const locks = verifyLocks();
     log('verify-locks', { ok: locks.ok, failures: locks.failures });
     if (!locks.ok) {
-      throw haltErr(`lock verification failed: ${locks.failures.join('; ')}`, 'lock-mismatch', writeBlocker('lock-mismatch', locks));
+      throw haltErr(`lock verification failed: ${locks.failures.join('; ')}`, 'lock-mismatch', safeWriteBlocker('lock-mismatch', locks));
     }
 
     // ── Step 2: pull metrics (read-only PostHog) ─────────────────────────────
@@ -95,53 +106,88 @@ export async function runLoop(opts = {}) {
     // feedback + the GitHub release pipeline (see releases.mjs, AGENT_BRIEF.md).
     // Then DRAFT a journal entry. Its machine-readable `metrics` block MUST be
     // copied from telemetry — they are reconciled below and a mismatch refuses
-    // publication.
+    // publication. Public numbers MUST be rendered from this verified block.
+    budget.tick(); // count the (expensive) draft turn
     const journalDraft = opts.draftOverride
       ? opts.draftOverride(date, telemetry, gate)
       : dryRun
         ? draftHonestJournalStub(date, telemetry, gate)
         : await draftJournalViaAgent(date, telemetry, gate, wrapped, opts.llm); // SEAM
 
-    // ── Step 5b: JOURNAL-HONESTY eval (refuse mismatched entries) ────────────
+    // ── Step 5b: JOURNAL-HONESTY eval (refuse mismatched OR incomplete entries) ──
     budget.tick();
     const recon = reconcileJournal(journalDraft.metrics, telemetry);
-    log('journal-honesty', { ok: recon.ok, mismatches: recon.mismatches });
+    log('journal-honesty', { ok: recon.ok, mismatches: recon.mismatches, missing: recon.missing });
     if (!recon.ok) {
-      // Fail visibly: do not publish a journal entry whose numbers don't match.
+      // Fail visibly: do not publish a journal entry whose numbers don't match
+      // telemetry OR that omits a required canonical metric.
       record.journal_published = false;
       throw haltErr(
-        `journal reconciliation failed: ${JSON.stringify(recon.mismatches)}`,
+        `journal reconciliation failed: ${JSON.stringify({ mismatches: recon.mismatches, missing: recon.missing })}`,
         'journal-mismatch',
-        writeBlocker('journal-mismatch', { mismatches: recon.mismatches }),
+        safeWriteBlocker('journal-mismatch', { mismatches: recon.mismatches, missing: recon.missing }),
       );
     }
 
-    // ── Step 6: pivot hysteresis ─────────────────────────────────────────────
+    // ── Step 6: pivot hysteresis — a REAL chokepoint, not advisory ───────────
     budget.tick();
     const pivot = canPivot(date);
     record.pivot = pivot;
-    log('pivot-hysteresis', pivot);
-    // TODO(agent): if you intend to pivot strategy and pivot.allowed is false,
-    // you MUST NOT pivot this cycle. recordPivot() enforces the same window.
+    log('pivot-hysteresis', { ...pivot, intent: !!journalDraft.intent_to_pivot });
+    if (journalDraft.intent_to_pivot) {
+      if (!pivot.allowed) {
+        // Enforced in code: a pivot inside the window halts the run.
+        throw haltErr(`pivot disallowed — ${pivot.reason}`, 'pivot-hysteresis', safeWriteBlocker('pivot-hysteresis', pivot));
+      }
+      if (!dryRun) recordPivot(date, journalDraft.pivot_rationale ?? '');
+      record.pivoted = true;
+    }
 
-    // ── Step 7: judges (dark-pattern + freshness-theater) ────────────────────
+    // ── Step 7: judges — re-derive AUTHORITATIVE source data, stage publishes ──
+    // Integrity: the harness derives contentHash/provenance/version from the LIVE
+    // GitHub source for each entry. The agent's claimed values are NEVER trusted,
+    // so "freshness" and provenance cannot be fabricated.
     budget.tick();
     const proposedEntries = journalDraft.proposed_entries ?? []; // SEAM output
+    const buildRecord = opts.buildRecord ?? buildReleaseRecord;
+    const registry = loadAppRegistry();
     const freshnessVerdicts = [];
+    const toPublish = []; // STAGED — nothing persists until step 8 succeeds (atomicity)
     for (const entry of proposedEntries) {
-      assertAllowed({ kind: 'publish_entry', entry }); // provenance gate (halts if missing)
+      budget.tick(); // each entry is real work — count it against the caps
+      const app = registry.find((a) => a.slug === entry.slug);
+      if (!app || !app.repo) {
+        throw haltErr(`proposed entry slug "${entry.slug}" is not in the app registry`, 'unknown-app', safeWriteBlocker('unknown-app', { slug: entry.slug }));
+      }
+      const source = await buildRecord(app); // authoritative GitHub record
+      if (!source || source.found === false) {
+        // No real release/tag — refuse to publish rather than let the agent invent one.
+        log('no-source', { slug: entry.slug });
+        continue;
+      }
+      // Override integrity-bearing fields with harness-derived values; keep the
+      // agent's summary/safeToUpdate prose. raw_body is stripped before publish.
+      const verified = stripRaw({
+        ...entry,
+        name: app.name,
+        slug: app.slug,
+        tagName: source.tagName,
+        contentHash: source.contentHash, // <- from GitHub, NOT from the agent
+        provenance: source.provenance, // <- from GitHub, NOT from the agent
+      });
+      assertAllowed({ kind: 'publish_entry', entry: verified }); // provenance gate (halts if invalid)
       const prev = getPublishedEntry(entry.slug);
-      const v = await judgeFreshness({ prev, next: entry }, { llm: dryRun ? null : opts.llm });
+      const v = await judgeFreshness({ prev, next: verified }, { llm: dryRun ? null : opts.llm });
       freshnessVerdicts.push({ slug: entry.slug, verdict: v.verdict, reason: v.authoritative.reason });
       if (v.verdict === 'theater') {
-        // fake-fresh is a logged failure; skip publishing this entry (do not halt the whole run)
         log('freshness-theater', { slug: entry.slug, blocked: true, reason: v.authoritative.reason });
         continue;
       }
-      if (!dryRun) setPublishedEntry(entry.slug, stripRaw(entry));
+      toPublish.push(verified); // stage only; commit in step 8
     }
     const darkVerdicts = [];
     for (const mech of journalDraft.proposed_retention_mechanics ?? []) {
+      budget.tick();
       const dv = await judgeDarkPattern(mech, { llm: dryRun ? null : opts.llm });
       darkVerdicts.push({ name: mech.name, verdict: dv.verdict, signatures: dv.signatures });
       // TODO(agent): a 'dark-pattern' verdict means the mechanic must NOT ship.
@@ -149,36 +195,50 @@ export async function runLoop(opts = {}) {
     record.judges = { freshness: freshnessVerdicts, dark_pattern: darkVerdicts };
     log('judges', record.judges);
 
-    // ── Step 8: append the dated journal entry ───────────────────────────────
+    // ── Step 8: append journal + commit staged publishes ATOMICALLY ──────────
     budget.tick();
     if (!dryRun) {
-      const count = appendJournalEntry({ date, ...journalDraft.public });
+      // Journal first, then advance the published-entries tracker. If a write
+      // fails mid-way the tracker is at worst BEHIND the journal (re-published
+      // next run), never ahead (which would suppress a real update as theater).
+      const verifiedMetrics = recon.verified ?? journalDraft.metrics;
+      const count = appendJournalEntry({ date, ...journalDraft.public, metrics: verifiedMetrics });
+      for (const e of toPublish) setPublishedEntry(e.slug, e);
       record.journal_published = true;
       record.journal_count = count;
+      record.published_slugs = toPublish.map((e) => e.slug);
     } else {
       record.journal_published = false; // dry-run never publishes
+      record.staged_slugs = toPublish.map((e) => e.slug);
     }
     log('journal-append', { published: record.journal_published });
 
     record.status = 'ok';
   } catch (err) {
-    record.status = err.halt ? 'halted' : 'error';
-    record.halt = err.halt ? { code: err.code ?? null, reason: err.message, blocker: err.blocker ?? null } : null;
-    record.error = err.halt ? null : String(err.stack ?? err.message);
-    // Graceful halt for throttling/reprice — never retry-hammer; resume next window.
+    // Classify. Blocker writes are best-effort (safeWriteBlocker) so a secondary
+    // I/O failure can never escape and skip the run record.
     if (err instanceof RateLimitError) {
       record.status = 'halted';
-      record.halt = { code: 'rate-limit', reason: err.message, blocker: writeBlocker('rate-limit', { retryAfter: err.retryAfter }) };
+      record.halt = { code: 'rate-limit', reason: err.message, blocker: safeWriteBlocker('rate-limit', { retryAfter: err.retryAfter }) };
     } else if (err instanceof BillingChangeError) {
       record.status = 'halted';
-      record.halt = { code: 'reprice', reason: err.message, blocker: writeBlocker('reprice', { reason: err.message }) };
+      record.halt = { code: 'reprice', reason: err.message, blocker: safeWriteBlocker('reprice', { reason: err.message }) };
+    } else if (err.halt) {
+      record.status = 'halted';
+      record.halt = { code: err.code ?? null, reason: err.message, blocker: err.blocker ?? null };
+    } else {
+      record.status = 'error';
+      record.error = String(err.stack ?? err.message);
+    }
+  } finally {
+    // ── Step 9: emit machine-readable run record (ALWAYS, even on halt) ───────
+    record.budget = budget.remaining();
+    try {
+      record.run_record_file = emitRunRecord(record);
+    } catch (e) {
+      record.run_record_error = String(e.message);
     }
   }
-
-  // ── Step 9: emit machine-readable run record ───────────────────────────────
-  record.budget = budget.remaining();
-  const file = emitRunRecord(record);
-  record.run_record_file = file;
   return record;
 }
 
@@ -210,6 +270,7 @@ function draftHonestJournalStub(date, telemetry, gate) {
       stage: gate.stage,
       summary: '(dry-run) control-flow exercise; no content published.',
     },
+    intent_to_pivot: false,
     proposed_entries: [],
     proposed_retention_mechanics: [],
   };
@@ -218,7 +279,10 @@ function draftHonestJournalStub(date, telemetry, gate) {
 /**
  * SEAM(agent): real journal drafting. The agent (Sonnet) decides the narrative
  * and proposes entries/mechanics, but the `metrics` block MUST be copied from
- * `telemetry` verbatim (reconciliation will reject anything else).
+ * `telemetry` verbatim (reconciliation rejects anything else or any omission),
+ * and public-facing numbers MUST be rendered from that verified block. Set
+ * intent_to_pivot:true (+ pivot_rationale) only when changing strategy; the loop
+ * enforces the 6-day hysteresis window in code.
  */
 async function draftJournalViaAgent(/* date, telemetry, gate, wrapped, llm */) {
   throw new Error('SEAM: implement journal drafting via lib/llm.mjs (Sonnet). See AGENT_BRIEF.md §journal.');

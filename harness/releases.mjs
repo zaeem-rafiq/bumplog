@@ -69,12 +69,15 @@ export async function ghFetch(path, { cacheKey } = {}) {
 
   const remaining = Number(res.headers.get('x-ratelimit-remaining') ?? '1');
   const reset = res.headers.get('x-ratelimit-reset');
+  const retryAfter = res.headers.get('retry-after');
 
   if (res.status === 304 && cached) {
     return { status: 304, data: cached.data, fromCache: true };
   }
-  if (res.status === 429 || (res.status === 403 && remaining === 0)) {
-    throw new RateLimitError(`GitHub rate limit hit on ${path}.`, reset);
+  // Primary limit (403 + remaining 0) AND secondary/abuse limit (429, or 403 with a
+  // Retry-After even when the primary quota isn't exhausted) both halt gracefully.
+  if (res.status === 429 || (res.status === 403 && (remaining === 0 || retryAfter))) {
+    throw new RateLimitError(`GitHub rate limit hit on ${path}.`, retryAfter ?? reset);
   }
   if (res.status === 402) {
     throw new BillingChangeError(`GitHub returned 402 on ${path}.`);

@@ -54,9 +54,11 @@ export function looksLikeInjection(text) {
 function neutralize(s) {
   return String(s ?? '')
     // Neutralize ALL angle brackets so no pseudo-tag (</feedback>, <system>, …)
-    // can be forged to break out of the data block. Uses guillemets, inert in prompts.
+    // can be forged, AND double-quotes so untrusted id/page values can't break out
+    // of their data-block attribute. All inert curly substitutes, safe in prompts.
     .replace(/</g, '‹')
     .replace(/>/g, '›')
+    .replace(/"/g, '”')
     .replace(/```/g, '`​``') // break code fences with a zero-width space
     .replace(/\p{Cc}/gu, ' ') // strip ASCII/Unicode control characters
     .slice(0, 2000);
