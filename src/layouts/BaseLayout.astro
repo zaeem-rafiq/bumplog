@@ -12,6 +12,9 @@ interface Props {
   description?: string;
   /** Optional OG type override; defaults to "website". */
   ogType?: string;
+  /** Optional social-share image, root-relative (e.g. "/og-image.png").
+   *  Resolved to an absolute URL for og:image/twitter:image. */
+  image?: string;
   /** Optional wide layout (used by the stack dashboard). */
   wide?: boolean;
 }
@@ -20,11 +23,15 @@ const {
   title,
   description = 'Bumplog tracks releases of popular self-hosted apps and tells you whether it is safe to update — summarized changelogs, breaking-change warnings, all traceable to the GitHub release.',
   ogType = 'website',
+  image = '/og-image.png',
   wide = false,
 } = Astro.props;
 
 // Canonical URL: absolute, derived from `site` in astro.config.mjs.
 const canonical = new URL(Astro.url.pathname, Astro.site).href;
+
+// Social-share image: scrapers require an absolute URL.
+const ogImage = new URL(image, Astro.site).href;
 
 // PostHog public env vars. Only initialize when a key is present so local dev
 // without keys does not crash.
@@ -49,11 +56,18 @@ const posthogHost = import.meta.env.PUBLIC_POSTHOG_HOST ?? 'https://us.i.posthog
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Bumplog — is it safe to update? Release tracking for self-hosted apps." />
 
     <!-- Twitter -->
-    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+    <meta name="twitter:image:alt" content="Bumplog — is it safe to update? Release tracking for self-hosted apps." />
 
     <link rel="sitemap" href="/sitemap-index.xml" />
 
