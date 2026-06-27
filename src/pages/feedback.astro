@@ -6,11 +6,13 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   title="Send feedback — Bumplog"
   description="Spotted a wrong version, a missing app, or a bad update call? Send Bumplog feedback — what you saw and where."
 >
-  <h1>Send feedback</h1>
-  <p class="lede">
-    Spotted a wrong version, a missing app, or an update call that does not match
-    reality? Tell us what you saw and where.
-  </p>
+  <div class="page-hero">
+    <h1>Send feedback</h1>
+    <p class="lede">
+      Spotted a wrong version, a missing app, or an update call that doesn't match
+      reality? Tell us what you saw and where — every report is read.
+    </p>
+  </div>
 
   <!--
     The form POSTs JSON to /api/feedback (host function, see functions/api/feedback.ts).
@@ -76,9 +78,16 @@ import BaseLayout from '../layouts/BaseLayout.astro';
   .feedback-form {
     display: block;
     max-width: 34rem;
+    box-shadow: var(--shadow-sm);
+  }
+  .feedback-form label:first-of-type {
+    margin-top: 0;
   }
   .feedback-form button {
-    margin-top: 1.25rem;
+    margin-top: 1.5rem;
+  }
+  #feedback-status {
+    margin-top: 1rem;
   }
   #feedback-status:empty {
     display: none;
