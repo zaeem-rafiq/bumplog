@@ -57,6 +57,11 @@
 </script>
 
 <style>
+  /* The [hidden] attribute must win over the display rule below, or hide()
+     (banner.hidden = true) has no visual effect. Higher specificity than .consent. */
+  .consent[hidden] {
+    display: none;
+  }
   .consent {
     position: fixed;
     left: 50%;
