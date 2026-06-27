@@ -83,9 +83,9 @@
 
   --content-width: 46rem;
   --wide-width: 64rem;
-  --radius-sm: 6px;
-  --radius: 9px;
-  --radius-lg: 13px;
+  --radius-sm: 0;
+  --radius: 0;
+  --radius-lg: 0;
   --space: 1rem;
 
   --shadow-sm: 0 1px 2px oklch(0.2 0.02 60 / 0.05);
