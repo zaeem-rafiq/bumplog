@@ -19,7 +19,10 @@ harness/.gh-cache/
 
 # ── Impeccable design tooling (installed per-project; not product source) ──
 .claude/
-.impeccable/
+.impeccable/*
+# Keep the detector config tracked (waives a false-strict flat-type flag on the
+# stacks index, whose small-text scale — caption/label/body — is necessarily tight).
+!.impeccable/config.json
 
 # ── OS / editor ──────────────────────────────────────────────────────────
 .DS_Store
