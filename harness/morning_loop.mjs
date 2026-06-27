@@ -251,6 +251,7 @@ export async function runLoop(opts = {}) {
           latestVersion: e.tagName,
           changelogSummary: e.summary,
           safeToUpdate: e.safeToUpdate ?? 'unknown',
+          rationale: e.rationale ?? null,
           sourceUrl: e.provenance?.url,
           lastChecked: date,
         });

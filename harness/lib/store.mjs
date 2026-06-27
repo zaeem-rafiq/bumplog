@@ -82,7 +82,7 @@ export function appendJournalEntry(entry) {
  * Immutable update keyed by slug; a slug not in the registry is ignored (the
  * registry is the source of truth for which apps the site renders).
  * @param {string} slug
- * @param {{ latestVersion:string, changelogSummary:string, safeToUpdate:string, sourceUrl:string, lastChecked:string }} fields
+ * @param {{ latestVersion:string, changelogSummary:string, safeToUpdate:string, rationale:string, sourceUrl:string, lastChecked:string }} fields
  * @returns {boolean} whether a registry row was updated
  */
 export function syncSiteApp(slug, fields) {
@@ -98,6 +98,7 @@ export function syncSiteApp(slug, fields) {
       latestVersion: fields.latestVersion ?? app.latestVersion,
       changelogSummary: fields.changelogSummary ?? app.changelogSummary,
       safeToUpdate: fields.safeToUpdate ?? app.safeToUpdate,
+      rationale: fields.rationale ?? app.rationale ?? null,
       sourceUrl: fields.sourceUrl ?? app.sourceUrl,
       lastChecked: fields.lastChecked ?? app.lastChecked,
     };

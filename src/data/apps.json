@@ -7,7 +7,8 @@
     "changelogSummary": "v2.7.5 is a small maintenance release with two changes. The main fix adds rate limiting and deduplication to the server's version-check mechanism, preventing unnecessary repeated requests. Translation strings for the web interface were also refreshed.",
     "safeToUpdate": "safe",
     "sourceUrl": "https://github.com/immich-app/immich/releases/tag/v2.7.5",
-    "lastChecked": "2026-06-27"
+    "lastChecked": "2026-06-27",
+    "rationale": "v2.7.5 contains only a server-side bug fix (rate limiting and deduplication on version checks) and a translation update. The release notes call out no breaking changes, required migrations, manual upgrade steps, deprecations, or configuration changes."
   },
   {
     "slug": "jellyfin",
@@ -17,7 +18,8 @@
     "changelogSummary": "Jellyfin v10.11.11 is a minor stability release focused on bugfixes. The primary change introduces a lock helper for the UserManager component, which improves thread-safety and helps prevent race conditions when user data is accessed concurrently. Users should notice improved reliability in multi-user or high-concurrency scenarios. A full backup is recommended before upgrading.",
     "safeToUpdate": "safe",
     "sourceUrl": "https://github.com/jellyfin/jellyfin/releases/tag/v10.11.11",
-    "lastChecked": "2026-06-27"
+    "lastChecked": "2026-06-27",
+    "rationale": "The v10.11.11 release notes describe a single minor bugfix (a lock helper addition to UserManager) with no breaking changes, required migrations, or manual upgrade steps called out. The release is explicitly characterized as a minor bugfix release. Standard backup precaution is advised by the Jellyfin team, as with any release."
   },
   {
     "slug": "paperless-ngx",
@@ -27,7 +29,8 @@
     "changelogSummary": "v2.20.15 is a security-focused patch release that all users are encouraged to apply. It closes a disclosed vulnerability (GHSA-8c6x-pfjq-9gr7) by tightening authentication flows to use only the allauth login and logout endpoints, and by correctly scoping mail account enumeration to prevent unauthorized access. Two additional bug fixes ship alongside: one eliminates a spurious change event that could fire when switching operator types on a custom field query, and another rejects malformed requests to the API notes endpoint.",
     "safeToUpdate": "safe",
     "sourceUrl": "https://github.com/paperless-ngx/paperless-ngx/releases/tag/v2.20.15",
-    "lastChecked": "2026-06-27"
+    "lastChecked": "2026-06-27",
+    "rationale": "This release contains only bug fixes, including a recommended security patch (GHSA-8c6x-pfjq-9gr7) addressing mail account enumeration and login/logout endpoint issues. There are no breaking changes, required migrations, or manual upgrade steps noted."
   },
   {
     "slug": "nextcloud",
@@ -37,7 +40,8 @@
     "changelogSummary": null,
     "safeToUpdate": null,
     "sourceUrl": null,
-    "lastChecked": null
+    "lastChecked": null,
+    "rationale": null
   },
   {
     "slug": "home-assistant",
@@ -47,7 +51,8 @@
     "changelogSummary": null,
     "safeToUpdate": null,
     "sourceUrl": null,
-    "lastChecked": null
+    "lastChecked": null,
+    "rationale": null
   },
   {
     "slug": "gitea",
@@ -57,7 +62,8 @@
     "changelogSummary": null,
     "safeToUpdate": null,
     "sourceUrl": null,
-    "lastChecked": null
+    "lastChecked": null,
+    "rationale": null
   },
   {
     "slug": "vaultwarden",
@@ -67,7 +73,8 @@
     "changelogSummary": null,
     "safeToUpdate": null,
     "sourceUrl": null,
-    "lastChecked": null
+    "lastChecked": null,
+    "rationale": null
   },
   {
     "slug": "adguard-home",
@@ -77,7 +84,8 @@
     "changelogSummary": null,
     "safeToUpdate": null,
     "sourceUrl": null,
-    "lastChecked": null
+    "lastChecked": null,
+    "rationale": null
   },
   {
     "slug": "uptime-kuma",
@@ -87,6 +95,7 @@
     "changelogSummary": null,
     "safeToUpdate": null,
     "sourceUrl": null,
-    "lastChecked": null
+    "lastChecked": null,
+    "rationale": null
   }
 ]

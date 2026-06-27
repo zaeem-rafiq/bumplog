@@ -20,6 +20,8 @@ export interface App {
   changelogSummary: string | null;
   /** Update-safety assessment. null (treated as "unknown") until assessed. */
   safeToUpdate: SafeToUpdate | null;
+  /** Grounded "why it's safe/caution/breaking" rationale. null until assessed. */
+  rationale: string | null;
   /** Provenance: link to the source GitHub release. null until filled. */
   sourceUrl: string | null;
   /** ISO 8601 timestamp of the last check. null until filled. */
