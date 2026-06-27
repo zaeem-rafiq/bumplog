@@ -3,31 +3,31 @@
     "slug": "immich",
     "name": "Immich",
     "repo": "immich-app/immich",
-    "latestVersion": null,
-    "changelogSummary": null,
-    "safeToUpdate": null,
-    "sourceUrl": null,
-    "lastChecked": null
+    "latestVersion": "v2.7.5",
+    "changelogSummary": "v2.7.5 is a small maintenance release with two changes. The main fix adds rate limiting and deduplication to the server's version-check mechanism, preventing unnecessary repeated requests. Translation strings for the web interface were also refreshed.",
+    "safeToUpdate": "safe",
+    "sourceUrl": "https://github.com/immich-app/immich/releases/tag/v2.7.5",
+    "lastChecked": "2026-06-27"
   },
   {
     "slug": "jellyfin",
     "name": "Jellyfin",
     "repo": "jellyfin/jellyfin",
-    "latestVersion": null,
-    "changelogSummary": null,
-    "safeToUpdate": null,
-    "sourceUrl": null,
-    "lastChecked": null
+    "latestVersion": "v10.11.11",
+    "changelogSummary": "Jellyfin v10.11.11 is a minor stability release focused on bugfixes. The primary change introduces a lock helper for the UserManager component, which improves thread-safety and helps prevent race conditions when user data is accessed concurrently. Users should notice improved reliability in multi-user or high-concurrency scenarios. A full backup is recommended before upgrading.",
+    "safeToUpdate": "safe",
+    "sourceUrl": "https://github.com/jellyfin/jellyfin/releases/tag/v10.11.11",
+    "lastChecked": "2026-06-27"
   },
   {
     "slug": "paperless-ngx",
     "name": "Paperless-ngx",
     "repo": "paperless-ngx/paperless-ngx",
-    "latestVersion": null,
-    "changelogSummary": null,
-    "safeToUpdate": null,
-    "sourceUrl": null,
-    "lastChecked": null
+    "latestVersion": "v2.20.15",
+    "changelogSummary": "v2.20.15 is a security-focused patch release that all users are encouraged to apply. It closes a disclosed vulnerability (GHSA-8c6x-pfjq-9gr7) by tightening authentication flows to use only the allauth login and logout endpoints, and by correctly scoping mail account enumeration to prevent unauthorized access. Two additional bug fixes ship alongside: one eliminates a spurious change event that could fire when switching operator types on a custom field query, and another rejects malformed requests to the API notes endpoint.",
+    "safeToUpdate": "safe",
+    "sourceUrl": "https://github.com/paperless-ngx/paperless-ngx/releases/tag/v2.20.15",
+    "lastChecked": "2026-06-27"
   },
   {
     "slug": "nextcloud",

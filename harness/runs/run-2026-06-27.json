@@ -1,0 +1,170 @@
+{
+  "date": "2026-06-27",
+  "status": "ok",
+  "mode": "live",
+  "trace": [
+    {
+      "step": "auth-guard",
+      "at": "2026-06-27T14:02:35.927Z",
+      "ok": true
+    },
+    {
+      "step": "verify-locks",
+      "at": "2026-06-27T14:02:35.928Z",
+      "ok": true,
+      "failures": []
+    },
+    {
+      "step": "pull-metrics",
+      "at": "2026-06-27T14:02:36.227Z",
+      "primary_metric": 0,
+      "engaged_uniques": 3,
+      "max_source_share": 1
+    },
+    {
+      "step": "feedback",
+      "at": "2026-06-27T14:02:36.228Z",
+      "count": 4,
+      "flagged": [
+        {
+          "id": "fb-injection-probe",
+          "reason": "injection-shaped content"
+        }
+      ]
+    },
+    {
+      "step": "gate",
+      "at": "2026-06-27T14:02:36.229Z",
+      "stage": "leading",
+      "day_index": 1,
+      "leading": {
+        "engaged_uniques": 3,
+        "distinct_sources": 1,
+        "max_source_share": 1,
+        "channel_cap_ok": false,
+        "on_track": false
+      },
+      "lagging": {
+        "returning_engaged_median": 0,
+        "target": 3,
+        "on_track": false
+      },
+      "channel_cap": 0.5,
+      "channel_cap_ok": false,
+      "gated_on_track": false
+    },
+    {
+      "step": "journal-honesty",
+      "at": "2026-06-27T14:03:20.330Z",
+      "ok": true,
+      "mismatches": [],
+      "missing": []
+    },
+    {
+      "step": "pivot-hysteresis",
+      "at": "2026-06-27T14:03:20.331Z",
+      "allowed": true,
+      "reason": "no prior pivot on record",
+      "lastPivotDate": null,
+      "daysSince": null,
+      "intent": false
+    },
+    {
+      "step": "judges",
+      "at": "2026-06-27T14:04:48.803Z",
+      "freshness": [
+        {
+          "slug": "immich",
+          "verdict": "fresh",
+          "reason": "first publish for this app"
+        },
+        {
+          "slug": "jellyfin",
+          "verdict": "fresh",
+          "reason": "first publish for this app"
+        },
+        {
+          "slug": "paperless-ngx",
+          "verdict": "fresh",
+          "reason": "first publish for this app"
+        }
+      ],
+      "dark_pattern": [
+        {
+          "name": "Per-app breaking-change RSS feed",
+          "verdict": "real-value",
+          "signatures": []
+        }
+      ]
+    },
+    {
+      "step": "journal-append",
+      "at": "2026-06-27T14:04:48.808Z",
+      "published": true
+    }
+  ],
+  "day_index": 1,
+  "start_date": "2026-06-27",
+  "gate": {
+    "stage": "leading",
+    "day_index": 1,
+    "leading": {
+      "engaged_uniques": 3,
+      "distinct_sources": 1,
+      "max_source_share": 1,
+      "channel_cap_ok": false,
+      "on_track": false
+    },
+    "lagging": {
+      "returning_engaged_median": 0,
+      "target": 3,
+      "on_track": false
+    },
+    "channel_cap": 0.5,
+    "channel_cap_ok": false,
+    "gated_on_track": false
+  },
+  "pivot": {
+    "allowed": true,
+    "reason": "no prior pivot on record",
+    "lastPivotDate": null,
+    "daysSince": null
+  },
+  "judges": {
+    "freshness": [
+      {
+        "slug": "immich",
+        "verdict": "fresh",
+        "reason": "first publish for this app"
+      },
+      {
+        "slug": "jellyfin",
+        "verdict": "fresh",
+        "reason": "first publish for this app"
+      },
+      {
+        "slug": "paperless-ngx",
+        "verdict": "fresh",
+        "reason": "first publish for this app"
+      }
+    ],
+    "dark_pattern": [
+      {
+        "name": "Per-app breaking-change RSS feed",
+        "verdict": "real-value",
+        "signatures": []
+      }
+    ]
+  },
+  "journal_published": true,
+  "journal_count": 1,
+  "published_slugs": [
+    "immich",
+    "jellyfin",
+    "paperless-ngx"
+  ],
+  "budget": {
+    "turns": 44,
+    "minutes": 27.785316666666667
+  }
+}

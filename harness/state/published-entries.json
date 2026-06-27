@@ -1,0 +1,59 @@
+{
+  "immich": {
+    "slug": "immich",
+    "angle": "First build — classify latest release as safe/caution/breaking; call out any DB migration steps or breaking API changes explicitly; summarize what upgraders actually need to know.",
+    "name": "Immich",
+    "tagName": "v2.7.5",
+    "publishedAt": "2026-04-13T14:53:55Z",
+    "contentHash": "f81399794254dfd9f7fbebefcfb85bf4bfd4b752c778f4916f25ba64a6c158b5",
+    "provenance": {
+      "source": "github",
+      "url": "https://github.com/immich-app/immich/releases/tag/v2.7.5",
+      "fetchedAt": "2026-06-27T14:03:20.785Z"
+    },
+    "summary": "v2.7.5 is a small maintenance release with two changes. The main fix adds rate limiting and deduplication to the server's version-check mechanism, preventing unnecessary repeated requests. Translation strings for the web interface were also refreshed.",
+    "safeToUpdate": "safe",
+    "rationale": "v2.7.5 contains only a server-side bug fix (rate limiting and deduplication on version checks) and a translation update. The release notes call out no breaking changes, required migrations, manual upgrade steps, deprecations, or configuration changes.",
+    "citations": [
+      "https://github.com/immich-app/immich/releases/tag/v2.7.5"
+    ]
+  },
+  "jellyfin": {
+    "slug": "jellyfin",
+    "angle": "First build — safe-to-update badge with plugin-compatibility notes where the upstream release notes surface them; flag any server ABI or plugin API breaks.",
+    "name": "Jellyfin",
+    "tagName": "v10.11.11",
+    "publishedAt": "2026-06-06T16:18:54Z",
+    "contentHash": "267a786ccfae09141d3e819c7f3a871fe777cd40efa5f7b1d49a5cc7a1dfab2b",
+    "provenance": {
+      "source": "github",
+      "url": "https://github.com/jellyfin/jellyfin/releases/tag/v10.11.11",
+      "fetchedAt": "2026-06-27T14:03:38.490Z"
+    },
+    "summary": "Jellyfin v10.11.11 is a minor stability release focused on bugfixes. The primary change introduces a lock helper for the UserManager component, which improves thread-safety and helps prevent race conditions when user data is accessed concurrently. Users should notice improved reliability in multi-user or high-concurrency scenarios. A full backup is recommended before upgrading.",
+    "safeToUpdate": "safe",
+    "rationale": "The v10.11.11 release notes describe a single minor bugfix (a lock helper addition to UserManager) with no breaking changes, required migrations, or manual upgrade steps called out. The release is explicitly characterized as a minor bugfix release. Standard backup precaution is advised by the Jellyfin team, as with any release.",
+    "citations": [
+      "https://github.com/jellyfin/jellyfin/releases/tag/v10.11.11"
+    ]
+  },
+  "paperless-ngx": {
+    "slug": "paperless-ngx",
+    "angle": "First build — highlight schema migrations or config-format changes if present; classify risk level and link the upstream release for provenance.",
+    "name": "Paperless-ngx",
+    "tagName": "v2.20.15",
+    "publishedAt": "2026-04-27T03:00:34Z",
+    "contentHash": "d1c025b35f8879a91a2aa334b3bab76df3333e49ae5e11e56214237e436ba2ea",
+    "provenance": {
+      "source": "github",
+      "url": "https://github.com/paperless-ngx/paperless-ngx/releases/tag/v2.20.15",
+      "fetchedAt": "2026-06-27T14:04:00.863Z"
+    },
+    "summary": "v2.20.15 is a security-focused patch release that all users are encouraged to apply. It closes a disclosed vulnerability (GHSA-8c6x-pfjq-9gr7) by tightening authentication flows to use only the allauth login and logout endpoints, and by correctly scoping mail account enumeration to prevent unauthorized access. Two additional bug fixes ship alongside: one eliminates a spurious change event that could fire when switching operator types on a custom field query, and another rejects malformed requests to the API notes endpoint.",
+    "safeToUpdate": "safe",
+    "rationale": "This release contains only bug fixes, including a recommended security patch (GHSA-8c6x-pfjq-9gr7) addressing mail account enumeration and login/logout endpoint issues. There are no breaking changes, required migrations, or manual upgrade steps noted.",
+    "citations": [
+      "https://github.com/paperless-ngx/paperless-ngx/releases/tag/v2.20.15"
+    ]
+  }
+}

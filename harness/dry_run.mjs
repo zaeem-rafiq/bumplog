@@ -35,6 +35,7 @@ process.env.BUMPLOG_BLOCKERS_DIR = mkdtempSync(join(tmpdir(), 'bumplog-blockers-
 process.env.BUMPLOG_RUNS_DIR = mkdtempSync(join(tmpdir(), 'bumplog-runs-'));
 process.env.BUMPLOG_STATE_DIR = mkdtempSync(join(tmpdir(), 'bumplog-state-'));
 process.env.BUMPLOG_JOURNAL_FILE = join(mkdtempSync(join(tmpdir(), 'bumplog-journal-')), 'journal.json');
+process.env.BUMPLOG_APPS_FILE = join(mkdtempSync(join(tmpdir(), 'bumplog-apps-')), 'apps.json');
 const results = [];
 const add = (id, status, evidence) => results.push({ id, status, evidence });
 const haveCreds = ['POSTHOG_PERSONAL_API_KEY', 'POSTHOG_PROJECT_ID', 'POSTHOG_HOST'].every((k) => process.env[k]);
@@ -300,6 +301,49 @@ async function main() {
     add('metric_sql_executes', 'pending', 'no PostHog creds in env');
   }
 
+  // 18) synthesis seams ground in the source: provenance carried, safety enum
+  //     validated, and an empty-notes source needs NO llm call (can't fabricate)
+  {
+    const { summarizeChangelog, flagBreakingChanges } = await import('./releases.mjs');
+    const url = 'https://github.com/immich-app/immich/releases/tag/v1.120.0';
+    const record = { name: 'Immich', tagName: 'v1.120.0', kind: 'release', provenance: { source: 'github', url }, raw_body: 'Fixed a memory leak. Added album sharing.' };
+    let calls = 0;
+    // A deliberately misbehaving model: emits an out-of-range safety value and no citations.
+    const fakeLLM = async () => { calls += 1; return { json: { summary: 'Routine fixes and a new album-sharing feature.', citations: [], safeToUpdate: 'not-a-real-value', rationale: 'Minor fixes.' }, text: '' }; };
+    const sum = await summarizeChangelog(record, fakeLLM);
+    const flag = await flagBreakingChanges(record, fakeLLM);
+    // An empty-notes (tag-only) record must NOT invoke the llm — deterministic stub.
+    const emptyRecord = { name: 'Gitea', tagName: 'v1.21.0', kind: 'tag', provenance: { source: 'github', url: 'https://github.com/go-gitea/gitea/releases/tag/v1.21.0' }, raw_body: '' };
+    const callsBefore = calls;
+    const emptySum = await summarizeChangelog(emptyRecord, fakeLLM);
+    const emptyFlag = await flagBreakingChanges(emptyRecord, fakeLLM);
+    const noLlmForEmpty = calls === callsBefore;
+    const ok =
+      sum.citations.includes(url) &&
+      flag.citations.includes(url) &&
+      flag.safeToUpdate === 'unknown' && // out-of-range value coerced to 'unknown'
+      noLlmForEmpty &&
+      emptyFlag.safeToUpdate === 'unknown' &&
+      emptySum.summary.includes('v1.21.0');
+    add('synthesis_grounded', ok ? 'pass' : 'fail', `sum_cites_src=${sum.citations.includes(url)}; flag_enum_validated=${flag.safeToUpdate === 'unknown'}; empty_no_llm=${noLlmForEmpty}; empty_flag=${emptyFlag.safeToUpdate}`);
+  }
+
+  // 19) past day 30 → experiment-complete halt: no draft, no publish ----------
+  if (locksFrozen) {
+    const { mkdirSync, writeFileSync: wf } = await import('node:fs');
+    mkdirSync(process.env.BUMPLOG_STATE_DIR, { recursive: true });
+    // Start far enough back that "now" lands past day 30 (stage 'post').
+    wf(join(process.env.BUMPLOG_STATE_DIR, 'experiment.json'), JSON.stringify({ start_date: '2026-06-01' }, null, 2));
+    const telem = { primary_metric: 3, returning_engaged_series: [{ day: 'd', returning_engaged: 3 }], reported_not_gated: { raw_pageviews: 50, total_uniques: 20, sessions: 25 }, channels: { rows: [], total_engaged_uniques: 5, max_source_share: 0.4, top_source: 'x' }, new_vs_returning: { new: 3, returning: 2 } };
+    let drafted = false;
+    const draftOverride = () => { drafted = true; return { metrics: {}, public: {}, proposed_entries: [], proposed_retention_mechanics: [] }; };
+    const rec = await runLoop({ dryRun: true, now: new Date('2026-07-05T08:00:00Z'), pullMetrics: async () => telem, draftOverride });
+    const ok = rec.status === 'halted' && rec.halt?.code === 'experiment-complete' && rec.journal_published !== true && drafted === false && rec.day_index > 30;
+    add('experiment_complete_halt', ok ? 'pass' : 'fail', `status=${rec.status}; halt.code=${rec.halt?.code}; day_index=${rec.day_index}; drafted=${drafted}`);
+  } else {
+    add('experiment_complete_halt', 'pending', 'needs frozen locks');
+  }
+
   print();
 }
 
@@ -323,6 +367,8 @@ const CHECKLIST = [
   ['pivot_loop_blocked', 'pivot intent inside the window → loop HALTS (code-enforced)'],
   ['pivot_record_governed', 'recordPivot defense-in-depth throw → governed halt + blocker (not a crash)'],
   ['metric_sql_executes', 'full metric SQL (returning-engaged + channel cap) executes live'],
+  ['synthesis_grounded', 'synthesis seams carry source provenance, validate the safety enum, and never call the model on empty notes'],
+  ['experiment_complete_halt', 'past day 30 → experiment-complete halt: no draft, no publish (scheduler self-disables)'],
 ];
 
 function print() {

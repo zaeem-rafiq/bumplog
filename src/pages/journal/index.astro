@@ -1,10 +1,17 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import type { JournalEntry } from '../../data/types';
+import journal from '../../data/journal.json';
 
-// TODO(harness): the harness appends dated entries to a journal data source.
-// For now the journal is empty scaffolding — render an explicit empty-state.
-const entries: JournalEntry[] = [];
+// The harness appends dated entries to src/data/journal.json (most-recent first).
+// Each entry carries more fields (stage, day_index, metrics); the index needs
+// only date + title.
+interface JournalRow {
+  date: string;
+  title: string;
+}
+const entries = (journal as JournalRow[])
+  .slice()
+  .sort((a, b) => (a.date < b.date ? 1 : -1));
 ---
 
 <BaseLayout

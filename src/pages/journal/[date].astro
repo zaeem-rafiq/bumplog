@@ -1,23 +1,35 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import type { JournalEntry } from '../../data/types';
+import journal from '../../data/journal.json';
+
+// The harness appends dated entries to src/data/journal.json. Each path is keyed
+// by ISO date. `body` is the agent's plain-text narrative — rendered as ESCAPED
+// text (never set:html) so model output can't inject markup.
+interface JournalRow {
+  date: string;
+  title: string;
+  body: string;
+  stage?: string;
+  day_index?: number;
+  metrics?: Record<string, number>;
+}
 
 export function getStaticPaths() {
-  // TODO(harness): the harness appends dated journal entries here. Each path is
-  // `{ params: { date }, props: { entry } }` keyed by ISO date (e.g. 2026-06-26).
-  // Empty for now — no journal pages are pre-rendered until entries exist.
-  const entries: JournalEntry[] = [];
-  return entries.map((entry) => ({
+  return (journal as JournalRow[]).map((entry) => ({
     params: { date: entry.date },
     props: { entry },
   }));
 }
 
 interface Props {
-  entry: JournalEntry;
+  entry: JournalRow;
 }
 
 const { entry } = Astro.props;
+const dayLabel =
+  entry.day_index != null
+    ? `Day ${entry.day_index}${entry.stage ? ` · ${entry.stage}` : ''}`
+    : null;
 ---
 
 <BaseLayout
@@ -28,8 +40,11 @@ const { entry } = Astro.props;
   <article>
     <p class="muted breadcrumb"><a href="/journal/">Journal</a> / {entry.date}</p>
     <h1>{entry.title}</h1>
-    <p><time datetime={entry.date}>{entry.date}</time></p>
-    <div class="entry-body" set:html={entry.body}></div>
+    <p class="muted">
+      <time datetime={entry.date}>{entry.date}</time>
+      {dayLabel && <span> · {dayLabel}</span>}
+    </p>
+    <div class="entry-body">{entry.body}</div>
   </article>
 </BaseLayout>
 
@@ -37,5 +52,10 @@ const { entry } = Astro.props;
   .breadcrumb {
     font-size: 0.9rem;
     margin-bottom: 0.5rem;
+  }
+  /* Preserve the agent's paragraph breaks without rendering raw HTML. */
+  .entry-body {
+    white-space: pre-line;
+    margin-top: 1rem;
   }
 </style>

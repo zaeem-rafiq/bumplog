@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>org.bumplog.daily</string>
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/zsh</string>
+    <string>/Users/zaeemkhan/Documents/Bumplog/bumplog/harness/run-daily.sh</string>
+  </array>
+  <!-- 8:00 AM local, daily. If the Mac is asleep/off at 8, launchd runs it once
+       at the next wake. -->
+  <key>StartCalendarInterval</key>
+  <dict>
+    <key>Hour</key>
+    <integer>8</integer>
+    <key>Minute</key>
+    <integer>0</integer>
+  </dict>
+  <!-- Do not fire on load; day-1 was deployed manually at arm time. First
+       scheduled run is the next 8 AM. -->
+  <key>RunAtLoad</key>
+  <false/>
+  <key>StandardOutPath</key>
+  <string>/Users/zaeemkhan/Documents/Bumplog/bumplog/harness/runs/logs/launchd.out.log</string>
+  <key>StandardErrorPath</key>
+  <string>/Users/zaeemkhan/Documents/Bumplog/bumplog/harness/runs/logs/launchd.err.log</string>
+</dict>
+</plist>

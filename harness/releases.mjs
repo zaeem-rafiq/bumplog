@@ -206,23 +206,109 @@ export async function buildAllRecords() {
 // Implemented in the loop via lib/llm.mjs; left as TODO seams here.
 // ───────────────────────────────────────────────────────────────────────────
 
-/**
- * TODO(agent): summarize the changelog. MUST:
- *   - take `record.raw_body` as INPUT, emit a fresh SUMMARY (not a copy);
- *   - carry record.provenance.url through to the output;
- *   - never assert a version/date not present in `record`.
- * @returns {{ summary:string, citations:string[] }}
- */
-export function summarizeChangelog(/* record, llm */) {
-  throw new Error('SEAM: implement via lib/llm.mjs (Sonnet). See AGENT_BRIEF.md §pillar-1.');
+// Keep summaries well under provenance.mjs's MAX_SUMMARY_CHARS (2000) so a
+// summary can never read as a wholesale republish. Raw notes fed to the model
+// are bounded too — long changelogs cost budget without improving the gist.
+const SUMMARY_MAX_CHARS = 1500;
+const RATIONALE_MAX_CHARS = 600;
+const RAW_BODY_INPUT_CHARS = 6000;
+const SAFE_VALUES = new Set(['safe', 'caution', 'breaking', 'unknown']);
+
+function clamp(s, n) {
+  const str = typeof s === 'string' ? s.trim() : '';
+  return str.length > n ? `${str.slice(0, n - 1).trimEnd()}…` : str;
+}
+
+/** Source URL is the one citation we can always assert — it comes from the record. */
+function withSource(citations, record) {
+  const url = record?.provenance?.url;
+  const list = Array.isArray(citations) ? citations.filter((c) => typeof c === 'string') : [];
+  if (url && !list.includes(url)) list.unshift(url);
+  return list;
 }
 
 /**
- * TODO(agent): classify breaking changes / "safe to update?". MUST be grounded
- * only in `record.raw_body` + linked source; emits one of
- * 'safe' | 'caution' | 'breaking' | 'unknown' plus a rationale + citations.
- * @returns {{ safeToUpdate:'safe'|'caution'|'breaking'|'unknown', rationale:string, citations:string[] }}
+ * Summarize the changelog (Sonnet). Takes `record.raw_body` as INPUT and emits a
+ * FRESH summary (never a copy); carries record.provenance.url through; never
+ * asserts a version/date not present in `record`. When the source has no notes
+ * (tag-only fallback), returns a deterministic stub WITHOUT an LLM call rather
+ * than letting the model invent content.
+ * @param {object} record  a buildReleaseRecord() result (found: true)
+ * @param {(o:object)=>Promise<{text:string,json?:any}>} llm  lib/llm.mjs runLLM
+ * @returns {Promise<{ summary:string, citations:string[] }>}
  */
-export function flagBreakingChanges(/* record, llm */) {
-  throw new Error('SEAM: implement via lib/llm.mjs (Sonnet). See AGENT_BRIEF.md §pillar-1.');
+export async function summarizeChangelog(record, llm) {
+  const url = record?.provenance?.url;
+  const raw = (record?.raw_body ?? '').trim();
+  if (!raw) {
+    return {
+      summary: `${record.name} ${record.tagName}: GitHub published no release notes for this ${record.kind}. See the linked source.`,
+      citations: withSource([], record),
+    };
+  }
+  if (typeof llm !== 'function') {
+    throw new Error('summarizeChangelog requires an llm function (lib/llm.mjs runLLM)');
+  }
+  const prompt = [
+    `Summarize the GitHub release notes for ${record.name} ${record.tagName}.`,
+    'Reply with JSON only: {"summary": string, "citations": string[]}.',
+    'RULES:',
+    `- summary: plain text, 2–5 sentences, no markdown headers, focus on notable user-facing changes.`,
+    `- Mention NO version number other than "${record.tagName}". Invent no dates.`,
+    `- This is a fresh summary, NOT a copy of the notes.`,
+    `- Put the source URL ${url} in citations.`,
+    '',
+    'RELEASE NOTES (input only — do not republish verbatim):',
+    raw.slice(0, RAW_BODY_INPUT_CHARS),
+  ].join('\n');
+
+  const out = await llm({ prompt, role: 'build', expectJson: true });
+  const j = out.json ?? {};
+  const summary = clamp(j.summary ?? out.text, SUMMARY_MAX_CHARS) ||
+    `${record.name} ${record.tagName}: see the linked release notes.`;
+  return { summary, citations: withSource(j.citations, record) };
+}
+
+/**
+ * Classify breaking changes / "safe to update?" (Sonnet). Grounded ONLY in
+ * `record.raw_body` + the linked source. Emits one of
+ * 'safe'|'caution'|'breaking'|'unknown' plus a rationale + citations. With no
+ * source notes, returns 'unknown' deterministically (no LLM call).
+ * @param {object} record  a buildReleaseRecord() result (found: true)
+ * @param {(o:object)=>Promise<{text:string,json?:any}>} llm  lib/llm.mjs runLLM
+ * @returns {Promise<{ safeToUpdate:'safe'|'caution'|'breaking'|'unknown', rationale:string, citations:string[] }>}
+ */
+export async function flagBreakingChanges(record, llm) {
+  const url = record?.provenance?.url;
+  const raw = (record?.raw_body ?? '').trim();
+  if (!raw) {
+    return {
+      safeToUpdate: 'unknown',
+      rationale: 'No published release notes to assess. Review the linked source before updating.',
+      citations: withSource([], record),
+    };
+  }
+  if (typeof llm !== 'function') {
+    throw new Error('flagBreakingChanges requires an llm function (lib/llm.mjs runLLM)');
+  }
+  const prompt = [
+    `Assess whether it is safe to update to ${record.name} ${record.tagName}, based ONLY on these release notes.`,
+    'Reply with JSON only: {"safeToUpdate": "safe"|"caution"|"breaking"|"unknown", "rationale": string, "citations": string[]}.',
+    'CLASSIFY:',
+    '- "breaking": notes call out breaking changes, required migrations, or manual upgrade steps.',
+    '- "caution": notable behavioral changes, deprecations, or config changes worth reading first.',
+    '- "safe": routine fixes/features with no migration or breaking note.',
+    '- "unknown": notes are insufficient to judge.',
+    `- rationale: 1–3 sentences grounded ONLY in the notes; cite the source URL ${url}.`,
+    '',
+    'RELEASE NOTES (input only):',
+    raw.slice(0, RAW_BODY_INPUT_CHARS),
+  ].join('\n');
+
+  const out = await llm({ prompt, role: 'build', expectJson: true });
+  const j = out.json ?? {};
+  const safeToUpdate = SAFE_VALUES.has(j.safeToUpdate) ? j.safeToUpdate : 'unknown';
+  const rationale = clamp(j.rationale, RATIONALE_MAX_CHARS) ||
+    'Assessment unavailable from the release notes; review the linked source.';
+  return { safeToUpdate, rationale, citations: withSource(j.citations, record) };
 }
