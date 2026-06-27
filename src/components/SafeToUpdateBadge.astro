@@ -3,9 +3,11 @@ import type { SafeToUpdate } from '../data/types';
 
 interface Props {
   status: SafeToUpdate;
+  /** "md" (default) for inline use; "sm" for dense card rows. */
+  size?: 'sm' | 'md';
 }
 
-const { status } = Astro.props;
+const { status, size = 'md' } = Astro.props;
 
 // Accessible: each state carries its own TEXT label, not color alone.
 const LABELS: Record<SafeToUpdate, string> = {
@@ -18,8 +20,21 @@ const LABELS: Record<SafeToUpdate, string> = {
 const label = LABELS[status];
 ---
 
-<span class={`badge badge--${status}`} role="status">
-  <span class="badge__dot" aria-hidden="true"></span>
+<span class:list={['badge', `badge--${status}`, { 'badge--sm': size === 'sm' }]} role="status">
+  <span class="badge__glyph" aria-hidden="true">
+    {status === 'safe' && (
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 8.5l3 3 6-7" /></svg>
+    )}
+    {status === 'caution' && (
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2.5L14.5 13.5H1.5L8 2.5z" /><path d="M8 6.6v3" /><path d="M8 11.7h.01" /></svg>
+    )}
+    {status === 'breaking' && (
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4l8 8M12 4l-8 8" /></svg>
+    )}
+    {status === 'unknown' && (
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 13.5a5.5 5.5 0 100-11 5.5 5.5 0 000 11z" opacity="0.55" /><path d="M8 7.5v3.2" /><path d="M8 5.1h.01" /></svg>
+    )}
+  </span>
   {label}
 </span>
 
@@ -27,20 +42,32 @@ const label = LABELS[status];
   .badge {
     display: inline-flex;
     align-items: center;
-    gap: 0.45rem;
-    padding: 0.3rem 0.7rem;
+    gap: 0.4rem;
+    padding: 0.32rem 0.7rem 0.32rem 0.55rem;
     border-radius: 999px;
-    font-size: 0.9rem;
-    font-weight: 650;
+    font-size: var(--text-sm);
+    font-weight: 660;
     line-height: 1.2;
     border: 1px solid transparent;
+    white-space: nowrap;
   }
-  .badge__dot {
-    width: 0.55rem;
-    height: 0.55rem;
-    border-radius: 50%;
-    background: currentColor;
+  .badge--sm {
+    font-size: var(--text-xs);
+    padding: 0.22rem 0.55rem 0.22rem 0.4rem;
+    gap: 0.3rem;
+  }
+  .badge__glyph {
+    display: inline-flex;
     flex: none;
+  }
+  .badge__glyph svg {
+    width: 0.95rem;
+    height: 0.95rem;
+    display: block;
+  }
+  .badge--sm .badge__glyph svg {
+    width: 0.8rem;
+    height: 0.8rem;
   }
   .badge--safe {
     background: var(--status-safe-bg);

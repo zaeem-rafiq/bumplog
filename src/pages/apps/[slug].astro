@@ -2,7 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import SafeToUpdateBadge from '../../components/SafeToUpdateBadge.astro';
 import apps from '../../data/apps.json';
-import { toBadgeStatus, type App } from '../../data/types';
+import { toBadgeStatus, type App, type SafeToUpdate } from '../../data/types';
 
 export function getStaticPaths() {
   return (apps as App[]).map((app) => ({
@@ -18,6 +18,23 @@ interface Props {
 const { app } = Astro.props;
 const status = toBadgeStatus(app.safeToUpdate);
 const repoUrl = `https://github.com/${app.repo}`;
+const assessed = app.safeToUpdate != null;
+
+// The headline answer per safety level — plain, confident, scannable.
+const VERDICT_ANSWER: Record<SafeToUpdate, string> = {
+  safe: 'Yes — this looks safe to update.',
+  caution: 'Update with care.',
+  breaking: 'Hold off — this release has breaking changes.',
+  unknown: 'Not assessed yet.',
+};
+const VERDICT_EYEBROW: Record<SafeToUpdate, string> = {
+  safe: 'Verdict',
+  caution: 'Verdict',
+  breaking: 'Verdict',
+  unknown: 'Pending',
+};
+const answer = VERDICT_ANSWER[status];
+const eyebrow = VERDICT_EYEBROW[status];
 ---
 
 <BaseLayout
@@ -26,69 +43,133 @@ const repoUrl = `https://github.com/${app.repo}`;
   ogType="article"
 >
   <article>
-    <p class="muted breadcrumb"><a href="/">Trackers</a> / {app.name}</p>
+    <p class="breadcrumb"><a href="/">Trackers</a> <span aria-hidden="true">/</span> {app.name}</p>
 
-    <h1>Is it safe to update {app.name}?</h1>
+    <header class="app-head">
+      <h1>Is it safe to update {app.name}?</h1>
+      <p class="app-head__repo muted">
+        Tracking <a href={repoUrl} rel="nofollow noopener"><code>{app.repo}</code></a>
+      </p>
+    </header>
 
-    <div class="badge-row">
-      <SafeToUpdateBadge status={status} />
-      {app.latestVersion ? (
-        <span class="muted">Latest version: <strong>{app.latestVersion}</strong></span>
-      ) : (
-        <span class="placeholder">Latest version pending</span>
-      )}
-    </div>
+    <!-- ── Verdict: the differentiator. Renders safeToUpdate + rationale +
+         version + freshness + source, with a distinct treatment per level. ── -->
+    <section class={`verdict verdict--${status}`} aria-labelledby="verdict-answer">
+      <div class="verdict__head">
+        <span class="verdict__glyph" aria-hidden="true">
+          {status === 'safe' && (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4 4 10-11" /></svg>
+          )}
+          {status === 'caution' && (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5L22 20.5H2L12 3.5z" /><path d="M12 10v4.2" /><path d="M12 17.6h.01" /></svg>
+          )}
+          {status === 'breaking' && (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18" /></svg>
+          )}
+          {status === 'unknown' && (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v6" /><path d="M12 16.5h.01" /><circle cx="12" cy="12" r="9" opacity="0.5" /></svg>
+          )}
+        </span>
+        <div class="verdict__titles">
+          <p class="verdict__eyebrow">{eyebrow}</p>
+          <p class="verdict__answer" id="verdict-answer">{answer}</p>
+        </div>
+      </div>
 
-    <h2>Changelog summary</h2>
+      <div class="verdict__body">
+        {assessed && app.rationale ? (
+          <p class="verdict__rationale">{app.rationale}</p>
+        ) : (
+          <p class="verdict__rationale placeholder">
+            {app.name}'s next release hasn't been assessed yet — Bumplog checks the
+            GitHub release feed and posts a sourced verdict here as soon as one lands.
+          </p>
+        )}
+
+        <dl class="verdict__meta">
+          <div class="verdict__meta-pair">
+            <dt>Latest version</dt>
+            {app.latestVersion ? (
+              <dd class="verdict__version">{app.latestVersion}</dd>
+            ) : (
+              <dd class="placeholder">pending</dd>
+            )}
+          </div>
+          <div class="verdict__meta-pair">
+            <dt>Last checked</dt>
+            {app.lastChecked ? (
+              <dd><span class="freshness"><time datetime={app.lastChecked}>{app.lastChecked}</time></span></dd>
+            ) : (
+              <dd class="placeholder">not yet checked</dd>
+            )}
+          </div>
+          <div class="verdict__meta-pair">
+            <dt>Status</dt>
+            <dd><SafeToUpdateBadge status={status} size="sm" /></dd>
+          </div>
+        </dl>
+      </div>
+    </section>
+
+    <h2>What changed</h2>
     {app.changelogSummary ? (
       <div class="card changelog">{app.changelogSummary}</div>
     ) : (
       <div class="empty-state">
-        {/* TODO(harness): populated from the summarized GitHub release notes. */}
-        <p>No changelog summary yet for {app.name}.</p>
+        <p>No changelog summary yet for {app.name}. It'll appear here once the next release is summarized.</p>
       </div>
     )}
 
     <!-- Source provenance: every datum must trace back to a GitHub release. -->
     <h2>Source</h2>
-    <div class="card">
-      <p class="muted">
-        Source of truth: the GitHub release for <code>{app.repo}</code>.
+    <div class="card source-card">
+      <p class="muted source-card__lede">
+        Every verdict on Bumplog traces back to a GitHub release — no invented details.
       </p>
-      <p>
+      <p class="source-card__link">
         {app.sourceUrl ? (
-          <a href={app.sourceUrl} rel="nofollow noopener">View the source release</a>
+          <a class="source-link" href={app.sourceUrl} rel="nofollow noopener">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 .2a8 8 0 00-2.53 15.6c.4.07.55-.17.55-.38v-1.34c-2.23.49-2.7-1.07-2.7-1.07-.36-.93-.89-1.18-.89-1.18-.73-.5.05-.49.05-.49.8.06 1.23.83 1.23.83.71 1.23 1.87.87 2.33.67.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.96 0-.87.31-1.59.83-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 014 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.52.56.83 1.28.83 2.15 0 3.08-1.87 3.76-3.65 3.96.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8 8 0 008 .2z"/></svg>
+            View the source release
+          </a>
         ) : (
-          <a href={repoUrl} rel="nofollow noopener">{repoUrl}</a>
+          <a class="source-link" href={repoUrl} rel="nofollow noopener">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 .2a8 8 0 00-2.53 15.6c.4.07.55-.17.55-.38v-1.34c-2.23.49-2.7-1.07-2.7-1.07-.36-.93-.89-1.18-.89-1.18-.73-.5.05-.49.05-.49.8.06 1.23.83 1.23.83.71 1.23 1.87.87 2.33.67.07-.52.28-.87.5-1.07-1.78-.2-3.64-.89-3.64-3.96 0-.87.31-1.59.83-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 014 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.52.56.83 1.28.83 2.15 0 3.08-1.87 3.76-3.65 3.96.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8 8 0 008 .2z"/></svg>
+            View releases on GitHub
+          </a>
         )}
         {!app.sourceUrl && (
           <span class="placeholder"> — specific release link pending</span>
         )}
       </p>
-      {app.lastChecked ? (
-        <p class="muted">
-          Last checked: <time datetime={app.lastChecked}>{app.lastChecked}</time>
-        </p>
-      ) : (
-        <p class="placeholder">Not yet checked.</p>
-      )}
     </div>
   </article>
 </BaseLayout>
 
 <style>
-  .breadcrumb {
-    font-size: 0.9rem;
-    margin-bottom: 0.5rem;
+  .app-head {
+    margin-bottom: 1.5rem;
   }
-  .badge-row {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.75rem 1rem;
-    margin-block: 1rem 0.5rem;
+  .app-head__repo {
+    font-size: var(--text-sm);
+    margin: 0.25rem 0 0;
+  }
+  .app-head__repo a {
+    color: inherit;
+    text-decoration: none;
+  }
+  .app-head__repo a:hover code {
+    color: var(--color-link);
   }
   .changelog {
     white-space: pre-line;
+    line-height: 1.65;
+  }
+  .source-card__lede {
+    font-size: var(--text-sm);
+    margin-bottom: 0.85rem;
+  }
+  .source-card__link {
+    margin: 0;
   }
 </style>
