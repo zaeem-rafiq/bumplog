@@ -1,0 +1,9 @@
+{
+  "frozen_at": "2026-06-26T17:34:33.104Z",
+  "target_returning_engaged_median": 3,
+  "hashes": {
+    "contract.lock.json": "27b5b08ff4089f0617e0cef6eb26bdd5486f51a886faf1686d52b9b2fcaa90b8",
+    "guardrails.lock.json": "2df1c9401afe449546abea0153637b8865f6b2a054a9c683335f61e215f264c1"
+  },
+  "note": "Hashes are the authoritative integrity witness; git history is a second witness. Files are chmod 0444."
+}

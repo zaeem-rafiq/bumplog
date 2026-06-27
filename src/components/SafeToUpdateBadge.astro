@@ -1,0 +1,65 @@
+---
+import type { SafeToUpdate } from '../data/types';
+
+interface Props {
+  status: SafeToUpdate;
+}
+
+const { status } = Astro.props;
+
+// Accessible: each state carries its own TEXT label, not color alone.
+const LABELS: Record<SafeToUpdate, string> = {
+  safe: 'Safe to update',
+  caution: 'Update with care',
+  breaking: 'Breaking changes',
+  unknown: 'Not yet assessed',
+};
+
+const label = LABELS[status];
+---
+
+<span class={`badge badge--${status}`} role="status">
+  <span class="badge__dot" aria-hidden="true"></span>
+  {label}
+</span>
+
+<style>
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.3rem 0.7rem;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    font-weight: 650;
+    line-height: 1.2;
+    border: 1px solid transparent;
+  }
+  .badge__dot {
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 50%;
+    background: currentColor;
+    flex: none;
+  }
+  .badge--safe {
+    background: var(--status-safe-bg);
+    color: var(--status-safe-fg);
+    border-color: var(--status-safe-border);
+  }
+  .badge--caution {
+    background: var(--status-caution-bg);
+    color: var(--status-caution-fg);
+    border-color: var(--status-caution-border);
+  }
+  .badge--breaking {
+    background: var(--status-breaking-bg);
+    color: var(--status-breaking-fg);
+    border-color: var(--status-breaking-border);
+  }
+  .badge--unknown {
+    background: var(--status-unknown-bg);
+    color: var(--status-unknown-fg);
+    border-color: var(--status-unknown-border);
+  }
+</style>

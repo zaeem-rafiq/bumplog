@@ -1,0 +1,65 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SafeToUpdateBadge from '../components/SafeToUpdateBadge.astro';
+import apps from '../data/apps.json';
+import { toBadgeStatus, type App } from '../data/types';
+
+const trackedApps = apps as App[];
+---
+
+<BaseLayout
+  title="Bumplog — the self-hosted update tracker"
+  description="Bumplog tracks releases of popular self-hosted apps and tells you whether it is safe to update — summarized changelogs and breaking-change warnings, every datum traceable to its GitHub release."
+>
+  <h1>Is it safe to update?</h1>
+  <p class="lede">
+    Bumplog watches releases of popular self-hosted apps and tells you, in plain
+    language, whether it is safe to update — with the breaking changes called out.
+  </p>
+
+  <h2>Tracked apps</h2>
+  {trackedApps.length === 0 ? (
+    <div class="empty-state">
+      <p>No apps are being tracked yet. Check back soon.</p>
+    </div>
+  ) : (
+    <ul class="grid">
+      {trackedApps.map((app) => (
+        <li>
+          <a class="card app-card" href={`/apps/${app.slug}/`}>
+            <span class="app-card__name">{app.name}</span>
+            <span class="app-card__repo muted">{app.repo}</span>
+            <SafeToUpdateBadge status={toBadgeStatus(app.safeToUpdate)} />
+            {app.latestVersion ? (
+              <span class="muted">Latest: {app.latestVersion}</span>
+            ) : (
+              <span class="placeholder">Latest version pending</span>
+            )}
+          </a>
+        </li>
+      ))}
+    </ul>
+  )}
+</BaseLayout>
+
+<style>
+  .app-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    height: 100%;
+    text-decoration: none;
+    color: inherit;
+  }
+  .app-card:hover {
+    border-color: var(--color-accent);
+  }
+  .app-card__name {
+    font-weight: 700;
+    font-size: 1.15rem;
+  }
+  .app-card__repo {
+    font-size: 0.85rem;
+    font-family: var(--font-mono);
+  }
+</style>

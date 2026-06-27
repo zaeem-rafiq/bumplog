@@ -1,0 +1,94 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SafeToUpdateBadge from '../../components/SafeToUpdateBadge.astro';
+import apps from '../../data/apps.json';
+import { toBadgeStatus, type App } from '../../data/types';
+
+export function getStaticPaths() {
+  return (apps as App[]).map((app) => ({
+    params: { slug: app.slug },
+    props: { app },
+  }));
+}
+
+interface Props {
+  app: App;
+}
+
+const { app } = Astro.props;
+const status = toBadgeStatus(app.safeToUpdate);
+const repoUrl = `https://github.com/${app.repo}`;
+---
+
+<BaseLayout
+  title={`Is it safe to update ${app.name}? — Bumplog`}
+  description={`Is it safe to update ${app.name}? Bumplog summarizes the latest ${app.name} release and flags breaking changes, all traceable to the GitHub release for ${app.repo}.`}
+  ogType="article"
+>
+  <article>
+    <p class="muted breadcrumb"><a href="/">Trackers</a> / {app.name}</p>
+
+    <h1>Is it safe to update {app.name}?</h1>
+
+    <div class="badge-row">
+      <SafeToUpdateBadge status={status} />
+      {app.latestVersion ? (
+        <span class="muted">Latest version: <strong>{app.latestVersion}</strong></span>
+      ) : (
+        <span class="placeholder">Latest version pending</span>
+      )}
+    </div>
+
+    <h2>Changelog summary</h2>
+    {app.changelogSummary ? (
+      <div class="card changelog">{app.changelogSummary}</div>
+    ) : (
+      <div class="empty-state">
+        {/* TODO(harness): populated from the summarized GitHub release notes. */}
+        <p>No changelog summary yet for {app.name}.</p>
+      </div>
+    )}
+
+    <!-- Source provenance: every datum must trace back to a GitHub release. -->
+    <h2>Source</h2>
+    <div class="card">
+      <p class="muted">
+        Source of truth: the GitHub release for <code>{app.repo}</code>.
+      </p>
+      <p>
+        {app.sourceUrl ? (
+          <a href={app.sourceUrl} rel="nofollow noopener">View the source release</a>
+        ) : (
+          <a href={repoUrl} rel="nofollow noopener">{repoUrl}</a>
+        )}
+        {!app.sourceUrl && (
+          <span class="placeholder"> — specific release link pending</span>
+        )}
+      </p>
+      {app.lastChecked ? (
+        <p class="muted">
+          Last checked: <time datetime={app.lastChecked}>{app.lastChecked}</time>
+        </p>
+      ) : (
+        <p class="placeholder">Not yet checked.</p>
+      )}
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .breadcrumb {
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+  }
+  .badge-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1rem;
+    margin-block: 1rem 0.5rem;
+  }
+  .changelog {
+    white-space: pre-line;
+  }
+</style>

@@ -1,0 +1,51 @@
+{
+  "version": 1,
+  "protected_actions": [
+    {
+      "kind": "spend_money",
+      "rule": "Never spend money or enter payment details."
+    },
+    {
+      "kind": "enter_payment",
+      "rule": "Never enter payment details."
+    },
+    {
+      "kind": "modify_dns",
+      "rule": "Never modify DNS."
+    },
+    {
+      "kind": "modify_auth",
+      "rule": "Never modify auth."
+    },
+    {
+      "kind": "modify_access_control",
+      "rule": "Never modify access-control / sharing permissions."
+    },
+    {
+      "kind": "publish_person_claim",
+      "rule": "Never publish factual claims about real, named people."
+    },
+    {
+      "kind": "mass_post_external",
+      "rule": "Never mass-post externally in any pattern risking the domain being blacklisted."
+    },
+    {
+      "kind": "irreversible_delete",
+      "rule": "Never irreversibly delete data."
+    },
+    {
+      "kind": "fabricate_datum",
+      "rule": "Never fabricate a tracker datum, or publish an entry without source provenance."
+    }
+  ],
+  "enforcement": "Pre-action deny-list (harness/lib/guards.mjs) AND excluded from the agent write scope. On any attempt: HALT, write a dated blocker to harness/blockers/, do not proceed.",
+  "runtime_caps": {
+    "max_output_tokens": 8000,
+    "max_turns": 60,
+    "max_wall_clock_minutes": 30,
+    "note": "Subscription path: the binding constraint is the rate-limit allowance, not dollars. These protect that allowance and kill runaway loops."
+  },
+  "rate_limit_policy": "On any 429 / quota-exhausted response: HALT gracefully, write a blocker, do NOT retry-hammer, resume next scheduled window.",
+  "reprice_tripwire": "If billing mode changes (requests rejected with a credit/billing message, or usage draws a separate metered credit): HALT and write a blocker. Never silently roll into pay-as-you-go.",
+  "auth": "Subscription (Max 20x). ANTHROPIC_API_KEY must be unset; the loop halts if it is set."
+}

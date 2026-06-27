@@ -1,0 +1,86 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Send feedback — Bumplog"
+  description="Spotted a wrong version, a missing app, or a bad update call? Send Bumplog feedback — what you saw and where."
+>
+  <h1>Send feedback</h1>
+  <p class="lede">
+    Spotted a wrong version, a missing app, or an update call that does not match
+    reality? Tell us what you saw and where.
+  </p>
+
+  <!--
+    The form POSTs JSON to /api/feedback (host function, see functions/api/feedback.ts).
+    Enhanced on submit by the inline script below; the no-JS note is shown when
+    scripting is unavailable.
+  -->
+  <form id="feedback-form" class="card feedback-form" method="post" action="/api/feedback">
+    <label for="page">Page or app this is about</label>
+    <input id="page" name="page" type="text" placeholder="e.g. /apps/immich or Immich" />
+
+    <label for="app">App slug (optional)</label>
+    <input id="app" name="app" type="text" placeholder="e.g. immich" />
+
+    <label for="message">Message <span aria-hidden="true">*</span></label>
+    <textarea id="message" name="message" rows="5" required
+      placeholder="What did you notice?"></textarea>
+
+    <label for="email">Email (optional, only if you want a reply)</label>
+    <input id="email" name="email" type="email" placeholder="you@example.com" />
+
+    <button type="submit">Send feedback</button>
+
+    <p id="feedback-status" class="muted" role="status" aria-live="polite"></p>
+
+    <noscript>
+      <p class="muted">
+        JavaScript is off, so this form cannot submit directly. Please email your
+        feedback instead, or enable JavaScript and try again.
+      </p>
+    </noscript>
+  </form>
+</BaseLayout>
+
+<script>
+  // Progressive enhancement: serialize the form to JSON and POST to /api/feedback.
+  const form = document.getElementById('feedback-form') as HTMLFormElement | null;
+  const status = document.getElementById('feedback-status');
+
+  form?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    if (!status) return;
+
+    const data = Object.fromEntries(new FormData(form).entries());
+    status.textContent = 'Sending…';
+
+    try {
+      const res = await fetch('/api/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      if (!res.ok) throw new Error(`Request failed (${res.status})`);
+      status.textContent = 'Thanks — your feedback was received.';
+      form.reset();
+    } catch (err) {
+      status.textContent =
+        'Could not send right now. Please try again in a moment.';
+    }
+  });
+</script>
+
+<style>
+  .feedback-form {
+    display: block;
+    max-width: 34rem;
+  }
+  .feedback-form button {
+    margin-top: 1.25rem;
+  }
+  #feedback-status:empty {
+    display: none;
+  }
+</style>

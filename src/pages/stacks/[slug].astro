@@ -1,0 +1,113 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import SafeToUpdateBadge from '../../components/SafeToUpdateBadge.astro';
+import apps from '../../data/apps.json';
+import stacks from '../../data/stacks.json';
+import { toBadgeStatus, type App, type Stack } from '../../data/types';
+
+export function getStaticPaths() {
+  const allApps = apps as App[];
+  const appBySlug = new Map(allApps.map((app) => [app.slug, app]));
+
+  return (stacks as Stack[]).map((stack) => {
+    // Resolve referenced app slugs to full app records; skip any unknown slug.
+    const stackApps = stack.appSlugs
+      .map((slug) => appBySlug.get(slug))
+      .filter((app): app is App => app !== undefined);
+    return {
+      params: { slug: stack.slug },
+      props: { stack, stackApps },
+    };
+  });
+}
+
+interface Props {
+  stack: Stack;
+  stackApps: App[];
+}
+
+const { stack, stackApps } = Astro.props;
+---
+
+<BaseLayout
+  title={`${stack.name} self-hosted stack — update dashboard — Bumplog`}
+  description={`Update dashboard for the ${stack.name} self-hosted stack: ${stack.description} Track every app's update safety in one place.`}
+  ogType="article"
+  wide={true}
+>
+  <article>
+    <p class="muted breadcrumb"><a href="/stacks/">Stacks</a> / {stack.name}</p>
+    <h1>{stack.name} stack</h1>
+    <p class="lede">{stack.description}</p>
+
+    <h2>Apps in this stack</h2>
+    {stackApps.length === 0 ? (
+      <div class="empty-state">
+        <p>This stack has no apps yet.</p>
+      </div>
+    ) : (
+      <ul class="stack-list">
+        {stackApps.map((app) => (
+          <li class="card stack-row">
+            <div class="stack-row__main">
+              <a class="stack-row__name" href={`/apps/${app.slug}/`}>{app.name}</a>
+              <span class="muted stack-row__repo">{app.repo}</span>
+            </div>
+            <div class="stack-row__meta">
+              <SafeToUpdateBadge status={toBadgeStatus(app.safeToUpdate)} />
+              {app.latestVersion ? (
+                <span class="muted">{app.latestVersion}</span>
+              ) : (
+                <span class="placeholder">version pending</span>
+              )}
+            </div>
+          </li>
+        ))}
+      </ul>
+    )}
+  </article>
+</BaseLayout>
+
+<style>
+  .breadcrumb {
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+  }
+  .stack-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .stack-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem 1rem;
+  }
+  .stack-row__main {
+    display: flex;
+    flex-direction: column;
+  }
+  .stack-row__name {
+    font-weight: 700;
+    font-size: 1.1rem;
+    text-decoration: none;
+    color: inherit;
+  }
+  .stack-row__name:hover {
+    text-decoration: underline;
+  }
+  .stack-row__repo {
+    font-size: 0.85rem;
+    font-family: var(--font-mono);
+  }
+  .stack-row__meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+</style>

@@ -1,0 +1,61 @@
+---
+// Site header: brand wordmark + primary nav.
+const links = [
+  { href: '/', label: 'Trackers' },
+  { href: '/stacks/', label: 'Stacks' },
+  { href: '/journal/', label: 'Journal' },
+  { href: '/feedback/', label: 'Feedback' },
+];
+---
+
+<header class="site-header">
+  <div class="container container--wide site-header__inner">
+    <a class="wordmark" href="/">Bumplog</a>
+    <nav aria-label="Primary">
+      <ul>
+        {links.map((link) => (
+          <li><a href={link.href}>{link.label}</a></li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    border-bottom: 1px solid var(--color-border);
+    background: var(--color-surface);
+  }
+  .site-header__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem 1.5rem;
+    padding-block: 0.9rem;
+  }
+  .wordmark {
+    font-weight: 750;
+    font-size: 1.25rem;
+    letter-spacing: -0.02em;
+    color: var(--color-text);
+    text-decoration: none;
+  }
+  nav ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  nav a {
+    color: var(--color-text-muted);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  nav a:hover {
+    color: var(--color-text);
+  }
+</style>

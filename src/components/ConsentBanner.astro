@@ -1,0 +1,121 @@
+---
+// Cookie-consent banner. Hidden by default (no-JS users + crawlers never see a
+// blocking UI, and analytics stays opted-out — the safe default). JS reveals it
+// only when no prior choice is stored AND PostHog is present. Accepting opts the
+// visitor in (enabling the contract's cookie-based persistence); declining keeps
+// them opted out. The choice persists in localStorage so the banner shows once.
+---
+
+<div
+  id="consent-banner"
+  class="consent"
+  role="region"
+  aria-label="Cookie consent"
+  hidden
+>
+  <p class="consent__text">
+    Bumplog uses <strong>one first-party cookie</strong> to measure returning visitors so we
+    can tell whether the tracker is genuinely useful. No ads, no third-party trackers.
+  </p>
+  <div class="consent__actions">
+    <button type="button" id="consent-decline" class="btn btn--ghost">Decline</button>
+    <button type="button" id="consent-accept" class="btn btn--primary">Accept</button>
+  </div>
+</div>
+
+<script is:inline>
+  (function () {
+    var KEY = 'bumplog_consent';
+    var banner = document.getElementById('consent-banner');
+    if (!banner) return;
+
+    function stored() {
+      try { return localStorage.getItem(KEY); } catch (e) { return null; }
+    }
+    function remember(v) {
+      try { localStorage.setItem(KEY, v); } catch (e) { /* non-fatal */ }
+    }
+    function hide() { banner.hidden = true; }
+
+    // Only prompt when undecided and analytics is actually present.
+    if (stored() || !window.posthog) return;
+    banner.hidden = false;
+
+    var accept = document.getElementById('consent-accept');
+    var decline = document.getElementById('consent-decline');
+    if (accept) accept.addEventListener('click', function () {
+      remember('granted');
+      try { window.posthog && window.posthog.opt_in_capturing(); } catch (e) {}
+      hide();
+    });
+    if (decline) decline.addEventListener('click', function () {
+      remember('denied');
+      try { window.posthog && window.posthog.opt_out_capturing(); } catch (e) {}
+      hide();
+    });
+  })();
+</script>
+
+<style>
+  .consent {
+    position: fixed;
+    left: 50%;
+    bottom: 1rem;
+    transform: translateX(-50%);
+    z-index: 50;
+    width: min(40rem, calc(100vw - 2rem));
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 1rem;
+    padding: 0.9rem 1.1rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.16);
+    color: var(--color-text);
+  }
+  .consent__text {
+    flex: 1 1 18rem;
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.45;
+    color: var(--color-text-muted);
+  }
+  .consent__text strong { color: var(--color-text); }
+  .consent__actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-left: auto;
+  }
+  .btn {
+    font: inherit;
+    font-size: 0.875rem;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius);
+    border: 1px solid transparent;
+    cursor: pointer;
+  }
+  .btn--primary {
+    background: var(--color-accent);
+    color: var(--color-accent-fg);
+  }
+  .btn--ghost {
+    background: transparent;
+    color: var(--color-text);
+    border-color: var(--color-border);
+  }
+  .btn:focus-visible {
+    outline: none;
+    box-shadow: var(--focus-ring);
+  }
+  /* Subtle entrance, only when motion is welcome. */
+  @media (prefers-reduced-motion: no-preference) {
+    .consent { animation: consent-in 180ms ease-out; }
+    @keyframes consent-in {
+      from { opacity: 0; transform: translate(-50%, 0.5rem); }
+      to { opacity: 1; transform: translate(-50%, 0); }
+    }
+  }
+</style>

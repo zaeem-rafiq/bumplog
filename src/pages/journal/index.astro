@@ -1,0 +1,50 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import type { JournalEntry } from '../../data/types';
+
+// TODO(harness): the harness appends dated entries to a journal data source.
+// For now the journal is empty scaffolding — render an explicit empty-state.
+const entries: JournalEntry[] = [];
+---
+
+<BaseLayout
+  title="Update journal — Bumplog"
+  description="A dated log of notable self-hosted app releases, breaking changes, and update advisories, tracked by Bumplog."
+>
+  <h1>Update journal</h1>
+  <p class="lede">
+    A running, dated log of notable releases and update advisories across the
+    self-hosted apps we track.
+  </p>
+
+  {entries.length === 0 ? (
+    <div class="empty-state">
+      <p>No journal entries yet. New entries will appear here as they are published.</p>
+    </div>
+  ) : (
+    <ul class="journal-list">
+      {entries.map((entry) => (
+        <li>
+          <time datetime={entry.date}>{entry.date}</time>
+          <a href={`/journal/${entry.date}/`}>{entry.title}</a>
+        </li>
+      ))}
+    </ul>
+  )}
+</BaseLayout>
+
+<style>
+  .journal-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .journal-list li {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+</style>

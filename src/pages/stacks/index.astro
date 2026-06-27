@@ -1,0 +1,60 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import stacks from '../../data/stacks.json';
+import type { Stack } from '../../data/types';
+
+const allStacks = stacks as Stack[];
+---
+
+<BaseLayout
+  title="Self-hosted stacks — update dashboards — Bumplog"
+  description="Curated bundles of self-hosted apps. Bookmark a stack to track all its apps' update safety on one dashboard."
+>
+  <h1>Self-hosted stacks</h1>
+  <p class="lede">
+    Curated bundles of apps that go together. Bookmark a stack to watch every
+    app's update safety on a single dashboard.
+  </p>
+
+  {allStacks.length === 0 ? (
+    <div class="empty-state">
+      <p>No stacks defined yet.</p>
+    </div>
+  ) : (
+    <ul class="grid">
+      {allStacks.map((stack) => (
+        <li>
+          <a class="card stack-card" href={`/stacks/${stack.slug}/`}>
+            <span class="stack-card__name">{stack.name}</span>
+            <span class="muted">{stack.description}</span>
+            <span class="muted stack-card__count">
+              {stack.appSlugs.length} app{stack.appSlugs.length === 1 ? '' : 's'}
+            </span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  )}
+</BaseLayout>
+
+<style>
+  .stack-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    height: 100%;
+    text-decoration: none;
+    color: inherit;
+  }
+  .stack-card:hover {
+    border-color: var(--color-accent);
+  }
+  .stack-card__name {
+    font-weight: 700;
+    font-size: 1.15rem;
+  }
+  .stack-card__count {
+    font-size: 0.85rem;
+    margin-top: auto;
+  }
+</style>

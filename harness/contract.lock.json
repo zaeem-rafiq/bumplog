@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "primary_metric": {
+    "name": "returning_engaged_median_trailing_7",
+    "definition": "median daily count of returning + engaged + deduped humans over the trailing 7 days",
+    "computed_via": "HogQL in harness/analytics.mjs (getReturningEngaged); NOT a built-in \"returning\" tile"
+  },
+  "definitions": {
+    "engaged_seconds": 45,
+    "engaged": "a session with a $pageview and (duration > 45s OR a scroll/$autocapture event)",
+    "returning": "person_id seen (engaged) on a calendar day later than its first engaged day (≥2 distinct engaged days)",
+    "deduped": "distinct person_id after PostHog bot/self exclusion (filterTestAccounts + ingestion bot-discard)"
+  },
+  "channel_cap": 0.5,
+  "channel_cap_definition": "no single referral source may exceed 50% of engaged uniques",
+  "staged_gate": {
+    "days_1_14": {
+      "role": "leading",
+      "gate": "engaged-uniques + source diversity"
+    },
+    "days_15_19": {
+      "role": "transition",
+      "gate": "none (both reported, neither gated)"
+    },
+    "days_20_30": {
+      "role": "lagging",
+      "gate": "returning-engaged median (hard-to-fake)"
+    }
+  },
+  "reported_not_gated": [
+    "raw_visits",
+    "total_uniques",
+    "bounce"
+  ],
+  "target": {
+    "returning_engaged_median": 3,
+    "by_day": 30
+  },
+  "bot_self_exclusion": "Configured in PostHog (test-account filters via filterTestAccounts + ingestion bot-discard). NOT defined in harness code. Frozen alongside this contract; the agent cannot change what counts as a real human.",
+  "persistence_note": "Cookie-based persistence is ON. Any undercount from the chosen consent config is acknowledged by the human at freeze time."
+}

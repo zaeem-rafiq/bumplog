@@ -1,0 +1,92 @@
+[
+  {
+    "slug": "immich",
+    "name": "Immich",
+    "repo": "immich-app/immich",
+    "latestVersion": null,
+    "changelogSummary": null,
+    "safeToUpdate": null,
+    "sourceUrl": null,
+    "lastChecked": null
+  },
+  {
+    "slug": "jellyfin",
+    "name": "Jellyfin",
+    "repo": "jellyfin/jellyfin",
+    "latestVersion": null,
+    "changelogSummary": null,
+    "safeToUpdate": null,
+    "sourceUrl": null,
+    "lastChecked": null
+  },
+  {
+    "slug": "paperless-ngx",
+    "name": "Paperless-ngx",
+    "repo": "paperless-ngx/paperless-ngx",
+    "latestVersion": null,
+    "changelogSummary": null,
+    "safeToUpdate": null,
+    "sourceUrl": null,
+    "lastChecked": null
+  },
+  {
+    "slug": "nextcloud",
+    "name": "Nextcloud",
+    "repo": "nextcloud/server",
+    "latestVersion": null,
+    "changelogSummary": null,
+    "safeToUpdate": null,
+    "sourceUrl": null,
+    "lastChecked": null
+  },
+  {
+    "slug": "home-assistant",
+    "name": "Home Assistant",
+    "repo": "home-assistant/core",
+    "latestVersion": null,
+    "changelogSummary": null,
+    "safeToUpdate": null,
+    "sourceUrl": null,
+    "lastChecked": null
+  },
+  {
+    "slug": "gitea",
+    "name": "Gitea",
+    "repo": "go-gitea/gitea",
+    "latestVersion": null,
+    "changelogSummary": null,
+    "safeToUpdate": null,
+    "sourceUrl": null,
+    "lastChecked": null
+  },
+  {
+    "slug": "vaultwarden",
+    "name": "Vaultwarden",
+    "repo": "dani-garcia/vaultwarden",
+    "latestVersion": null,
+    "changelogSummary": null,
+    "safeToUpdate": null,
+    "sourceUrl": null,
+    "lastChecked": null
+  },
+  {
+    "slug": "adguard-home",
+    "name": "AdGuard Home",
+    "repo": "AdguardTeam/AdGuardHome",
+    "latestVersion": null,
+    "changelogSummary": null,
+    "safeToUpdate": null,
+    "sourceUrl": null,
+    "lastChecked": null
+  },
+  {
+    "slug": "uptime-kuma",
+    "name": "Uptime Kuma",
+    "repo": "louislam/uptime-kuma",
+    "latestVersion": null,
+    "changelogSummary": null,
+    "safeToUpdate": null,
+    "sourceUrl": null,
+    "lastChecked": null
+  }
+]

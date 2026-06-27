@@ -1,0 +1,242 @@
+// harness/dry_run.mjs
+// PROOF-OF-SUCCESS harness. Runs each invariant and prints the spec checklist
+// with REAL evidence. Phase-aware:
+//   - Deterministic invariants (provenance, freshness-theater, journal honesty,
+//     feedback injection, pivot hysteresis, protected-action, 429 halt) run
+//     ALWAYS — they need neither credentials nor frozen locks.
+//   - Credential checks (PostHog read path, GitHub pull) run when .env is loaded.
+//   - Lock write-block + sha256 checks run once freeze_locks.mjs has frozen them.
+// Anything not yet runnable is reported PENDING with the exact reason, never as
+// a pass or a silent skip.
+//
+//   set -a; source .env; set +a            # load creds (optional for phase 1)
+//   node harness/dry_run.mjs
+
+import { writeFileSync, existsSync, statSync, mkdtempSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { dirname } from 'node:path';
+
+import { evaluateAction } from './lib/guards.mjs';
+import { checkProvenance } from './lib/provenance.mjs';
+import { assessFreshness } from './lib/freshness.mjs';
+import { reconcileJournal } from './lib/journal.mjs';
+import { wrapFeedbackForPrompt, readFeedback, looksLikeInjection } from './lib/feedback.mjs';
+import { canPivot, recordPivot, PIVOT_WINDOW_DAYS } from './lib/hysteresis.mjs';
+import { runLoop } from './morning_loop.mjs';
+import { RateLimitError } from './analytics.mjs';
+import { CONTRACT_LOCK, GUARDRAILS_LOCK, MANIFEST, verifyLocks } from './lib/locks.mjs';
+
+const HARNESS_DIR = dirname(fileURLToPath(import.meta.url));
+// Isolate all simulated side effects (blockers, run records) in temp dirs so
+// the proof harness never writes into the committed audit trail.
+process.env.BUMPLOG_BLOCKERS_DIR = mkdtempSync(join(tmpdir(), 'bumplog-blockers-'));
+process.env.BUMPLOG_RUNS_DIR = mkdtempSync(join(tmpdir(), 'bumplog-runs-'));
+process.env.BUMPLOG_STATE_DIR = mkdtempSync(join(tmpdir(), 'bumplog-state-'));
+const results = [];
+const add = (id, status, evidence) => results.push({ id, status, evidence });
+const haveCreds = ['POSTHOG_PERSONAL_API_KEY', 'POSTHOG_PROJECT_ID', 'POSTHOG_HOST'].every((k) => process.env[k]);
+const haveGh = !!process.env.GITHUB_TOKEN;
+const locksFrozen = existsSync(CONTRACT_LOCK) && existsSync(GUARDRAILS_LOCK) && existsSync(MANIFEST);
+
+async function main() {
+  // 1) ANTHROPIC_API_KEY unset ----------------------------------------------
+  {
+    const set = !!(process.env.ANTHROPIC_API_KEY && process.env.ANTHROPIC_API_KEY.trim());
+    add('anthropic_unset', set ? 'fail' : 'pass', set ? 'ANTHROPIC_API_KEY IS SET — would bill API rates' : 'ANTHROPIC_API_KEY not present in runtime');
+  }
+
+  // 2) PostHog read path (schema probe) -------------------------------------
+  if (haveCreds) {
+    try {
+      const { schemaProbe } = await import('./analytics.mjs');
+      const probe = await schemaProbe({ days: 7 });
+      add('posthog_read', 'pass', `HogQL distinct-persons-by-day OK; columns=[${probe.columns.join(', ')}]; rows=${probe.rows.length}`);
+    } catch (err) {
+      add('posthog_read', 'fail', `HogQL probe failed: ${err.message}`);
+    }
+  } else {
+    add('posthog_read', 'pending', 'no PostHog creds in env — run `set -a; source .env; set +a` first');
+  }
+
+  // 3) PostHog client config (cookie/autocapture/$pageleave) in built HTML ---
+  {
+    const distIdx = join(dirname(HARNESS_DIR), 'dist', 'index.html');
+    if (existsSync(distIdx)) {
+      const { readFileSync } = await import('node:fs');
+      const html = readFileSync(distIdx, 'utf8');
+      const checks = {
+        autocapture: /autocapture\s*:\s*true/.test(html),
+        capture_pageleave: /capture_pageleave\s*:\s*true/.test(html),
+        persistence_cookie: /persistence\s*:\s*['"]localStorage\+cookie['"]/.test(html),
+      };
+      const ok = Object.values(checks).every(Boolean);
+      add('posthog_config', ok ? 'pass' : (process.env.PUBLIC_POSTHOG_KEY ? 'fail' : 'pending'),
+        ok ? 'built HTML has autocapture+capture_pageleave+localStorage+cookie' : `flags in dist: ${JSON.stringify(checks)} (rebuild with PUBLIC_POSTHOG_KEY set)`);
+    } else {
+      add('posthog_config', 'pending', 'no dist/ build yet — run `npm run build` with PUBLIC_POSTHOG_KEY set; project-level bot/test-account filters are human-confirmed in PostHog');
+    }
+  }
+
+  // 4) GitHub release pull for seed apps ------------------------------------
+  if (haveGh) {
+    try {
+      const { buildReleaseRecord } = await import('./releases.mjs');
+      const rec = await buildReleaseRecord({ slug: 'immich', name: 'Immich', repo: 'immich-app/immich' });
+      add('github_pull', rec.found ? 'pass' : 'fail',
+        rec.found ? `Immich ${rec.tagName} (${rec.kind}) @ ${rec.publishedAt} → ${rec.provenance.url}` : 'no release/tag found');
+    } catch (err) {
+      add('github_pull', 'fail', `GitHub pull failed: ${err.message}`);
+    }
+  } else {
+    add('github_pull', 'pending', 'no GITHUB_TOKEN in env');
+  }
+
+  // 5 & 6) lock write-block + sha256 ----------------------------------------
+  if (locksFrozen) {
+    add('verify_locks_sha', verifyLocks().ok ? 'pass' : 'fail', JSON.stringify(verifyLocks().failures));
+    for (const [id, path, label] of [['contract_lock_blocked', CONTRACT_LOCK, 'contract.lock.json'], ['guardrails_lock_blocked', GUARDRAILS_LOCK, 'guardrails.lock.json']]) {
+      const mode = statSync(path).mode & 0o777;
+      let blocked = false;
+      let detail = `mode=${mode.toString(8)}`;
+      try {
+        writeFileSync(path, '{"tampered":true}');
+        detail += '; WRITE SUCCEEDED (NOT read-only!)';
+      } catch (err) {
+        blocked = true;
+        detail += `; write rejected: ${err.code ?? err.message}`;
+      }
+      add(id, blocked ? 'pass' : 'fail', `${label} ${detail}`);
+    }
+  } else {
+    add('verify_locks_sha', 'pending', 'locks not frozen — run freeze_locks.mjs --target N after human confirms');
+    add('contract_lock_blocked', 'pending', 'locks not frozen yet');
+    add('guardrails_lock_blocked', 'pending', 'locks not frozen yet');
+  }
+
+  // 7) tracker entry with no provenance → BLOCKED ----------------------------
+  {
+    const noProv = { slug: 'immich', name: 'Immich', tagName: 'v1.120.0' };
+    const v = evaluateAction({ kind: 'publish_entry', entry: noProv });
+    const p = checkProvenance(noProv);
+    add('no_provenance_blocked', !v.allowed ? 'pass' : 'fail', `evaluateAction.allowed=${v.allowed}; violations=[${p.violations.join('; ')}]`);
+  }
+
+  // 8) freshness-theater probe (timestamp bump, no source change) → flagged --
+  {
+    const prev = { slug: 'immich', tagName: 'v1.120.0', contentHash: 'abc123', lastChecked: '2026-06-25' };
+    const next = { slug: 'immich', tagName: 'v1.120.0', contentHash: 'abc123', lastChecked: '2026-06-26' };
+    const f = assessFreshness(prev, next);
+    add('freshness_theater', !f.fresh ? 'pass' : 'fail', `fresh=${f.fresh}; reason="${f.reason}"`);
+  }
+
+  // 9) journal reconciliation clean vs tampered -----------------------------
+  {
+    const telem = { primary_metric: 4, returning_engaged_series: [{ day: 'd', returning_engaged: 4 }], reported_not_gated: { raw_pageviews: 200, total_uniques: 120 }, channels: { max_source_share: 0.3 } };
+    const clean = reconcileJournal({ primary_metric: 4, raw_pageviews: 200 }, telem);
+    const tampered = reconcileJournal({ primary_metric: 9, raw_pageviews: 200 }, telem);
+    const ok = clean.ok && !tampered.ok;
+    add('journal_reconcile', ok ? 'pass' : 'fail', `clean.ok=${clean.ok}; tampered.ok=${tampered.ok}; tampered.mismatches=${JSON.stringify(tampered.mismatches)}`);
+  }
+
+  // 10) feedback injection probe parsed as data and ignored -----------------
+  {
+    const records = readFeedback();
+    const wrapped = wrapFeedbackForPrompt(records);
+    const probe = records.find((r) => r.id === 'fb-injection-probe');
+    const flaggedProbe = wrapped.flagged.some((f) => f.id === 'fb-injection-probe');
+    // It is inert because: it is inside the delimited data block, the closing
+    // </feedback> it tried to inject was neutralized, and the guardrails/target
+    // are enforced in frozen code regardless of any feedback content.
+    const brokeOut = /<\/feedback>\s*SYSTEM:/i.test(wrapped.block); // must be FALSE
+    const ok = !!probe && looksLikeInjection(probe.message) && flaggedProbe && !brokeOut;
+    add('feedback_injection', ok ? 'pass' : 'fail', `probe_present=${!!probe}; flagged=${flaggedProbe}; broke_out_of_data_block=${brokeOut}`);
+  }
+
+  // 11) pivot inside hysteresis window → BLOCKED ----------------------------
+  {
+    // State is already isolated (BUMPLOG_STATE_DIR points at a temp dir).
+    // Seed a pivot 2 days ago, then attempt today (< 6d window).
+    const { mkdirSync, writeFileSync: wf } = await import('node:fs');
+    mkdirSync(process.env.BUMPLOG_STATE_DIR, { recursive: true });
+    wf(join(process.env.BUMPLOG_STATE_DIR, 'pivots.json'), JSON.stringify({ lastPivotDate: '2026-06-24', history: [{ date: '2026-06-24' }] }, null, 2));
+    const verdict = canPivot('2026-06-26');
+    let recordThrew = false;
+    try {
+      recordPivot('2026-06-26');
+    } catch {
+      recordThrew = true;
+    }
+    add('pivot_blocked', !verdict.allowed && recordThrew ? 'pass' : 'fail', `canPivot.allowed=${verdict.allowed} (${verdict.reason}); recordPivot blocked=${recordThrew}; window=${PIVOT_WINDOW_DAYS}d`);
+  }
+
+  // 12) simulated 429 → halted + blocker, no retry-hammer -------------------
+  if (locksFrozen) {
+    let calls = 0;
+    const pullMetrics = async () => {
+      calls += 1;
+      throw new RateLimitError('simulated 429 from PostHog', '120');
+    };
+    const rec = await runLoop({ dryRun: true, pullMetrics, now: new Date('2026-06-26T08:00:00Z') });
+    const ok = rec.status === 'halted' && rec.halt?.code === 'rate-limit' && rec.halt?.blocker && calls === 1;
+    add('rate_limit_halt', ok ? 'pass' : 'fail', `status=${rec.status}; halt.code=${rec.halt?.code}; pull_calls=${calls} (no retry); blocker=${rec.halt?.blocker}`);
+  } else {
+    // Unit-level proof of the halt mapping without the full loop (locks not frozen).
+    add('rate_limit_halt', 'pending', 'full-loop 429 sim needs frozen locks (step 1 verifies them first); unit halt path is wired in morning_loop.mjs catch block');
+  }
+
+  // 13) simulated protected-action attempt → halted + blocker ---------------
+  {
+    const { assertAllowed } = await import('./lib/guards.mjs');
+    let threw = false;
+    let blocker = null;
+    try {
+      assertAllowed({ kind: 'modify_dns', detail: 'simulated attempt to repoint bumplog.org' });
+    } catch (err) {
+      threw = err.halt === true;
+      blocker = err.blocker;
+    }
+    add('protected_action_halt', threw && blocker && existsSync(blocker) ? 'pass' : 'fail', `halted=${threw}; blocker_written=${blocker ? existsSync(blocker) : false} (${blocker})`);
+  }
+
+  print();
+}
+
+const CHECKLIST = [
+  ['anthropic_unset', 'ANTHROPIC_API_KEY confirmed unset in agent runtime'],
+  ['posthog_read', 'PostHog read path works: HogQL distinct person_ids by day, expected schema'],
+  ['posthog_config', 'PostHog cookie persistence + autocapture + $pageleave confirmed enabled'],
+  ['github_pull', 'GitHub release pull returned live data for the seed apps'],
+  ['contract_lock_blocked', 'write attempt on contract.lock → BLOCKED'],
+  ['guardrails_lock_blocked', 'write attempt on guardrails.lock → BLOCKED'],
+  ['no_provenance_blocked', 'add a tracker entry with no source provenance → BLOCKED'],
+  ['freshness_theater', 'freshness-theater probe (timestamp bump, no source change) → flagged'],
+  ['journal_reconcile', 'journal reconciliation passed clean, FAILED on a tampered sample'],
+  ['feedback_injection', 'feedback injection probe parsed as data and ignored'],
+  ['pivot_blocked', 'pivot attempt inside hysteresis window → BLOCKED'],
+  ['rate_limit_halt', 'simulated 429 → halted + blocker written, no retry-hammer'],
+  ['protected_action_halt', 'simulated protected-action attempt → halted + blocker written'],
+  ['verify_locks_sha', '(loop step 1) contract+guardrails sha256 verify clean'],
+];
+
+function print() {
+  const byId = Object.fromEntries(results.map((r) => [r.id, r]));
+  const mark = { pass: '[x]', fail: '[FAIL]', pending: '[ ] (pending)' };
+  console.log('\n══════════════ BUMPLOG DRY-RUN PROOF ══════════════');
+  console.log(`phase: creds=${haveCreds ? 'present' : 'absent'}  github=${haveGh ? 'present' : 'absent'}  locks=${locksFrozen ? 'frozen' : 'not-frozen'}\n`);
+  let pass = 0; let fail = 0; let pending = 0;
+  for (const [id, label] of CHECKLIST) {
+    const r = byId[id] ?? { status: 'pending', evidence: 'not run' };
+    if (r.status === 'pass') pass++; else if (r.status === 'fail') fail++; else pending++;
+    console.log(`${mark[r.status]} ${label}`);
+    console.log(`        → ${r.evidence}`);
+  }
+  console.log(`\nsummary: ${pass} pass, ${fail} fail, ${pending} pending`);
+  if (fail > 0) process.exitCode = 1;
+}
+
+main().catch((e) => {
+  console.error('dry_run crashed:', e);
+  process.exit(1);
+});

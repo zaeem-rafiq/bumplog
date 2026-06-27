@@ -1,0 +1,21 @@
+{
+  "name": "bumplog",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "Bumplog — the self-hosted update tracker. Public, crawlable static site.",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "harness:dry-run": "node harness/dry_run.mjs",
+    "harness:freeze": "node harness/freeze_locks.mjs",
+    "harness:loop": "node harness/morning_loop.mjs",
+    "harness:loop:dry": "node harness/morning_loop.mjs --dry-run"
+  },
+  "dependencies": {
+    "astro": "5.18.2",
+    "@astrojs/sitemap": "3.7.3"
+  }
+}

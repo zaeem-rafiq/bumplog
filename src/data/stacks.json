@@ -1,0 +1,20 @@
+[
+  {
+    "slug": "media",
+    "name": "Media server",
+    "description": "Stream your movies, shows, music, and photos from your own hardware.",
+    "appSlugs": ["jellyfin", "immich"]
+  },
+  {
+    "slug": "home-automation",
+    "name": "Home automation",
+    "description": "Run your smart home and network-wide ad blocking locally, no cloud required.",
+    "appSlugs": ["home-assistant", "adguard-home"]
+  },
+  {
+    "slug": "productivity",
+    "name": "Productivity",
+    "description": "Self-hosted documents, files, and password management for everyday work.",
+    "appSlugs": ["paperless-ngx", "nextcloud", "vaultwarden"]
+  }
+]
