@@ -30,3 +30,20 @@ against the real backend, not a stand-in. (2) Never let agent-supplied values fl
 integrity gate — re-derive the authoritative value (here, contentHash from the live GitHub
 source) in the harness first, then gate. (3) For "must be present" contracts, require the
 canonical key set explicitly; iterating only present keys lets omission bypass the check.
+
+## 2026-06-27 — "Designer-grade" needs art direction, not a design system
+**Module:** `src/styles/global.css`, hero page templates (Bumplog UI)
+**What went wrong:** A competent first pass built a coherent design *system* (tokens, spacing,
+semantic status colors, a11y) but the user called it "vibecoded, generic, boring." The tells:
+system-ui fonts, soft-filled status pills, shadowed rounded cards, even spacing with no point of
+view. A tidy token system is necessary but not sufficient — it reads as default-AI without a
+distinctive direction.
+**What to do instead:** For an Apple/Vercel/Linear bar, lead with ART DIRECTION: (1) a real
+typeface is ~80% of the feel — self-host a distinctive one (Geist/Inter Tight + a mono), never
+ship `system-ui` and call it premium; (2) restraint + precision over decoration — hairline
+borders instead of shadows, near-monochrome with status as a small exact accent (dot/rail/label),
+generous rhythm, mono for technical data; (3) one confident idea executed perfectly (here, the
+verdict as the hero). Don't delegate the *taste* call to an unsupervised autonomous agent — its
+output trends generic; set the direction, then build. Note: the inline-widget (visualize/CDS)
+sandbox enforces the chat aesthetic (system font, two weights, no display type), so it's the
+wrong vehicle to preview a premium site direction — build it real and screenshot.
