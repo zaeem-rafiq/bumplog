@@ -63,25 +63,23 @@ function stackStatus(stack: Stack) {
     height: 100%;
     text-decoration: none;
     color: inherit;
-    box-shadow: var(--shadow-sm);
-    transition:
-      border-color var(--dur) var(--ease),
-      box-shadow var(--dur) var(--ease),
-      transform var(--dur) var(--ease);
+    padding: 1.1rem 0 0;
+    border-top: 1px solid var(--color-border);
   }
-  .stack-card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-    border-color: var(--color-border-strong);
+  .stack-card:hover .stack-card__name {
+    text-decoration: underline;
+    text-underline-offset: 2px;
   }
   .stack-card__name {
-    font-weight: 700;
-    font-size: var(--text-md);
+    font-family: var(--font-serif);
+    font-weight: 430;
+    font-size: var(--text-lg);
     letter-spacing: -0.01em;
   }
   .stack-card__desc {
-    font-size: var(--text-sm);
-    line-height: 1.55;
+    font-size: var(--text-base);
+    line-height: 1.6;
+    color: var(--color-text-muted);
   }
   .stack-card__foot {
     display: flex;

@@ -58,28 +58,18 @@ const entries = (journal as JournalRow[])
     list-style: none;
     margin: 0;
     padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
+    border-top: 1px solid var(--color-border);
   }
   .journal-entry {
     display: block;
     text-decoration: none;
     color: inherit;
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    padding: 1rem 1.15rem;
-    box-shadow: var(--shadow-sm);
-    transition:
-      border-color var(--dur) var(--ease),
-      box-shadow var(--dur) var(--ease),
-      transform var(--dur) var(--ease);
+    padding: 1.25rem 0;
+    border-bottom: 1px solid var(--color-border);
   }
-  .journal-entry:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-    border-color: var(--color-border-strong);
+  .journal-entry:hover .journal-entry__title {
+    text-decoration: underline;
+    text-underline-offset: 2px;
   }
   .journal-entry__meta {
     display: flex;
@@ -87,18 +77,19 @@ const entries = (journal as JournalRow[])
     align-items: center;
     gap: 0.5rem 0.85rem;
     font-size: var(--text-xs);
-    margin-bottom: 0.3rem;
+    margin-bottom: 0.45rem;
   }
   .journal-entry__day {
     color: var(--color-accent);
-    font-weight: 660;
+    font-weight: 600;
   }
   .journal-entry__title {
     display: block;
-    font-weight: 680;
-    font-size: var(--text-md);
-    letter-spacing: -0.012em;
+    font-family: var(--font-serif);
+    font-weight: 430;
+    font-size: var(--text-lg);
+    letter-spacing: -0.01em;
     color: var(--color-text);
-    line-height: 1.35;
+    line-height: 1.2;
   }
 </style>

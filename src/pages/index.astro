@@ -132,37 +132,29 @@ const activeFilters = FILTERS.filter((f) => f.key === 'all' || counts[f.key as S
   .filters {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.35rem;
+    gap: 1rem;
   }
   .filter-chip {
-    background: transparent;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
     color: var(--color-text-muted);
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-sm);
-    padding: 0.28rem 0.7rem;
+    padding: 0.15rem 0.1rem;
     font-size: var(--text-sm);
     font-weight: 500;
   }
   .filter-chip:hover {
-    border-color: var(--color-border-strong);
     color: var(--color-text);
   }
   .filter-chip[aria-pressed='true'] {
-    background: var(--color-text);
-    color: var(--color-bg);
-    border-color: var(--color-text);
+    color: var(--color-text);
+    border-bottom-color: var(--color-accent);
   }
 
   .app-list {
     list-style: none;
     margin: 1.1rem 0 0;
     padding: 0;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius);
-    background: var(--color-surface);
-    overflow: hidden;
-  }
-  .app-list__item + .app-list__item {
     border-top: 1px solid var(--color-border);
   }
   .app-list__item[hidden] {

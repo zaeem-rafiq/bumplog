@@ -34,13 +34,14 @@ const status = toBadgeStatus(app.safeToUpdate);
     align-items: center;
     justify-content: space-between;
     gap: 0.4rem 1.25rem;
-    padding: 0.95rem 1.15rem;
+    padding: 1.05rem 0;
     text-decoration: none;
     color: inherit;
-    transition: background var(--dur) var(--ease);
+    border-bottom: 1px solid var(--color-border);
   }
-  .app-row:hover {
-    background: var(--color-surface-2);
+  .app-row:hover .app-row__name {
+    text-decoration: underline;
+    text-underline-offset: 2px;
   }
   .app-row__main {
     display: flex;

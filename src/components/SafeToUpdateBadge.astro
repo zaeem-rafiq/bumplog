@@ -43,18 +43,14 @@ const label = LABELS[status];
     display: inline-flex;
     align-items: center;
     gap: 0.35rem;
-    padding: 0.25rem 0.6rem 0.25rem 0.45rem;
-    border-radius: var(--radius-sm);
     font-size: var(--text-sm);
-    font-weight: 540;
+    font-weight: 500;
     line-height: 1.2;
-    border: 1px solid transparent;
     white-space: nowrap;
   }
   .badge--sm {
     font-size: var(--text-xs);
-    padding: 0.18rem 0.5rem 0.18rem 0.36rem;
-    gap: 0.28rem;
+    gap: 0.3rem;
   }
   .badge__glyph {
     display: inline-flex;
@@ -69,24 +65,8 @@ const label = LABELS[status];
     width: 0.8rem;
     height: 0.8rem;
   }
-  .badge--safe {
-    background: var(--status-safe-bg);
-    color: var(--status-safe-fg);
-    border-color: var(--status-safe-border);
-  }
-  .badge--caution {
-    background: var(--status-caution-bg);
-    color: var(--status-caution-fg);
-    border-color: var(--status-caution-border);
-  }
-  .badge--breaking {
-    background: var(--status-breaking-bg);
-    color: var(--status-breaking-fg);
-    border-color: var(--status-breaking-border);
-  }
-  .badge--unknown {
-    background: var(--status-unknown-bg);
-    color: var(--status-unknown-fg);
-    border-color: var(--status-unknown-border);
-  }
+  .badge--safe { color: var(--status-safe-fg); }
+  .badge--caution { color: var(--status-caution-fg); }
+  .badge--breaking { color: var(--status-breaking-fg); }
+  .badge--unknown { color: var(--status-unknown-fg); }
 </style>

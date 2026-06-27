@@ -261,20 +261,16 @@ pre {
   max-width: 56ch;
 }
 
+/* No boxes: content flows on the page, structured by whitespace and hairlines. */
 .card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  padding: 1.5rem 1.6rem;
+  background: none;
+  border: none;
+  padding: 0;
 }
 
 .empty-state {
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  padding: 2.25rem 1.5rem;
-  text-align: center;
+  padding: 1.25rem 0;
   color: var(--color-text-muted);
-  background: var(--color-surface-2);
 }
 
 .placeholder {
@@ -404,10 +400,8 @@ time {
 /* Verdict: a solid status glyph + a serif answer. No rail, no eyebrow. */
 .verdict {
   --v-icon: var(--status-unknown-icon);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  background: var(--color-surface);
-  box-shadow: var(--shadow-sm);
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
 }
 .verdict--safe { --v-icon: var(--status-safe-icon); }
 .verdict--caution { --v-icon: var(--status-caution-icon); }
@@ -418,7 +412,7 @@ time {
   display: flex;
   align-items: center;
   gap: 1rem;
-  padding: 1.6rem 1.7rem 0;
+  padding: 1.6rem 0 0;
 }
 .verdict__glyph {
   width: 2.4rem;
@@ -441,7 +435,7 @@ time {
   line-height: 1.05;
 }
 .verdict__body {
-  padding: 1.3rem 1.7rem 1.6rem;
+  padding: 1.3rem 0 1.6rem;
 }
 .verdict__rationale {
   margin: 0;
