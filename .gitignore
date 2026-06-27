@@ -17,6 +17,10 @@ harness/.posthog-cache/
 harness/.gh-cache/
 *.log
 
+# ── Impeccable design tooling (installed per-project; not product source) ──
+.claude/
+.impeccable/
+
 # ── OS / editor ──────────────────────────────────────────────────────────
 .DS_Store
 Thumbs.db

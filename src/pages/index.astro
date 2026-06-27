@@ -6,14 +6,9 @@ import { toBadgeStatus, type App, type SafeToUpdate } from '../data/types';
 
 const trackedApps = apps as App[];
 
-// Sort so assessed apps lead, then by severity (safe → caution → breaking),
-// then pending last. Within a group, keep stable name order.
-const ORDER: Record<SafeToUpdate, number> = {
-  safe: 0,
-  caution: 1,
-  breaking: 2,
-  unknown: 3,
-};
+// Assessed apps lead, ordered by severity (safe, caution, breaking), pending
+// last. Stable name order within a group.
+const ORDER: Record<SafeToUpdate, number> = { safe: 0, caution: 1, breaking: 2, unknown: 3 };
 const sorted = [...trackedApps].sort((a, b) => {
   const sa = ORDER[toBadgeStatus(a.safeToUpdate)];
   const sb = ORDER[toBadgeStatus(b.safeToUpdate)];
@@ -21,7 +16,6 @@ const sorted = [...trackedApps].sort((a, b) => {
   return a.name.localeCompare(b.name);
 });
 
-// Header summary counts.
 const total = trackedApps.length;
 const assessed = trackedApps.filter((a) => a.safeToUpdate != null).length;
 const counts = {
@@ -31,7 +25,6 @@ const counts = {
   unknown: trackedApps.filter((a) => a.safeToUpdate == null).length,
 };
 
-// Filter chips: only show statuses that actually have apps (plus "All").
 const FILTERS: { key: SafeToUpdate | 'all'; label: string }[] = [
   { key: 'all', label: 'All' },
   { key: 'safe', label: 'Safe' },
@@ -39,54 +32,36 @@ const FILTERS: { key: SafeToUpdate | 'all'; label: string }[] = [
   { key: 'breaking', label: 'Breaking' },
   { key: 'unknown', label: 'Pending' },
 ];
-const activeFilters = FILTERS.filter(
-  (f) => f.key === 'all' || counts[f.key as SafeToUpdate] > 0,
-);
+const activeFilters = FILTERS.filter((f) => f.key === 'all' || counts[f.key as SafeToUpdate] > 0);
 ---
 
 <BaseLayout
   title="Bumplog — the self-hosted update tracker"
-  description="Bumplog tracks releases of popular self-hosted apps and tells you whether it is safe to update — summarized changelogs and breaking-change warnings, every datum traceable to its GitHub release."
+  description="Bumplog tracks releases of popular self-hosted apps and tells you whether it is safe to update: summarized changelogs and breaking-change warnings, every datum traceable to its GitHub release."
 >
   <div class="page-hero">
     <h1>Is it safe to update?</h1>
     <p class="lede">
       Bumplog watches releases of popular self-hosted apps and tells you, in plain
-      language, whether it's safe to update — with the breaking changes called out
-      and every verdict traceable to its GitHub release.
+      language, whether it's safe to update, with the breaking changes called out and
+      every verdict traceable to its GitHub release.
     </p>
 
     {total > 0 && (
       <ul class="summary" aria-label="Tracking summary">
-        <li class="summary__item">
-          <span class="summary__num">{total}</span> tracked
-        </li>
-        <li class="summary__item">
-          <span class="summary__num">{assessed}</span> assessed
-        </li>
+        <li class="summary__item"><span class="summary__num">{total}</span> tracked</li>
+        <li class="summary__item"><span class="summary__num">{assessed}</span> assessed</li>
         {counts.safe > 0 && (
-          <li class="summary__item">
-            <span class="summary__dot summary__dot--safe"></span>
-            <span class="summary__num">{counts.safe}</span> safe
-          </li>
+          <li class="summary__item"><span class="summary__dot summary__dot--safe"></span><span class="summary__num">{counts.safe}</span> safe</li>
         )}
         {counts.caution > 0 && (
-          <li class="summary__item">
-            <span class="summary__dot summary__dot--caution"></span>
-            <span class="summary__num">{counts.caution}</span> caution
-          </li>
+          <li class="summary__item"><span class="summary__dot summary__dot--caution"></span><span class="summary__num">{counts.caution}</span> caution</li>
         )}
         {counts.breaking > 0 && (
-          <li class="summary__item">
-            <span class="summary__dot summary__dot--breaking"></span>
-            <span class="summary__num">{counts.breaking}</span> breaking
-          </li>
+          <li class="summary__item"><span class="summary__dot summary__dot--breaking"></span><span class="summary__num">{counts.breaking}</span> breaking</li>
         )}
         {counts.unknown > 0 && (
-          <li class="summary__item">
-            <span class="summary__dot summary__dot--unknown"></span>
-            <span class="summary__num">{counts.unknown}</span> pending
-          </li>
+          <li class="summary__item"><span class="summary__dot summary__dot--unknown"></span><span class="summary__num">{counts.unknown}</span> pending</li>
         )}
       </ul>
     )}
@@ -97,45 +72,32 @@ const activeFilters = FILTERS.filter(
     {activeFilters.length > 2 && (
       <div class="filters" role="group" aria-label="Filter apps by update safety" hidden>
         {activeFilters.map((f) => (
-          <button
-            type="button"
-            class="filter-chip"
-            data-filter={f.key}
-            aria-pressed={f.key === 'all' ? 'true' : 'false'}
-          >{f.label}</button>
+          <button type="button" class="filter-chip" data-filter={f.key} aria-pressed={f.key === 'all' ? 'true' : 'false'}>{f.label}</button>
         ))}
       </div>
     )}
   </div>
 
   {total === 0 ? (
-    <div class="empty-state">
-      <p>No apps are being tracked yet. Check back soon.</p>
-    </div>
+    <div class="empty-state"><p>No apps are being tracked yet. Check back soon.</p></div>
   ) : (
-    <ul class="grid app-grid" id="app-grid">
+    <ul class="app-list" id="app-grid" aria-labelledby="tracked-heading">
       {sorted.map((app) => {
         const status = toBadgeStatus(app.safeToUpdate);
         return (
-          <li class="app-grid__item" data-status={status}>
-            <a class={`card app-card app-card--${status}`} href={`/apps/${app.slug}/`}>
-              <span class="app-card__rail" aria-hidden="true"></span>
-              <span class="app-card__top">
-                <span class="app-card__name">{app.name}</span>
-                <span class="app-card__repo muted">{app.repo}</span>
+          <li class="app-list__item" data-status={status}>
+            <a class="app-row" href={`/apps/${app.slug}/`}>
+              <span class="app-row__main">
+                <span class="app-row__name">{app.name}</span>
+                <span class="app-row__repo mono">{app.repo}</span>
               </span>
-              <SafeToUpdateBadge status={status} size="sm" />
-              <span class="app-card__foot">
+              <span class="app-row__meta">
                 {app.latestVersion ? (
-                  <span class="app-card__version">{app.latestVersion}</span>
+                  <span class="app-row__version mono">{app.latestVersion}</span>
                 ) : (
-                  <span class="app-card__version placeholder">version pending</span>
+                  <span class="app-row__version mono placeholder">pending</span>
                 )}
-                {app.lastChecked ? (
-                  <span class="freshness"><time datetime={app.lastChecked}>{app.lastChecked}</time></span>
-                ) : (
-                  <span class="muted app-card__soon">assessed soon</span>
-                )}
+                <SafeToUpdateBadge status={status} size="sm" />
               </span>
             </a>
           </li>
@@ -144,23 +106,19 @@ const activeFilters = FILTERS.filter(
     </ul>
   )}
 
-  <p class="empty-state filter-empty" id="filter-empty" hidden>
-    No apps match this filter.
-  </p>
+  <p class="empty-state filter-empty" id="filter-empty" hidden>No apps match this filter.</p>
 </BaseLayout>
 
 <script>
-  // Progressive enhancement: client-side status filtering. The list is fully
-  // rendered + crawlable without JS; chips just hide/show. Chips themselves are
-  // revealed only when JS runs (they start [hidden]).
+  // Progressive enhancement: client-side status filtering. The list renders and
+  // is crawlable without JS; chips reveal only when JS runs.
   const filters = document.querySelector<HTMLElement>('.filters');
   const grid = document.getElementById('app-grid');
   const emptyMsg = document.getElementById('filter-empty');
   if (filters && grid) {
     filters.hidden = false;
     const chips = Array.from(filters.querySelectorAll<HTMLButtonElement>('.filter-chip'));
-    const items = Array.from(grid.querySelectorAll<HTMLElement>('.app-grid__item'));
-
+    const items = Array.from(grid.querySelectorAll<HTMLElement>('.app-list__item'));
     function apply(filter: string) {
       let visible = 0;
       for (const item of items) {
@@ -170,7 +128,6 @@ const activeFilters = FILTERS.filter(
       }
       if (emptyMsg) emptyMsg.hidden = visible !== 0;
     }
-
     for (const chip of chips) {
       chip.addEventListener('click', () => {
         for (const c of chips) c.setAttribute('aria-pressed', String(c === chip));
@@ -189,22 +146,22 @@ const activeFilters = FILTERS.filter(
     gap: 0.5rem 1rem;
   }
   .apps-head h2 {
-    margin-block: 1.5rem 0;
+    margin-block: 0 0;
   }
 
   .filters {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.4rem;
+    gap: 0.35rem;
   }
   .filter-chip {
-    background: var(--color-surface);
+    background: transparent;
     color: var(--color-text-muted);
     border: 1px solid var(--color-border);
-    border-radius: 999px;
-    padding: 0.32rem 0.8rem;
+    border-radius: var(--radius-sm);
+    padding: 0.28rem 0.7rem;
     font-size: var(--text-sm);
-    font-weight: 600;
+    font-weight: 500;
   }
   .filter-chip:hover {
     border-color: var(--color-border-strong);
@@ -216,80 +173,58 @@ const activeFilters = FILTERS.filter(
     border-color: var(--color-text);
   }
 
-  .app-grid {
-    margin-top: 1.1rem;
+  .app-list {
+    list-style: none;
+    margin: 1.1rem 0 0;
+    padding: 0;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-surface);
+    overflow: hidden;
   }
-  .app-grid__item[hidden] {
+  .app-list__item + .app-list__item {
+    border-top: 1px solid var(--color-border);
+  }
+  .app-list__item[hidden] {
     display: none;
   }
 
-  .app-card {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: 0.85rem;
-    height: 100%;
-    padding: 1.5rem 1.6rem 1.5rem 1.8rem;
-    text-decoration: none;
-    color: inherit;
-    box-shadow: var(--shadow-sm);
-    transition:
-      border-color var(--dur) var(--ease),
-      box-shadow var(--dur) var(--ease),
-      transform var(--dur) var(--ease);
-    overflow: hidden;
-  }
-  .app-card:hover {
-    transform: translateY(-2px);
-    border-color: var(--color-border-strong);
-    box-shadow: var(--shadow-md);
-  }
-  /* Status rail — the dominant, instantly-scannable signal per card. */
-  .app-card__rail {
-    position: absolute;
-    inset: 0 auto 0 0;
-    width: 3px;
-    background: var(--status-unknown-solid);
-  }
-  .app-card--safe .app-card__rail { background: var(--status-safe-solid); }
-  .app-card--caution .app-card__rail { background: var(--status-caution-solid); }
-  .app-card--breaking .app-card__rail { background: var(--status-breaking-solid); }
-  .app-card--unknown .app-card__rail { background: var(--status-unknown-solid); }
-
-  /* Pending cards stay calm, not broken-looking. */
-  .app-card--unknown {
-    background: var(--color-surface-2);
-  }
-
-  .app-card__top {
-    display: flex;
-    flex-direction: column;
-    gap: 0.15rem;
-  }
-  .app-card__name {
-    font-weight: 560;
-    font-size: var(--text-md);
-    letter-spacing: -0.02em;
-  }
-  .app-card__repo {
-    font-size: var(--text-xs);
-    font-family: var(--font-mono);
-  }
-  .app-card__foot {
+  .app-row {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: 0.3rem 0.75rem;
-    margin-top: auto;
-    padding-top: 0.2rem;
-    font-size: var(--text-xs);
+    gap: 0.4rem 1.25rem;
+    padding: 0.95rem 1.15rem;
+    text-decoration: none;
+    color: inherit;
+    transition: background var(--dur) var(--ease);
   }
-  .app-card__version {
-    font-family: var(--font-mono);
+  .app-row:hover {
+    background: var(--color-surface-2);
+  }
+  .app-row__main {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    min-width: 0;
+  }
+  .app-row__name {
+    font-weight: 540;
+    letter-spacing: -0.01em;
+  }
+  .app-row__repo {
+    font-size: var(--text-xs);
     color: var(--color-text-muted);
   }
-  .app-card__soon {
-    font-size: var(--text-xs);
+  .app-row__meta {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+  }
+  .app-row__version {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    white-space: nowrap;
   }
 </style>

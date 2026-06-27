@@ -1,6 +1,5 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import SafeToUpdateBadge from '../../components/SafeToUpdateBadge.astro';
 import apps from '../../data/apps.json';
 import { toBadgeStatus, type App, type SafeToUpdate } from '../../data/types';
 
@@ -20,21 +19,15 @@ const status = toBadgeStatus(app.safeToUpdate);
 const repoUrl = `https://github.com/${app.repo}`;
 const assessed = app.safeToUpdate != null;
 
-// The headline answer per safety level — plain, confident, scannable.
+// The answer is the hero, and it is the accessible status label (paired with the
+// colored glyph). Plain, confident, sentence case.
 const VERDICT_ANSWER: Record<SafeToUpdate, string> = {
-  safe: 'Yes — this looks safe to update.',
+  safe: 'Safe to update.',
   caution: 'Update with care.',
-  breaking: 'Hold off — this release has breaking changes.',
+  breaking: 'Holds breaking changes.',
   unknown: 'Not assessed yet.',
 };
-const VERDICT_EYEBROW: Record<SafeToUpdate, string> = {
-  safe: 'Verdict',
-  caution: 'Verdict',
-  breaking: 'Verdict',
-  unknown: 'Pending',
-};
 const answer = VERDICT_ANSWER[status];
-const eyebrow = VERDICT_EYEBROW[status];
 ---
 
 <BaseLayout
@@ -52,8 +45,6 @@ const eyebrow = VERDICT_EYEBROW[status];
       </p>
     </header>
 
-    <!-- ── Verdict: the differentiator. Renders safeToUpdate + rationale +
-         version + freshness + source, with a distinct treatment per level. ── -->
     <section class={`verdict verdict--${status}`} aria-labelledby="verdict-answer">
       <div class="verdict__head">
         <span class="verdict__glyph" aria-hidden="true">
@@ -70,10 +61,7 @@ const eyebrow = VERDICT_EYEBROW[status];
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v6" /><path d="M12 16.5h.01" /><circle cx="12" cy="12" r="9" opacity="0.5" /></svg>
           )}
         </span>
-        <div class="verdict__titles">
-          <p class="verdict__eyebrow">{eyebrow}</p>
-          <p class="verdict__answer" id="verdict-answer">{answer}</p>
-        </div>
+        <h2 class="verdict__answer" id="verdict-answer">{answer}</h2>
       </div>
 
       <div class="verdict__body">
@@ -81,13 +69,13 @@ const eyebrow = VERDICT_EYEBROW[status];
           <p class="verdict__rationale">{app.rationale}</p>
         ) : (
           <p class="verdict__rationale placeholder">
-            {app.name}'s next release hasn't been assessed yet — Bumplog checks the
-            GitHub release feed and posts a sourced verdict here as soon as one lands.
+            {app.name}'s next release hasn't been assessed yet. Bumplog watches the GitHub
+            release feed and posts a sourced verdict here as soon as one lands.
           </p>
         )}
 
         <dl class="verdict__meta">
-          <div class="verdict__meta-pair">
+          <div>
             <dt>Latest version</dt>
             {app.latestVersion ? (
               <dd class="verdict__version">{app.latestVersion}</dd>
@@ -95,17 +83,13 @@ const eyebrow = VERDICT_EYEBROW[status];
               <dd class="placeholder">pending</dd>
             )}
           </div>
-          <div class="verdict__meta-pair">
+          <div>
             <dt>Last checked</dt>
             {app.lastChecked ? (
               <dd><span class="freshness"><time datetime={app.lastChecked}>{app.lastChecked}</time></span></dd>
             ) : (
               <dd class="placeholder">not yet checked</dd>
             )}
-          </div>
-          <div class="verdict__meta-pair">
-            <dt>Status</dt>
-            <dd><SafeToUpdateBadge status={status} size="sm" /></dd>
           </div>
         </dl>
       </div>
@@ -116,15 +100,14 @@ const eyebrow = VERDICT_EYEBROW[status];
       <div class="card changelog">{app.changelogSummary}</div>
     ) : (
       <div class="empty-state">
-        <p>No changelog summary yet for {app.name}. It'll appear here once the next release is summarized.</p>
+        <p>No changelog summary yet for {app.name}. It appears here once the next release is summarized.</p>
       </div>
     )}
 
-    <!-- Source provenance: every datum must trace back to a GitHub release. -->
     <h2>Source</h2>
     <div class="card source-card">
       <p class="muted source-card__lede">
-        Every verdict on Bumplog traces back to a GitHub release — no invented details.
+        Every verdict on Bumplog traces back to a GitHub release. No invented details.
       </p>
       <p class="source-card__link">
         {app.sourceUrl ? (
@@ -139,7 +122,7 @@ const eyebrow = VERDICT_EYEBROW[status];
           </a>
         )}
         {!app.sourceUrl && (
-          <span class="placeholder"> — specific release link pending</span>
+          <span class="placeholder"> (specific release link pending)</span>
         )}
       </p>
     </div>
@@ -152,18 +135,21 @@ const eyebrow = VERDICT_EYEBROW[status];
   }
   .app-head__repo {
     font-size: var(--text-sm);
-    margin: 0.25rem 0 0;
+    margin: 0.3rem 0 0;
   }
   .app-head__repo a {
     color: inherit;
     text-decoration: none;
+  }
+  .app-head__repo code {
+    font-variant-numeric: tabular-nums;
   }
   .app-head__repo a:hover code {
     color: var(--color-link);
   }
   .changelog {
     white-space: pre-line;
-    line-height: 1.65;
+    line-height: 1.6;
   }
   .source-card__lede {
     font-size: var(--text-sm);

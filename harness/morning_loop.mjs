@@ -375,6 +375,7 @@ async function draftJournalViaAgent(date, telemetry, gate, wrapped, llm) {
     '  Favor not-yet-built, high-velocity apps early; refresh others only on a real new release.',
     '- body: plain text, 2–4 short paragraphs. Do NOT put visitor counts or metrics in the body;',
     '  the verified metrics block is rendered separately. No fabricated facts.',
+    '- Style: sentence case, plain punctuation. Avoid em-dashes (at most two total across title and body).',
     '- proposed_retention_mechanics: usually []. Propose one only if it earns retention through real',
     '  value (e.g. a digest of real changes). Manipulative patterns are rejected by a judge.',
     '- intent_to_pivot: false unless you are deliberately changing strategy.',
