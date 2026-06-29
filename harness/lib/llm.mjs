@@ -99,6 +99,15 @@ export async function runLLM(opts) {
     args.push('--allowed-tools', (opts.allowedTools ?? []).join(','));
     // Dollar tripwire (on subscription this should not bind; if it does, billing changed).
     args.push('--max-budget-usd', String(opts.budgetUsd ?? 1));
+    // Load only project/local settings, NOT user-level plugins. The loop is
+    // self-contained (system prompt, model, tools all passed explicitly), so it
+    // needs none of them — and excluding them stops the user's claude-mem
+    // SessionEnd hook from firing on every micro print-session (pointless churn)
+    // and from polluting captured stderr with "Hook cancelled" noise that would
+    // mask the real reason in a `claude -p exited <code>` error. Auth
+    // (OAuth/keychain subscription) is independent of --setting-sources. NOT
+    // --bare: that forces ANTHROPIC_API_KEY and never reads OAuth/keychain.
+    args.push('--setting-sources', 'project,local');
 
     const { stdout, code, stderr } = await spawnCapture('claude', args, opts.timeoutMs ?? caps.max_wall_clock_minutes * 60000);
 
