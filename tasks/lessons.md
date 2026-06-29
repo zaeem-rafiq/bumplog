@@ -64,3 +64,16 @@ FDA-having shell and bypasses the exact path that fails under launchd. The check
 and verify by triggering it AS the scheduled job (`launchctl kickstart -k gui/$(id -u)/<label>`,
 or an isolated probe agent that reads the target paths) — never by a hand-run that has FDA. Treat
 "ran it manually, works" as proof of nothing for the scheduled execution path.
+
+## 2026-06-29 — Don't leave uncommitted work when a `git add -A` scheduler is armed
+**Module:** `harness/run-daily.sh` (step 3: `git add -A && git commit`)
+**What went wrong:** I left an unwired prototype (`summarizeAndClassify` in `releases.mjs`)
+uncommitted in the working tree. The 8 AM autonomous Day-3 run's `git add -A && git commit`
+swept it into the daily content commit (`5a76531 chore(daily): …`), so dead-but-exported code
+landed in an autonomous commit with no parity test and no deliberate decision. Harmless here
+(it wasn't called), but it muddies history and could ship an unfinished change.
+**What to do instead:** This repo's daily loop commits EVERYTHING in the working tree, on a
+schedule. Treat the working tree as "anything here ships in the next cycle." Before/while the
+launchd job is armed: commit or stash in-progress work, or keep experiments outside the repo
+(e.g. the session scratchpad). If a prototype must live in the repo, wire+test it deliberately
+or revert it before the next 8 AM run — don't leave it dangling.
