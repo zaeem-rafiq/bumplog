@@ -70,68 +70,135 @@ export async function runLLM(opts) {
 
   const caps = loadCaps();
   const model = opts.model ?? MODELS[opts.role ?? 'routine'];
-  const args = [
-    '-p',
-    opts.prompt,
-    '--model',
-    model,
-    '--output-format',
-    'json',
-    '--system-prompt',
-    stablePrefix(),
-  ];
-  // Restrict tools: judge/classify steps need none. Default to no tools unless
-  // the caller explicitly allows some.
-  args.push('--allowed-tools', (opts.allowedTools ?? []).join(','));
-  // Dollar tripwire (on subscription this should not bind; if it does, billing changed).
-  args.push('--max-budget-usd', String(opts.budgetUsd ?? 1));
 
-  const { stdout, code, stderr } = await spawnCapture('claude', args, opts.timeoutMs ?? caps.max_wall_clock_minutes * 60000);
+  // Resilience: when a step requires JSON, ONE malformed reply must not sink the
+  // whole daily run. Re-ask up to JSON_ATTEMPTS times, appending a strict-JSON
+  // reminder (the model almost always complies on retry). This applies ONLY to
+  // parse failures — rate-limit / billing conditions still halt immediately, so
+  // the "no retry-hammer" guarantee is preserved.
+  const JSON_ATTEMPTS = 3;
+  const maxAttempts = opts.expectJson ? JSON_ATTEMPTS : 1;
+  let lastParseErr = null;
 
-  if (/rate.?limit|429|overloaded/i.test(stderr)) {
-    throw new RateLimitError(`claude -p rate-limited (${model}).`);
-  }
-  if (/credit|billing|payment|insufficient|api rate/i.test(stderr)) {
-    throw new BillingChangeError(`claude -p reported a billing/credit condition (${model}): ${stderr.slice(0, 200)}`);
-  }
-  if (code !== 0) {
-    throw new Error(`claude -p exited ${code} (${model}): ${stderr.slice(0, 300)}`);
-  }
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    const prompt = attempt === 1
+      ? opts.prompt
+      : `${opts.prompt}\n\n[RETRY ${attempt - 1}] Your previous reply could not be parsed. Output ONE valid JSON value ONLY — no prose, no markdown fences, no comments, no trailing commas.`;
+    const args = [
+      '-p',
+      prompt,
+      '--model',
+      model,
+      '--output-format',
+      'json',
+      '--system-prompt',
+      stablePrefix(),
+    ];
+    // Restrict tools: judge/classify steps need none. Default to no tools unless
+    // the caller explicitly allows some.
+    args.push('--allowed-tools', (opts.allowedTools ?? []).join(','));
+    // Dollar tripwire (on subscription this should not bind; if it does, billing changed).
+    args.push('--max-budget-usd', String(opts.budgetUsd ?? 1));
 
-  let envelope;
-  try {
-    envelope = JSON.parse(stdout);
-  } catch {
-    envelope = { result: stdout };
-  }
-  const text = typeof envelope.result === 'string' ? envelope.result : stdout;
+    const { stdout, code, stderr } = await spawnCapture('claude', args, opts.timeoutMs ?? caps.max_wall_clock_minutes * 60000);
 
-  let json;
-  if (opts.expectJson) {
-    json = extractJson(text);
-  }
+    if (/rate.?limit|429|overloaded/i.test(stderr)) {
+      throw new RateLimitError(`claude -p rate-limited (${model}).`);
+    }
+    if (/credit|billing|payment|insufficient|api rate/i.test(stderr)) {
+      throw new BillingChangeError(`claude -p reported a billing/credit condition (${model}): ${stderr.slice(0, 200)}`);
+    }
+    if (code !== 0) {
+      throw new Error(`claude -p exited ${code} (${model}): ${stderr.slice(0, 300)}`);
+    }
 
-  // max_output_tokens cap: turns + wall-clock are hard-enforced (lib/caps.mjs),
-  // but `claude -p` exposes no per-step output-token flag. We DETECT a breach
-  // post-hoc and surface it (fail visibly). For a HARD per-step cap, implement
-  // the seam via @anthropic-ai/claude-agent-sdk and pass maxTokens=caps.max_output_tokens.
-  const outTokens = envelope.usage?.output_tokens ?? null;
-  const overTokenCap = outTokens != null && outTokens > caps.max_output_tokens;
-  if (overTokenCap) {
-    console.warn(`[llm] step output ${outTokens} tok > cap ${caps.max_output_tokens} (${model}) — review prompt scope.`);
+    let envelope;
+    try {
+      envelope = JSON.parse(stdout);
+    } catch {
+      envelope = { result: stdout };
+    }
+    const text = typeof envelope.result === 'string' ? envelope.result : stdout;
+
+    let json;
+    if (opts.expectJson) {
+      try {
+        json = extractJson(text);
+      } catch (err) {
+        lastParseErr = err;
+        console.warn(`[llm] unparseable JSON (attempt ${attempt}/${maxAttempts}, ${model}): ${err.message}`);
+        if (attempt < maxAttempts) continue; // re-ask with a strict-JSON reminder
+        throw new Error(`claude -p returned no parseable JSON after ${maxAttempts} attempts (${model}): ${lastParseErr.message}`);
+      }
+    }
+
+    // max_output_tokens cap: turns + wall-clock are hard-enforced (lib/caps.mjs),
+    // but `claude -p` exposes no per-step output-token flag. We DETECT a breach
+    // post-hoc and surface it (fail visibly). For a HARD per-step cap, implement
+    // the seam via @anthropic-ai/claude-agent-sdk and pass maxTokens=caps.max_output_tokens.
+    const outTokens = envelope.usage?.output_tokens ?? null;
+    const overTokenCap = outTokens != null && outTokens > caps.max_output_tokens;
+    if (overTokenCap) {
+      console.warn(`[llm] step output ${outTokens} tok > cap ${caps.max_output_tokens} (${model}) — review prompt scope.`);
+    }
+    return { text, json, usage: envelope.usage ?? null, model, overTokenCap };
   }
-  return { text, json, usage: envelope.usage ?? null, model, overTokenCap };
+  // Unreachable: the loop returns on success and throws on exhausted retries.
+  throw new Error(`claude -p produced no result (${model})`);
 }
 
-/** Pull the first JSON object/array out of model text (handles ```json fences). */
+/**
+ * Pull the first VALID JSON object/array out of model text. Tolerant of prose
+ * around the JSON, ```json fences, an echoed format spec BEFORE the real reply
+ * (e.g. `{"summary": string, ...}` then the actual object), and braces inside
+ * string values. Strategy: scan each candidate '{'/'[', walk a string-aware
+ * balanced span, and return the FIRST span that JSON.parses — so an unparseable
+ * prose echo is skipped, not fatal. Throws if nothing parses (runLLM re-asks).
+ */
 export function extractJson(text) {
+  if (typeof text !== 'string' || text.length === 0) {
+    throw new Error('no JSON found in model output');
+  }
+  const scan = (hay) => {
+    let i = 0;
+    while (i < hay.length) {
+      if (hay[i] !== '{' && hay[i] !== '[') { i++; continue; }
+      let depth = 0;
+      let inStr = false;
+      let esc = false;
+      let completedAt = -1;
+      for (let j = i; j < hay.length; j++) {
+        const c = hay[j];
+        if (inStr) {
+          if (esc) esc = false;
+          else if (c === '\\') esc = true;
+          else if (c === '"') inStr = false;
+          continue;
+        }
+        if (c === '"') inStr = true;
+        else if (c === '{' || c === '[') depth++;
+        else if (c === '}' || c === ']') {
+          if (--depth === 0) { completedAt = j; break; }
+        }
+      }
+      if (completedAt === -1) { i++; continue; } // unbalanced from here — try next opener
+      try {
+        return JSON.parse(hay.slice(i, completedAt + 1));
+      } catch {
+        i = completedAt + 1; // skip PAST the whole span (don't dive into its interior)
+      }
+    }
+    return undefined; // no balanced, parseable span (JSON.parse never returns undefined)
+  };
+  // Prefer a fenced ```json block; fall back to scanning the whole text.
   const fenced = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
-  const candidate = fenced ? fenced[1] : text;
-  const start = candidate.search(/[[{]/);
-  if (start === -1) throw new Error('no JSON found in model output');
-  // Try progressively larger slices ending at the last bracket.
-  const end = Math.max(candidate.lastIndexOf('}'), candidate.lastIndexOf(']'));
-  return JSON.parse(candidate.slice(start, end + 1));
+  if (fenced) {
+    const r = scan(fenced[1]);
+    if (r !== undefined) return r;
+  }
+  const r = scan(text);
+  if (r !== undefined) return r;
+  throw new Error('no valid JSON found in model output');
 }
 
 function spawnCapture(cmd, args, timeoutMs) {

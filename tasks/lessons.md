@@ -47,3 +47,20 @@ verdict as the hero). Don't delegate the *taste* call to an unsupervised autonom
 output trends generic; set the direction, then build. Note: the inline-widget (visualize/CDS)
 sandbox enforces the chat aesthetic (system font, two weights, no display type), so it's the
 wrong vehicle to preview a premium site direction — build it real and screenshot.
+
+## 2026-06-28 — A scheduled job must be verified AS a scheduled job (launchd + ~/Documents TCC)
+**Module:** `harness/run-daily.sh`, `harness/launchd/org.bumplog.daily.plist`
+**What went wrong:** The Day-2 8 AM `org.bumplog.daily` launchd run died instantly —
+`/bin/zsh: can't open input file: …/harness/run-daily.sh`, exit 127 — and produced no content,
+no deploy, no run record. The repo lives in `~/Documents`, a TCC-protected folder. A `launchd`
+user agent does NOT inherit Terminal's Full Disk Access, so reads inside `~/Documents` return
+`Operation not permitted` (EPERM) even with correct POSIX perms. Confirmed with an isolated probe
+launchd agent: reads in `~/Documents` → EPERM, reads in `~/Library` → OK, same gui/501 domain.
+The schedule had been "validated" by a *manual* run at arm-time — which executes in an
+FDA-having shell and bypasses the exact path that fails under launchd. The checklist caught
+"Mac must be awake at 8 AM" but missed the TCC boundary.
+**What to do instead:** When arming any `launchd`/cron job that touches `~/Documents`/`~/Desktop`/
+`~/Downloads`: keep the working set out of those folders OR grant FDA to the responsible binary,
+and verify by triggering it AS the scheduled job (`launchctl kickstart -k gui/$(id -u)/<label>`,
+or an isolated probe agent that reads the target paths) — never by a hand-run that has FDA. Treat
+"ran it manually, works" as proof of nothing for the scheduled execution path.

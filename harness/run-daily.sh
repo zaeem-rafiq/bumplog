@@ -9,7 +9,7 @@
 # unset so the loop stays on the Max subscription (never bills PAYG).
 set -u
 export PATH="/Users/zaeemkhan/.local/bin:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
-REPO="/Users/zaeemkhan/Documents/Bumplog/bumplog"
+REPO="/Users/zaeemkhan/Projects/bumplog"
 PLIST="$HOME/Library/LaunchAgents/org.bumplog.daily.plist"
 cd "$REPO" || exit 1
 

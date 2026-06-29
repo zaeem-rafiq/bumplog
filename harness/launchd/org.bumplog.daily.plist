@@ -7,7 +7,7 @@
   <key>ProgramArguments</key>
   <array>
     <string>/bin/zsh</string>
-    <string>/Users/zaeemkhan/Documents/Bumplog/bumplog/harness/run-daily.sh</string>
+    <string>/Users/zaeemkhan/Projects/bumplog/harness/run-daily.sh</string>
   </array>
   <!-- 8:00 AM local, daily. If the Mac is asleep/off at 8, launchd runs it once
        at the next wake. -->
@@ -23,8 +23,8 @@
   <key>RunAtLoad</key>
   <false/>
   <key>StandardOutPath</key>
-  <string>/Users/zaeemkhan/Documents/Bumplog/bumplog/harness/runs/logs/launchd.out.log</string>
+  <string>/Users/zaeemkhan/Projects/bumplog/harness/runs/logs/launchd.out.log</string>
   <key>StandardErrorPath</key>
-  <string>/Users/zaeemkhan/Documents/Bumplog/bumplog/harness/runs/logs/launchd.err.log</string>
+  <string>/Users/zaeemkhan/Projects/bumplog/harness/runs/logs/launchd.err.log</string>
 </dict>
 </plist>

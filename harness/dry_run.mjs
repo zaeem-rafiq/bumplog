@@ -344,6 +344,34 @@ async function main() {
     add('experiment_complete_halt', 'pending', 'needs frozen locks');
   }
 
+  // 22) LLM JSON extraction is robust to messy model output, so a single
+  //     malformed `claude -p` reply can't sink the whole daily run. Regression
+  //     guard for the 2026-06-28 brittle-extractor failure (an echoed format
+  //     spec before the real object broke first-bracket→last-bracket parsing).
+  {
+    const { extractJson } = await import('./lib/llm.mjs');
+    const cases = [
+      ['{"summary":"ok","citations":["u"]}', 'ok'],
+      ['```json\n{"summary":"ok"}\n```', 'ok'],
+      ['The format is {"summary": string, "citations": string[]}.\n\n{"summary":"ok","citations":["u"]}', 'ok'],
+      ['Here you go: {"summary":"Use {curly} braces","citations":["u"]}', 'Use {curly} braces'],
+      ['{"summary":"ok"}\n\nLet me know if you want more!', 'ok'],
+    ];
+    let ok = true;
+    let detail = '';
+    for (const [input, want] of cases) {
+      try {
+        const r = extractJson(input);
+        if (r.summary !== want) { ok = false; detail += `got '${r.summary}'!=='${want}'; `; }
+      } catch (e) { ok = false; detail += `threw:${e.message}; `; }
+    }
+    // Genuinely-empty/garbage input must THROW (so runLLM re-asks, not silently pass).
+    let threwOnGarbage = false;
+    try { extractJson('no json here at all'); } catch { threwOnGarbage = true; }
+    if (!threwOnGarbage) { ok = false; detail += 'garbage did not throw; '; }
+    add('llm_json_robust', ok ? 'pass' : 'fail', ok ? 'prose-echo / fence / brace-in-string / trailing-prose all parsed; garbage throws' : detail);
+  }
+
   print();
 }
 
@@ -369,6 +397,7 @@ const CHECKLIST = [
   ['metric_sql_executes', 'full metric SQL (returning-engaged + channel cap) executes live'],
   ['synthesis_grounded', 'synthesis seams carry source provenance, validate the safety enum, and never call the model on empty notes'],
   ['experiment_complete_halt', 'past day 30 → experiment-complete halt: no draft, no publish (scheduler self-disables)'],
+  ['llm_json_robust', 'LLM JSON extraction tolerates prose/fences/format-echo/braces-in-strings; garbage throws so runLLM re-asks'],
 ];
 
 function print() {
