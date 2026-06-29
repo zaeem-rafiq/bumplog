@@ -18,7 +18,7 @@ import { verifyLocks } from './lib/locks.mjs';
 import { writeBlocker, assertAllowed } from './lib/guards.mjs';
 import { RunBudget } from './lib/caps.mjs';
 import { pullAllMetrics, RateLimitError, BillingChangeError } from './analytics.mjs';
-import { buildReleaseRecord, loadAppRegistry, summarizeChangelog, flagBreakingChanges } from './releases.mjs';
+import { buildReleaseRecord, loadAppRegistry, summarizeAndClassify } from './releases.mjs';
 import { readFeedback, wrapFeedbackForPrompt } from './lib/feedback.mjs';
 import { evaluateGate } from './lib/gate.mjs';
 import { reconcileJournal } from './lib/journal.mjs';
@@ -194,13 +194,12 @@ export async function runLoop(opts = {}) {
       let rationale = entry.rationale;
       let citations = entry.citations;
       if (!dryRun && opts.llm) {
-        budget.tick(); // summary + flag are two real LLM turns
-        const sum = await summarizeChangelog(source, opts.llm);
-        const flag = await flagBreakingChanges(source, opts.llm);
-        summary = sum.summary;
-        safeToUpdate = flag.safeToUpdate;
-        rationale = flag.rationale;
-        citations = Array.from(new Set([...(sum.citations ?? []), ...(flag.citations ?? [])]));
+        budget.tick(); // summary + safe-to-update classification in ONE Sonnet call
+        const sc = await summarizeAndClassify(source, opts.llm);
+        summary = sc.summary;
+        safeToUpdate = sc.safeToUpdate;
+        rationale = sc.rationale;
+        citations = sc.citations;
       }
       // Override integrity-bearing fields with harness-derived values; attach the
       // grounded prose. raw_body is stripped before publish.
@@ -312,6 +311,12 @@ function stripRaw(entry) {
 // not all in one cycle). Over-proposals are dropped with a logged note.
 const MAX_ENTRIES_PER_DAY = 3;
 
+/** Strip a trailing brand suffix the LLM sometimes appends to a journal title;
+ *  the page layout adds " — Bumplog" itself, so leaving it in renders doubled. */
+export function stripBrandSuffix(title) {
+  return String(title ?? '').replace(/\s*[—–-]\s*bumplog\s*$/i, '').trim();
+}
+
 /**
  * The canonical metrics block, sourced from telemetry in CODE. Publishing these
  * (rather than model-written numbers) is the strongest form of "journal numbers
@@ -412,7 +417,7 @@ async function draftJournalViaAgent(date, telemetry, gate, wrapped, llm) {
   return {
     metrics: metricsFromTelemetry(telemetry),
     public: {
-      title: typeof j.title === 'string' && j.title.trim() ? j.title.trim() : `Day ${gate.day_index}`,
+      title: stripBrandSuffix(typeof j.title === 'string' ? j.title : '') || `Day ${gate.day_index}`,
       stage: gate.stage,
       day_index: gate.day_index,
       body: typeof j.body === 'string' ? j.body.trim() : '',

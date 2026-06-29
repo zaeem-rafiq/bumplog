@@ -372,6 +372,49 @@ async function main() {
     add('llm_json_robust', ok ? 'pass' : 'fail', ok ? 'prose-echo / fence / brace-in-string / trailing-prose all parsed; garbage throws' : detail);
   }
 
+  // 23) the combined summarize+classify seam (now wired into the per-app loop in
+  //     place of two separate calls) keeps the two-call path's integrity: carries
+  //     source provenance, validates the safety enum, and makes NO model call on
+  //     empty notes (cannot fabricate). Parity guard for the call-collapse.
+  {
+    const { summarizeAndClassify } = await import('./releases.mjs');
+    const url = 'https://github.com/immich-app/immich/releases/tag/v1.120.0';
+    const record = { name: 'Immich', tagName: 'v1.120.0', kind: 'release', provenance: { source: 'github', url }, raw_body: 'Fixed a memory leak. Added album sharing.' };
+    let calls = 0;
+    // misbehaving model: out-of-range enum + no citations — must be coerced/grounded
+    const fakeLLM = async () => { calls += 1; return { json: { summary: 'Routine fixes and album sharing.', safeToUpdate: 'not-a-real-value', rationale: 'Minor fixes.', citations: [] }, text: '' }; };
+    const r = await summarizeAndClassify(record, fakeLLM);
+    const emptyRecord = { name: 'Gitea', tagName: 'v1.21.0', kind: 'tag', provenance: { source: 'github', url: 'https://github.com/go-gitea/gitea/releases/tag/v1.21.0' }, raw_body: '' };
+    const before = calls;
+    const empty = await summarizeAndClassify(emptyRecord, fakeLLM);
+    const ok =
+      r.citations.includes(url) &&            // provenance carried into citations
+      r.safeToUpdate === 'unknown' &&         // out-of-range enum coerced to 'unknown'
+      typeof r.summary === 'string' && r.summary.length > 0 &&
+      calls === before &&                     // empty notes → NO model call
+      empty.safeToUpdate === 'unknown' &&
+      empty.summary.includes('v1.21.0');
+    add('combined_synthesis_parity', ok ? 'pass' : 'fail', `cites_src=${r.citations.includes(url)}; enum=${r.safeToUpdate}; empty_no_llm=${calls === before}; empty_safe=${empty.safeToUpdate}`);
+  }
+
+  // 24) journal-title brand-suffix guard: the page layout appends " — Bumplog",
+  //     so an LLM title that already carries the brand must be stripped (else it
+  //     renders doubled, as it did on the Day-3 journal page).
+  {
+    const { stripBrandSuffix } = await import('./morning_loop.mjs');
+    const cases = [
+      ['Completing the base catalog — Bumplog', 'Completing the base catalog'],
+      ['Day 2: adding apps', 'Day 2: adding apps'],
+      ['X – Bumplog', 'X'],   // en-dash
+      ['Y - bumplog', 'Y'],   // hyphen, lower-case brand
+      ['Bumplog tips for self-hosters', 'Bumplog tips for self-hosters'], // brand not a trailing suffix
+    ];
+    let ok = true;
+    let detail = '';
+    for (const [inp, want] of cases) { const got = stripBrandSuffix(inp); if (got !== want) { ok = false; detail += `'${inp}'->'${got}'!=='${want}'; `; } }
+    add('journal_title_brand_guard', ok ? 'pass' : 'fail', ok ? 'trailing brand stripped; non-suffix brand preserved' : detail);
+  }
+
   print();
 }
 
@@ -398,6 +441,8 @@ const CHECKLIST = [
   ['synthesis_grounded', 'synthesis seams carry source provenance, validate the safety enum, and never call the model on empty notes'],
   ['experiment_complete_halt', 'past day 30 → experiment-complete halt: no draft, no publish (scheduler self-disables)'],
   ['llm_json_robust', 'LLM JSON extraction tolerates prose/fences/format-echo/braces-in-strings; garbage throws so runLLM re-asks'],
+  ['combined_synthesis_parity', 'combined summarize+classify seam carries provenance, validates the safety enum, and skips the model on empty notes (parity with the two-call path)'],
+  ['journal_title_brand_guard', 'journal title strips a trailing " — Bumplog" so the layout brand suffix is not doubled'],
 ];
 
 function print() {
