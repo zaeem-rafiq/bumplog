@@ -112,5 +112,62 @@
     "citations": [
       "https://github.com/dani-garcia/vaultwarden/releases/tag/1.36.0"
     ]
+  },
+  "uptime-kuma": {
+    "slug": "uptime-kuma",
+    "angle": "Is it safe to update Uptime Kuma? Latest release changelog summary, breaking changes, and migration notes sourced from the GitHub release.",
+    "name": "Uptime Kuma",
+    "tagName": "2.4.0",
+    "publishedAt": "2026-05-31T00:55:12Z",
+    "contentHash": "0ba43fdcf6a83c7fcc9b8cc1d8de1f331ba599d912144512e15b7a8b2d4deca4",
+    "provenance": {
+      "source": "github",
+      "url": "https://github.com/louislam/uptime-kuma/releases/tag/2.4.0",
+      "fetchedAt": "2026-06-29T13:01:05.741Z"
+    },
+    "summary": "Uptime Kuma 2.4.0 adds two new notification providers — EgoSMS (for Uganda-based SMS) and VKTeams bot — and now includes incidents in RSS feeds. Monitor configuration gains bearer token support across HTTP and WebSocket upgrade monitors, plus an optional token field for GameDig monitors. A critical security fix patches a Remote Code Execution vulnerability in the LiquidJS dependency used by notification templates. The release also resolves a long-standing bug where NTLM monitors over plain HTTP would fail with a 400 Bad Request error.",
+    "safeToUpdate": "safe",
+    "rationale": "The 2.4.0 release notes list only additive new features (new notification providers, RSS incidents), optional improvements (bearer token support, gamedig token field), and bug fixes — none of which require migration or manual upgrade steps. Notably, the release patches a Remote Code Execution vulnerability in the LiquidJS dependency (GHSA-gf2q-c269-pqgc), making the update actively advisable for security. No breaking changes, deprecations, or required configuration changes are called out.",
+    "citations": [
+      "https://github.com/louislam/uptime-kuma/releases/tag/2.4.0"
+    ]
+  },
+  "adguard-home": {
+    "slug": "adguard-home",
+    "angle": "Is it safe to update AdGuard Home? Config-format changes and schema migrations flagged, with a safe-update badge based on the current release.",
+    "name": "AdGuard Home",
+    "tagName": "v0.107.77",
+    "publishedAt": "2026-06-02T12:52:16Z",
+    "contentHash": "98cd3b962f2f278ebb98db1dd148f206c20f12d827ce050060b96e1717e1afe3",
+    "provenance": {
+      "source": "github",
+      "url": "https://github.com/AdguardTeam/AdGuardHome/releases/tag/v0.107.77",
+      "fetchedAt": "2026-06-29T13:01:31.714Z"
+    },
+    "summary": "v0.107.77 patches a path traversal vulnerability in authorization for GLiNET mode (CVE-2026-41448), reported by a community member. The query log API gains a new `reason` query parameter on `GET /control/querylog` that replaces the now-deprecated `response_status` parameter. No other user-facing changes are included in this release.",
+    "safeToUpdate": "caution",
+    "rationale": "This release patches a path traversal vulnerability (CVE-2026-41448) in GLiNET mode authorization, making it a security-motivated update worth applying. However, it also deprecates the `response_status` query parameter in `GET /control/querylog` in favor of a new `reason` parameter — users or integrations relying on that API endpoint should review the change before updating. No breaking migrations or manual upgrade steps are noted.",
+    "citations": [
+      "https://github.com/AdguardTeam/AdGuardHome/releases/tag/v0.107.77"
+    ]
+  },
+  "gitea": {
+    "slug": "gitea",
+    "angle": "Is it safe to update Gitea? Database migration warnings, API deprecations, and upgrade path notes drawn from the latest GitHub release.",
+    "name": "Gitea",
+    "tagName": "v1.26.4",
+    "publishedAt": "2026-06-21T16:03:59Z",
+    "contentHash": "d83f229df0a2dbbe94630d06873809f9774b10405872cbe08e4d116c42a11d2d",
+    "provenance": {
+      "source": "github",
+      "url": "https://github.com/go-gitea/gitea/releases/tag/v1.26.4",
+      "fetchedAt": "2026-06-29T13:01:44.387Z"
+    },
+    "summary": "v1.26.4 is a focused patch release shipping one security fix and one bug fix. The security change closes a gap where disabled user accounts could be silently reactivated when logging in through an OAuth2 provider; disabled accounts now remain inactive after the OAuth2 callback completes. A separate bug fix improves error handling during git log traversal, preventing context errors from being silently ignored.",
+    "safeToUpdate": "safe",
+    "rationale": "v1.26.4 contains only a security fix preventing disabled users from being auto-reactivated via OAuth2 and a single bug fix for git log context error handling. The release notes call out no breaking changes, required migrations, or manual upgrade steps.",
+    "citations": [
+      "https://github.com/go-gitea/gitea/releases/tag/v1.26.4"
+    ]
   }
 }

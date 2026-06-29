@@ -1,5 +1,19 @@
 [
   {
+    "date": "2026-06-29",
+    "title": "Completing the base catalog: Uptime Kuma, AdGuard Home, and Gitea — Bumplog",
+    "stage": "leading",
+    "day_index": 3,
+    "body": "Day 3 completes the opening catalog with three high-velocity apps: Uptime Kuma, AdGuard Home, and Gitea. Each sees frequent releases and sits near the top of self-hosted app search interest, so adding them expands both coverage and the range of referral sources.\n\nVisitor feedback from the first two days confirms the core value proposition. People want to know about breaking changes and required migrations before they update. That signal shapes today's entries, with particular attention to schema changes, config-format bumps, and upgrade paths in each app's latest release.\n\nWith ten apps now in the tracker, the foundation is set for the second week's work: a few deep-dive pages on apps with real, recent breaking releases and the first stack dashboard for the media category.",
+    "metrics": {
+      "primary_metric": 0,
+      "returning_engaged_today": 1,
+      "raw_pageviews": 32,
+      "total_uniques": 3,
+      "max_source_share": 1
+    }
+  },
+  {
     "date": "2026-06-28",
     "title": "Day 2: adding Home Assistant, Nextcloud, and Vaultwarden",
     "stage": "leading",

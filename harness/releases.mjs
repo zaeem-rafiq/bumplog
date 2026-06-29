@@ -312,3 +312,57 @@ export async function flagBreakingChanges(record, llm) {
     'Assessment unavailable from the release notes; review the linked source.';
   return { safeToUpdate, rationale, citations: withSource(j.citations, record) };
 }
+
+/**
+ * PROTOTYPE (not yet wired into morning_loop): summary + safe-to-update assessment
+ * in ONE Sonnet call. Functionally equals summarizeChangelog + flagBreakingChanges
+ * but halves the per-app LLM cost — the loop's two Sonnet calls/app collapse to one,
+ * and the (large) raw_body is sent once instead of twice (input-token saving too).
+ * Preserves every integrity guarantee: same grounding rules, the same empty-notes
+ * deterministic path (NO llm call), the same enum + length validation. Returns the
+ * union of both results so the per-app loop can drop in a single call.
+ * @param {object} record  a buildReleaseRecord() result (found: true)
+ * @param {(o:object)=>Promise<{text:string,json?:any}>} llm  lib/llm.mjs runLLM
+ * @returns {Promise<{ summary:string, safeToUpdate:'safe'|'caution'|'breaking'|'unknown', rationale:string, citations:string[] }>}
+ */
+export async function summarizeAndClassify(record, llm) {
+  const url = record?.provenance?.url;
+  const raw = (record?.raw_body ?? '').trim();
+  if (!raw) {
+    return {
+      summary: `${record.name} ${record.tagName}: GitHub published no release notes for this ${record.kind}. See the linked source.`,
+      safeToUpdate: 'unknown',
+      rationale: 'No published release notes to assess. Review the linked source before updating.',
+      citations: withSource([], record),
+    };
+  }
+  if (typeof llm !== 'function') {
+    throw new Error('summarizeAndClassify requires an llm function (lib/llm.mjs runLLM)');
+  }
+  const prompt = [
+    `Summarize AND assess update-safety for ${record.name} ${record.tagName}, based ONLY on these release notes.`,
+    'Reply with JSON only: {"summary": string, "safeToUpdate": "safe"|"caution"|"breaking"|"unknown", "rationale": string, "citations": string[]}.',
+    'SUMMARY:',
+    '- plain text, 2–5 sentences, no markdown headers, focus on notable user-facing changes.',
+    `- mention NO version number other than "${record.tagName}"; invent no dates; write a fresh summary, NOT a copy of the notes.`,
+    'safeToUpdate — CLASSIFY:',
+    '- "breaking": notes call out breaking changes, required migrations, or manual upgrade steps.',
+    '- "caution": notable behavioral changes, deprecations, or config changes worth reading first.',
+    '- "safe": routine fixes/features with no migration or breaking note.',
+    '- "unknown": notes are insufficient to judge.',
+    '- rationale: 1–3 sentences grounded ONLY in the notes.',
+    `- put the source URL ${url} in citations.`,
+    '',
+    'RELEASE NOTES (input only — do not republish verbatim):',
+    raw.slice(0, RAW_BODY_INPUT_CHARS),
+  ].join('\n');
+
+  const out = await llm({ prompt, role: 'build', expectJson: true });
+  const j = out.json ?? {};
+  const summary = clamp(j.summary ?? out.text, SUMMARY_MAX_CHARS) ||
+    `${record.name} ${record.tagName}: see the linked release notes.`;
+  const safeToUpdate = SAFE_VALUES.has(j.safeToUpdate) ? j.safeToUpdate : 'unknown';
+  const rationale = clamp(j.rationale, RATIONALE_MAX_CHARS) ||
+    'Assessment unavailable from the release notes; review the linked source.';
+  return { summary, safeToUpdate, rationale, citations: withSource(j.citations, record) };
+}
