@@ -55,5 +55,62 @@
     "citations": [
       "https://github.com/paperless-ngx/paperless-ngx/releases/tag/v2.20.15"
     ]
+  },
+  "home-assistant": {
+    "slug": "home-assistant",
+    "angle": "Is it safe to update Home Assistant? Breaking changes, supervisor and integration migration notes, and a safety badge drawn from the latest GitHub release.",
+    "name": "Home Assistant",
+    "tagName": "2026.6.4",
+    "publishedAt": "2026-06-19T20:58:50Z",
+    "contentHash": "ab7b3e8946d70f9b24e5684a061f6144386d5ad255a5ce3dafbdc82efd5d6e17",
+    "provenance": {
+      "source": "github",
+      "url": "https://github.com/home-assistant/core/releases/tag/2026.6.4",
+      "fetchedAt": "2026-06-29T04:29:12.433Z"
+    },
+    "summary": "Home Assistant 2026.6.4 delivers a security fix that prevents the Immich API key from appearing in error logs, and corrects a Growatt power reporting bug where total output power was reported 1,000 times too low when using the V1 API. Sonos now dynamically includes saved favorites in the media player source list, Subaru gains fourth-generation API support, and Amber Electric's configuration flow filters out closed sites to avoid setup confusion. WebDAV integration now retries setup on connection errors rather than failing outright, and the La Marzocco pre-brew time limits have been updated. A broad sweep of translation fixes across more than two dozen integrations improves the setup flow experience for non-English users.",
+    "safeToUpdate": "safe",
+    "rationale": "All changes in 2026.6.4 are bug fixes, dependency bumps, and translation additions — none of the release notes mention breaking changes, required migrations, or manual upgrade steps. Notable fixes include a Growatt sensor value correction (1000× off), an Immich API key log leak, an InfluxDB URL double-slash bug, and an MQTT discovery data fix, all of which are improvements rather than behavior changes that would require user action. The notes are slightly truncated but the visible content is uniformly patch-level.",
+    "citations": [
+      "https://github.com/home-assistant/core/releases/tag/2026.6.4"
+    ]
+  },
+  "nextcloud": {
+    "slug": "nextcloud",
+    "angle": "Is it safe to update Nextcloud? Database migration requirements, app compatibility warnings, and upgrade-path clarity synthesized from the latest release notes.",
+    "name": "Nextcloud",
+    "tagName": "v34.0.1",
+    "publishedAt": "2026-06-25T12:37:10Z",
+    "contentHash": "1418f44dc0de6d4071c67a4dcf327007c174b4c88abd55ba9b0375aaa8b77522",
+    "provenance": {
+      "source": "github",
+      "url": "https://github.com/nextcloud/server/releases/tag/v34.0.1",
+      "fetchedAt": "2026-06-29T04:29:53.680Z"
+    },
+    "summary": "...",
+    "safeToUpdate": "unknown",
+    "rationale": "The release notes provided contain only a changelog comparison URL and no substantive text describing changes, migrations, deprecations, or breaking changes. Without actual note content there is no basis to classify the update. The source must be fetched and read before a classification can be made.",
+    "citations": [
+      "https://github.com/nextcloud/server/releases/tag/v34.0.1"
+    ]
+  },
+  "vaultwarden": {
+    "slug": "vaultwarden",
+    "angle": "Is it safe to update Vaultwarden? Security-relevant changes, breaking config or schema shifts, and a caution/safe badge grounded in the latest GitHub release.",
+    "name": "Vaultwarden",
+    "tagName": "1.36.0",
+    "publishedAt": "2026-05-03T12:54:52Z",
+    "contentHash": "6516a987370ff01ee3cf81d9b8dba3509a67c3a780adbd10c956810a0eeffff7",
+    "provenance": {
+      "source": "github",
+      "url": "https://github.com/dani-garcia/vaultwarden/releases/tag/1.36.0",
+      "fetchedAt": "2026-06-29T04:32:38.412Z"
+    },
+    "summary": "Vaultwarden 1.36.0 is a security-critical release that patches multiple vulnerabilities including SSO login CSRF, user/organization enumeration, SSO existing-user binding issues, and server-side request forgery (SSRF) via the icon endpoint — an immediate upgrade is strongly advised. On the features side, vault item archiving is now supported, letting users tidy their vault without permanently deleting entries. The bundled Web Vault has been updated to v2026.4.1, and DuckDuckGo has been added as a recognized browser device type. Several SSO improvements and a fix for favicon fetching (which now checks all icon links rather than only the first) round out the release.",
+    "safeToUpdate": "caution",
+    "rationale": "This release patches six security advisories (SSO CSRF, user/org enumeration, SSO existing-user binding, and SSRF via Icon Endpoint) and the maintainers explicitly urge updating 'as soon as possible,' making the upgrade strongly recommended. No breaking changes or required manual migration steps are called out in the notes. However, the multiple SSO-related fixes (CSRF, identifier handling, user binding) and the Web Vault bump to v2026.4.1 warrant reading the individual advisories—especially if SSO is enabled—before updating in production.",
+    "citations": [
+      "https://github.com/dani-garcia/vaultwarden/releases/tag/1.36.0"
+    ]
   }
 }

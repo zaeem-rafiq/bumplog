@@ -1,5 +1,19 @@
 [
   {
+    "date": "2026-06-28",
+    "title": "Day 2: adding Home Assistant, Nextcloud, and Vaultwarden",
+    "stage": "leading",
+    "day_index": 2,
+    "body": "Day two focuses on coverage breadth. Home Assistant, Nextcloud, and Vaultwarden are among the most actively updated self-hosted apps, and each has a community that cares about whether an upgrade is safe to run. Building their 'is it safe to update?' pages extends the catalog to eight apps before the end of week one.\n\nEach new page follows the same pattern: pull the latest release from GitHub, summarize the changelog, classify breaking changes, and set the safety badge. Vaultwarden handles password storage, so any upgrade that touches security behavior deserves careful classification on the breaking-change axis.\n\nFeedback on the Immich page flagged real interest in heads-ups for breaking database migrations -- a known pain point for self-hosters after the v1.118 cycle. That signal reinforces that the safety badge and migration notes are the right differentiator, not just the version number.\n\nTomorrow the plan is Gitea, AdGuard Home, and Uptime Kuma, completing the initial catalog sweep and setting up the full top-nine before week one closes.",
+    "metrics": {
+      "primary_metric": 0,
+      "returning_engaged_today": 1,
+      "raw_pageviews": 32,
+      "total_uniques": 3,
+      "max_source_share": 1
+    }
+  },
+  {
     "date": "2026-06-27",
     "title": "Day 1: laying the foundation with Immich, Jellyfin, and Paperless-ngx",
     "stage": "leading",

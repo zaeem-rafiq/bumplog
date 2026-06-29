@@ -36,23 +36,23 @@
     "slug": "nextcloud",
     "name": "Nextcloud",
     "repo": "nextcloud/server",
-    "latestVersion": null,
-    "changelogSummary": null,
-    "safeToUpdate": null,
-    "sourceUrl": null,
-    "lastChecked": null,
-    "rationale": null
+    "latestVersion": "v34.0.1",
+    "changelogSummary": "...",
+    "safeToUpdate": "unknown",
+    "sourceUrl": "https://github.com/nextcloud/server/releases/tag/v34.0.1",
+    "lastChecked": "2026-06-28",
+    "rationale": "The release notes provided contain only a changelog comparison URL and no substantive text describing changes, migrations, deprecations, or breaking changes. Without actual note content there is no basis to classify the update. The source must be fetched and read before a classification can be made."
   },
   {
     "slug": "home-assistant",
     "name": "Home Assistant",
     "repo": "home-assistant/core",
-    "latestVersion": null,
-    "changelogSummary": null,
-    "safeToUpdate": null,
-    "sourceUrl": null,
-    "lastChecked": null,
-    "rationale": null
+    "latestVersion": "2026.6.4",
+    "changelogSummary": "Home Assistant 2026.6.4 delivers a security fix that prevents the Immich API key from appearing in error logs, and corrects a Growatt power reporting bug where total output power was reported 1,000 times too low when using the V1 API. Sonos now dynamically includes saved favorites in the media player source list, Subaru gains fourth-generation API support, and Amber Electric's configuration flow filters out closed sites to avoid setup confusion. WebDAV integration now retries setup on connection errors rather than failing outright, and the La Marzocco pre-brew time limits have been updated. A broad sweep of translation fixes across more than two dozen integrations improves the setup flow experience for non-English users.",
+    "safeToUpdate": "safe",
+    "sourceUrl": "https://github.com/home-assistant/core/releases/tag/2026.6.4",
+    "lastChecked": "2026-06-28",
+    "rationale": "All changes in 2026.6.4 are bug fixes, dependency bumps, and translation additions — none of the release notes mention breaking changes, required migrations, or manual upgrade steps. Notable fixes include a Growatt sensor value correction (1000× off), an Immich API key log leak, an InfluxDB URL double-slash bug, and an MQTT discovery data fix, all of which are improvements rather than behavior changes that would require user action. The notes are slightly truncated but the visible content is uniformly patch-level."
   },
   {
     "slug": "gitea",
@@ -69,12 +69,12 @@
     "slug": "vaultwarden",
     "name": "Vaultwarden",
     "repo": "dani-garcia/vaultwarden",
-    "latestVersion": null,
-    "changelogSummary": null,
-    "safeToUpdate": null,
-    "sourceUrl": null,
-    "lastChecked": null,
-    "rationale": null
+    "latestVersion": "1.36.0",
+    "changelogSummary": "Vaultwarden 1.36.0 is a security-critical release that patches multiple vulnerabilities including SSO login CSRF, user/organization enumeration, SSO existing-user binding issues, and server-side request forgery (SSRF) via the icon endpoint — an immediate upgrade is strongly advised. On the features side, vault item archiving is now supported, letting users tidy their vault without permanently deleting entries. The bundled Web Vault has been updated to v2026.4.1, and DuckDuckGo has been added as a recognized browser device type. Several SSO improvements and a fix for favicon fetching (which now checks all icon links rather than only the first) round out the release.",
+    "safeToUpdate": "caution",
+    "sourceUrl": "https://github.com/dani-garcia/vaultwarden/releases/tag/1.36.0",
+    "lastChecked": "2026-06-28",
+    "rationale": "This release patches six security advisories (SSO CSRF, user/org enumeration, SSO existing-user binding, and SSRF via Icon Endpoint) and the maintainers explicitly urge updating 'as soon as possible,' making the upgrade strongly recommended. No breaking changes or required manual migration steps are called out in the notes. However, the multiple SSO-related fixes (CSRF, identifier handling, user binding) and the Web Vault bump to v2026.4.1 warrant reading the individual advisories—especially if SSO is enabled—before updating in production."
   },
   {
     "slug": "adguard-home",

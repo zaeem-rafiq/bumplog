@@ -1,0 +1,170 @@
+{
+  "date": "2026-06-28",
+  "status": "ok",
+  "mode": "live",
+  "trace": [
+    {
+      "step": "auth-guard",
+      "at": "2026-06-29T04:28:05.453Z",
+      "ok": true
+    },
+    {
+      "step": "verify-locks",
+      "at": "2026-06-29T04:28:05.454Z",
+      "ok": true,
+      "failures": []
+    },
+    {
+      "step": "pull-metrics",
+      "at": "2026-06-29T04:28:07.041Z",
+      "primary_metric": 0,
+      "engaged_uniques": 3,
+      "max_source_share": 1
+    },
+    {
+      "step": "feedback",
+      "at": "2026-06-29T04:28:07.043Z",
+      "count": 4,
+      "flagged": [
+        {
+          "id": "fb-injection-probe",
+          "reason": "injection-shaped content"
+        }
+      ]
+    },
+    {
+      "step": "gate",
+      "at": "2026-06-29T04:28:07.044Z",
+      "stage": "leading",
+      "day_index": 2,
+      "leading": {
+        "engaged_uniques": 3,
+        "distinct_sources": 1,
+        "max_source_share": 1,
+        "channel_cap_ok": false,
+        "on_track": false
+      },
+      "lagging": {
+        "returning_engaged_median": 0,
+        "target": 3,
+        "on_track": false
+      },
+      "channel_cap": 0.5,
+      "channel_cap_ok": false,
+      "gated_on_track": false
+    },
+    {
+      "step": "journal-honesty",
+      "at": "2026-06-29T04:29:12.043Z",
+      "ok": true,
+      "mismatches": [],
+      "missing": []
+    },
+    {
+      "step": "pivot-hysteresis",
+      "at": "2026-06-29T04:29:12.043Z",
+      "allowed": true,
+      "reason": "no prior pivot on record",
+      "lastPivotDate": null,
+      "daysSince": null,
+      "intent": false
+    },
+    {
+      "step": "judges",
+      "at": "2026-06-29T04:33:16.549Z",
+      "freshness": [
+        {
+          "slug": "home-assistant",
+          "verdict": "fresh",
+          "reason": "first publish for this app"
+        },
+        {
+          "slug": "nextcloud",
+          "verdict": "fresh",
+          "reason": "first publish for this app"
+        },
+        {
+          "slug": "vaultwarden",
+          "verdict": "fresh",
+          "reason": "first publish for this app"
+        }
+      ],
+      "dark_pattern": [
+        {
+          "name": "Weekly breaking-changes digest",
+          "verdict": "real-value",
+          "signatures": []
+        }
+      ]
+    },
+    {
+      "step": "journal-append",
+      "at": "2026-06-29T04:33:16.553Z",
+      "published": true
+    }
+  ],
+  "day_index": 2,
+  "start_date": "2026-06-27",
+  "gate": {
+    "stage": "leading",
+    "day_index": 2,
+    "leading": {
+      "engaged_uniques": 3,
+      "distinct_sources": 1,
+      "max_source_share": 1,
+      "channel_cap_ok": false,
+      "on_track": false
+    },
+    "lagging": {
+      "returning_engaged_median": 0,
+      "target": 3,
+      "on_track": false
+    },
+    "channel_cap": 0.5,
+    "channel_cap_ok": false,
+    "gated_on_track": false
+  },
+  "pivot": {
+    "allowed": true,
+    "reason": "no prior pivot on record",
+    "lastPivotDate": null,
+    "daysSince": null
+  },
+  "judges": {
+    "freshness": [
+      {
+        "slug": "home-assistant",
+        "verdict": "fresh",
+        "reason": "first publish for this app"
+      },
+      {
+        "slug": "nextcloud",
+        "verdict": "fresh",
+        "reason": "first publish for this app"
+      },
+      {
+        "slug": "vaultwarden",
+        "verdict": "fresh",
+        "reason": "first publish for this app"
+      }
+    ],
+    "dark_pattern": [
+      {
+        "name": "Weekly breaking-changes digest",
+        "verdict": "real-value",
+        "signatures": []
+      }
+    ]
+  },
+  "journal_published": true,
+  "journal_count": 2,
+  "published_slugs": [
+    "home-assistant",
+    "nextcloud",
+    "vaultwarden"
+  ],
+  "budget": {
+    "turns": 44,
+    "minutes": 24.815
+  }
+}
