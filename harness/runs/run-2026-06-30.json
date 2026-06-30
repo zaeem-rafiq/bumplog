@@ -1,0 +1,187 @@
+{
+  "date": "2026-06-30",
+  "status": "ok",
+  "mode": "live",
+  "trace": [
+    {
+      "step": "auth-guard",
+      "at": "2026-06-30T13:00:05.303Z",
+      "ok": true
+    },
+    {
+      "step": "verify-locks",
+      "at": "2026-06-30T13:00:05.304Z",
+      "ok": true,
+      "failures": []
+    },
+    {
+      "step": "pull-metrics",
+      "at": "2026-06-30T13:00:09.835Z",
+      "primary_metric": 0,
+      "engaged_uniques": 3,
+      "max_source_share": 1
+    },
+    {
+      "step": "feedback",
+      "at": "2026-06-30T13:00:09.840Z",
+      "count": 4,
+      "flagged": [
+        {
+          "id": "fb-injection-probe",
+          "reason": "injection-shaped content"
+        }
+      ]
+    },
+    {
+      "step": "gate",
+      "at": "2026-06-30T13:00:09.842Z",
+      "stage": "leading",
+      "day_index": 4,
+      "leading": {
+        "engaged_uniques": 3,
+        "distinct_sources": 1,
+        "max_source_share": 1,
+        "channel_cap_ok": false,
+        "on_track": false
+      },
+      "lagging": {
+        "returning_engaged_median": 0,
+        "target": 3,
+        "on_track": false
+      },
+      "channel_cap": 0.5,
+      "channel_cap_ok": false,
+      "gated_on_track": false
+    },
+    {
+      "step": "journal-honesty",
+      "at": "2026-06-30T13:01:08.386Z",
+      "ok": true,
+      "mismatches": [],
+      "missing": []
+    },
+    {
+      "step": "pivot-hysteresis",
+      "at": "2026-06-30T13:01:08.387Z",
+      "allowed": true,
+      "reason": "no prior pivot on record",
+      "lastPivotDate": null,
+      "daysSince": null,
+      "intent": false
+    },
+    {
+      "step": "freshness-theater",
+      "at": "2026-06-30T13:01:14.976Z",
+      "slug": "immich",
+      "blocked": true,
+      "reason": "source unchanged; non-source fields differ but no upstream change to report"
+    },
+    {
+      "step": "freshness-theater",
+      "at": "2026-06-30T13:01:31.593Z",
+      "slug": "home-assistant",
+      "blocked": true,
+      "reason": "source unchanged; non-source fields differ but no upstream change to report"
+    },
+    {
+      "step": "freshness-theater",
+      "at": "2026-06-30T13:01:37.105Z",
+      "slug": "jellyfin",
+      "blocked": true,
+      "reason": "source unchanged; non-source fields differ but no upstream change to report"
+    },
+    {
+      "step": "judges",
+      "at": "2026-06-30T13:01:54.733Z",
+      "freshness": [
+        {
+          "slug": "immich",
+          "verdict": "theater",
+          "reason": "source unchanged; non-source fields differ but no upstream change to report"
+        },
+        {
+          "slug": "home-assistant",
+          "verdict": "theater",
+          "reason": "source unchanged; non-source fields differ but no upstream change to report"
+        },
+        {
+          "slug": "jellyfin",
+          "verdict": "theater",
+          "reason": "source unchanged; non-source fields differ but no upstream change to report"
+        }
+      ],
+      "dark_pattern": [
+        {
+          "name": "weekly breaking-change digest page",
+          "verdict": "real-value",
+          "signatures": []
+        }
+      ]
+    },
+    {
+      "step": "journal-append",
+      "at": "2026-06-30T13:01:54.804Z",
+      "published": true
+    }
+  ],
+  "day_index": 4,
+  "start_date": "2026-06-27",
+  "gate": {
+    "stage": "leading",
+    "day_index": 4,
+    "leading": {
+      "engaged_uniques": 3,
+      "distinct_sources": 1,
+      "max_source_share": 1,
+      "channel_cap_ok": false,
+      "on_track": false
+    },
+    "lagging": {
+      "returning_engaged_median": 0,
+      "target": 3,
+      "on_track": false
+    },
+    "channel_cap": 0.5,
+    "channel_cap_ok": false,
+    "gated_on_track": false
+  },
+  "pivot": {
+    "allowed": true,
+    "reason": "no prior pivot on record",
+    "lastPivotDate": null,
+    "daysSince": null
+  },
+  "judges": {
+    "freshness": [
+      {
+        "slug": "immich",
+        "verdict": "theater",
+        "reason": "source unchanged; non-source fields differ but no upstream change to report"
+      },
+      {
+        "slug": "home-assistant",
+        "verdict": "theater",
+        "reason": "source unchanged; non-source fields differ but no upstream change to report"
+      },
+      {
+        "slug": "jellyfin",
+        "verdict": "theater",
+        "reason": "source unchanged; non-source fields differ but no upstream change to report"
+      }
+    ],
+    "dark_pattern": [
+      {
+        "name": "weekly breaking-change digest page",
+        "verdict": "real-value",
+        "signatures": []
+      }
+    ]
+  },
+  "journal_published": true,
+  "journal_count": 4,
+  "published_slugs": [],
+  "budget": {
+    "turns": 44,
+    "minutes": 28.174966666666666
+  }
+}

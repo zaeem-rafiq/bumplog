@@ -1,5 +1,19 @@
 [
   {
+    "date": "2026-06-30",
+    "title": "Day 4: freshness pass on high-velocity apps and sharper breaking-change notes",
+    "stage": "leading",
+    "day_index": 4,
+    "body": "Day 4 of 30. All nine core app pages are live, so the focus now is staying current. Immich and Home Assistant release fast enough that their pages need regular attention; both are queued for a freshness check today, and the breaking-change badge will be updated if the underlying source release changed.\n\nReader feedback points consistently at one gap: people want to know about database migrations before they upgrade, not after. The breaking-change classification on high-velocity apps can be sharper, naming the migration step explicitly when the release notes describe one, rather than a generic caution flag.\n\nJellyfin feedback asks for plugin compatibility notes alongside the safety badge. Where the release notes mention plugin impact, a short 'plugin notes' line is easy to add and makes the page genuinely more useful.\n\nSource diversity is the stage-one lever. Long-tail titles keyed to specific upgrade questions are the main acquisition path right now. No external community posting today; one well-timed share later in week two will do more than several early ones.",
+    "metrics": {
+      "primary_metric": 0,
+      "returning_engaged_today": 0,
+      "raw_pageviews": 32,
+      "total_uniques": 3,
+      "max_source_share": 1
+    }
+  },
+  {
     "date": "2026-06-29",
     "title": "Completing the base catalog: Uptime Kuma, AdGuard Home, and Gitea",
     "stage": "leading",
