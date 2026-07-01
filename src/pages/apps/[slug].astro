@@ -32,6 +32,26 @@ const VERDICT_ANSWER: Record<SafeToUpdate, string> = {
   unknown: 'Not assessed yet.',
 };
 const answer = VERDICT_ANSWER[status];
+
+// Structured data (schema.org): help search engines understand the "is it safe
+// to update" assessment. A TechArticle ABOUT the app (SoftwareApplication),
+// based on the cited GitHub release. Injected into <head> via the layout slot.
+const canonical = `https://bumplog.org/apps/${app.slug}/`;
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'TechArticle',
+  headline: `Is it safe to update ${app.name}?${app.latestVersion ? ` (${app.latestVersion})` : ''}`,
+  description: (app.rationale ?? app.changelogSummary ?? `Update-safety assessment for ${app.name}, traceable to its GitHub release.`).slice(0, 300),
+  ...(app.lastChecked ? { datePublished: app.lastChecked, dateModified: app.lastChecked } : {}),
+  mainEntityOfPage: canonical,
+  url: canonical,
+  author: { '@type': 'Organization', name: 'Bumplog', url: 'https://bumplog.org' },
+  publisher: { '@type': 'Organization', name: 'Bumplog', url: 'https://bumplog.org', logo: { '@type': 'ImageObject', url: 'https://bumplog.org/og-image.png' } },
+  about: { '@type': 'SoftwareApplication', name: app.name, applicationCategory: 'ServerApplication', ...(app.latestVersion ? { softwareVersion: app.latestVersion } : {}), url: repoUrl },
+  ...(app.sourceUrl ? { citation: app.sourceUrl, isBasedOn: app.sourceUrl } : {}),
+};
+// Escape "<" so a rationale can never break out of the <script> element.
+const jsonLdStr = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
 ---
 
 <BaseLayout
@@ -39,6 +59,7 @@ const answer = VERDICT_ANSWER[status];
   description={`Is it safe to update ${app.name}? Bumplog summarizes the latest ${app.name} release and flags breaking changes, all traceable to the GitHub release for ${app.repo}.`}
   ogType="article"
 >
+  <script type="application/ld+json" slot="head" is:inline set:html={jsonLdStr} />
   <article>
     <p class="breadcrumb"><a href="/">Trackers</a> <span aria-hidden="true">/</span> {app.name}</p>
 
