@@ -415,6 +415,32 @@ async function main() {
     add('journal_title_brand_guard', ok ? 'pass' : 'fail', ok ? 'trailing brand stripped; non-suffix brand preserved' : detail);
   }
 
+  // 25) governed catalog growth: agent-proposed NEW apps pass validate (GitHub
+  //     re-derivation) → dedupe → add, capped. An unverifiable repo is never
+  //     added; a malformed repo is rejected by the shape guard with NO network
+  //     call; the per-day cap holds. Integrity gate for autonomous growth.
+  {
+    const { validateNewAppRepo } = await import('./releases.mjs');
+    const { growCatalog } = await import('./morning_loop.mjs');
+    const bad = await validateNewAppRepo({ slug: 'x', name: 'X', repo: 'not-a-repo' }); // shape guard, no network
+    const registryHas = new Set(['immich']);   // pretend immich already in the registry
+    const added = [];
+    const fakeValidate = async ({ repo }) => (repo === 'real/app' ? { ok: true, repo } : { ok: false, reason: 'unverified' });
+    const fakeAdd = (slug, name, repo) => { if (registryHas.has(slug) || added.some((a) => a.slug === slug)) return false; added.push({ slug, name, repo }); return true; };
+    const cands = [
+      { slug: 'newapp', name: 'New App', repo: 'real/app' },  // valid → added
+      { slug: 'fakeapp', name: 'Fake', repo: 'ghost/nope' },  // unverifiable → rejected
+      { slug: 'third', name: 'Third', repo: 'real/app' },     // beyond cap(2) → not processed
+    ];
+    const res = await growCatalog(cands, { validate: fakeValidate, add: fakeAdd, cap: 2 });
+    const ok =
+      bad.ok === false &&
+      added.length === 1 && added[0].slug === 'newapp' &&
+      res.find((r) => r.slug === 'fakeapp')?.added === false &&
+      !res.some((r) => r.slug === 'third');
+    add('catalog_growth_governed', ok ? 'pass' : 'fail', `bad_repo_rejected=${bad.ok === false}; added=[${added.map((a) => a.slug).join(',')}]; processed=${res.length}`);
+  }
+
   print();
 }
 
@@ -443,6 +469,7 @@ const CHECKLIST = [
   ['llm_json_robust', 'LLM JSON extraction tolerates prose/fences/format-echo/braces-in-strings; garbage throws so runLLM re-asks'],
   ['combined_synthesis_parity', 'combined summarize+classify seam carries provenance, validates the safety enum, and skips the model on empty notes (parity with the two-call path)'],
   ['journal_title_brand_guard', 'journal title strips a trailing " — Bumplog" so the layout brand suffix is not doubled'],
+  ['catalog_growth_governed', 'agent-proposed new apps are GitHub-validated, deduped, and capped before entering the registry; malformed/unverifiable repos rejected'],
 ];
 
 function print() {

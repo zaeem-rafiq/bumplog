@@ -18,14 +18,14 @@ import { verifyLocks } from './lib/locks.mjs';
 import { writeBlocker, assertAllowed } from './lib/guards.mjs';
 import { RunBudget } from './lib/caps.mjs';
 import { pullAllMetrics, RateLimitError, BillingChangeError } from './analytics.mjs';
-import { buildReleaseRecord, loadAppRegistry, summarizeAndClassify } from './releases.mjs';
+import { buildReleaseRecord, loadAppRegistry, summarizeAndClassify, validateNewAppRepo } from './releases.mjs';
 import { readFeedback, wrapFeedbackForPrompt } from './lib/feedback.mjs';
 import { evaluateGate } from './lib/gate.mjs';
 import { reconcileJournal } from './lib/journal.mjs';
 import { canPivot, recordPivot } from './lib/hysteresis.mjs';
 import { judgeFreshness } from './judges/freshness_theater.mjs';
 import { judgeDarkPattern } from './judges/dark_pattern.mjs';
-import { experimentDay, getPublishedEntry, appendJournalEntry, emitRunRecord, setPublishedEntry, syncSiteApp } from './lib/store.mjs';
+import { experimentDay, getPublishedEntry, appendJournalEntry, emitRunRecord, setPublishedEntry, syncSiteApp, addSiteApp } from './lib/store.mjs';
 import { runLLM } from './lib/llm.mjs';
 
 function todayUTC(now = new Date()) {
@@ -236,6 +236,23 @@ export async function runLoop(opts = {}) {
     record.judges = { freshness: freshnessVerdicts, dark_pattern: darkVerdicts };
     log('judges', record.judges);
 
+    // ── Step 7b: governed catalog growth ─────────────────────────────────────
+    // The agent proposes NEW apps; the harness VALIDATES each against the real
+    // GitHub source (never trusting the agent's claim) before appending to the
+    // registry — capped, deduped, and hidden until assessed. Both seams are
+    // injectable for tests; live uses the GitHub validator + registry writer,
+    // dry-run adds nothing unless a fake is injected.
+    const validateNew = opts.validateNewApp ?? (dryRun ? async () => ({ ok: false, reason: 'dry-run' }) : validateNewAppRepo);
+    const addApp = opts.addApp ?? (dryRun ? () => false : addSiteApp);
+    const catalogGrowth = await growCatalog(journalDraft.proposed_new_apps, { validate: validateNew, add: addApp, tick: () => budget.tick() });
+    if (catalogGrowth.length) {
+      record.catalog_growth = catalogGrowth;
+      log('catalog-growth', {
+        added: catalogGrowth.filter((c) => c.added).map((c) => c.slug),
+        rejected: catalogGrowth.filter((c) => !c.added).map((c) => `${c.slug}:${c.reason}`),
+      });
+    }
+
     // ── Step 8: append journal + commit staged publishes ATOMICALLY ──────────
     budget.tick();
     if (!dryRun) {
@@ -310,11 +327,33 @@ function stripRaw(entry) {
 // and matches a sane content cadence (week 1 builds the top ~10 over the week,
 // not all in one cycle). Over-proposals are dropped with a logged note.
 const MAX_ENTRIES_PER_DAY = 3;
+/** At most this many NEW apps may enter the registry per run (governed growth). */
+const MAX_NEW_APPS_PER_DAY = 2;
 
 /** Strip a trailing brand suffix the LLM sometimes appends to a journal title;
  *  the page layout adds " — Bumplog" itself, so leaving it in renders doubled. */
 export function stripBrandSuffix(title) {
   return String(title ?? '').replace(/\s*[—–-]\s*bumplog\s*$/i, '').trim();
+}
+
+/**
+ * Governed catalog growth: for each candidate (capped), validate then add.
+ * `validate` re-derives from the real source and returns {ok, repo, reason};
+ * `add(slug,name,repo)` appends to the registry and returns whether it was added
+ * (false = duplicate). Both are injected so the loop can wire GitHub+disk while
+ * tests wire fakes. Returns one result row per processed candidate.
+ * @returns {Promise<Array<{slug:string, repo:string, added:boolean, reason:string}>>}
+ */
+export async function growCatalog(candidates, { validate, add, cap = MAX_NEW_APPS_PER_DAY, tick } = {}) {
+  const out = [];
+  for (const cand of (Array.isArray(candidates) ? candidates : []).slice(0, cap)) {
+    if (tick) tick();
+    const v = await validate(cand);
+    if (!v.ok) { out.push({ slug: cand.slug, repo: cand.repo, added: false, reason: v.reason }); continue; }
+    const added = add(cand.slug, cand.name, v.repo ?? cand.repo);
+    out.push({ slug: cand.slug, repo: v.repo ?? cand.repo, added, reason: added ? 'added' : 'duplicate' });
+  }
+  return out;
 }
 
 /**
@@ -373,11 +412,15 @@ async function draftJournalViaAgent(date, telemetry, gate, wrapped, llm) {
     'You operate Bumplog, a self-hosted-app update tracker. Decide the day\'s work and',
     'write a short public journal entry. Reply with JSON only:',
     '{"title": string, "body": string, "proposed_entries": [{"slug": string, "angle": string}],',
+    ' "proposed_new_apps": [{"slug": string, "name": string, "repo": string}],',
     ' "proposed_retention_mechanics": [{"name": string, "description": string}],',
     ' "intent_to_pivot": boolean, "pivot_rationale": string}',
     'RULES:',
     `- proposed_entries: pick 1–${MAX_ENTRIES_PER_DAY} app slugs FROM THE CATALOG to build/refresh today.`,
     '  Favor not-yet-built, high-velocity apps early; refresh others only on a real new release.',
+    `- proposed_new_apps: optionally propose up to ${MAX_NEW_APPS_PER_DAY} NEW self-hosted apps to GROW the catalog`,
+    '  — well-known, actively-released, NOT already in the catalog — each {slug, name, repo:"owner/name"}.',
+    '  The harness validates every repo against GitHub and silently drops any it cannot verify. [] if none.',
     '- body: plain text, 2–4 short paragraphs. Do NOT put visitor counts or metrics in the body;',
     '  the verified metrics block is rendered separately. No fabricated facts.',
     '- Style: sentence case, plain punctuation. Avoid em-dashes (at most two total across title and body).',
@@ -414,6 +457,13 @@ async function draftJournalViaAgent(date, telemetry, gate, wrapped, llm) {
     .filter((m) => m && typeof m.name === 'string' && typeof m.description === 'string')
     .slice(0, 2);
 
+  // NEW-app candidates: shape-check + drop any already in the registry. GitHub
+  // validation happens in the loop (re-derive, never trust the agent's claim).
+  const newApps = (Array.isArray(j.proposed_new_apps) ? j.proposed_new_apps : [])
+    .filter((a) => a && typeof a.slug === 'string' && typeof a.repo === 'string' && !known.has(a.slug.trim()))
+    .map((a) => ({ slug: a.slug.trim(), name: typeof a.name === 'string' && a.name.trim() ? a.name.trim() : a.slug.trim(), repo: a.repo.trim() }))
+    .slice(0, MAX_NEW_APPS_PER_DAY);
+
   return {
     metrics: metricsFromTelemetry(telemetry),
     public: {
@@ -426,6 +476,7 @@ async function draftJournalViaAgent(date, telemetry, gate, wrapped, llm) {
     pivot_rationale: typeof j.pivot_rationale === 'string' ? j.pivot_rationale : '',
     proposed_entries: proposed,
     proposed_retention_mechanics: mechanics,
+    proposed_new_apps: newApps,
   };
 }
 

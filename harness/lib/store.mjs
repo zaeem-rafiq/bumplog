@@ -107,6 +107,32 @@ export function syncSiteApp(slug, fields) {
   return updated;
 }
 
+/**
+ * Append a NEW app to the registry with null published fields (unassessed). The
+ * page + homepage row stay hidden until the agent assesses it. Idempotent:
+ * returns false if the slug already exists (never overwrites). Caller must have
+ * already validated `repo` against GitHub (see releases.validateNewAppRepo).
+ */
+export function addSiteApp(slug, name, repo) {
+  const file = appsFile();
+  const apps = readJson(file, null);
+  if (!Array.isArray(apps)) return false;
+  if (apps.some((a) => a.slug === slug)) return false;
+  apps.push({
+    slug,
+    name,
+    repo,
+    latestVersion: null,
+    changelogSummary: null,
+    safeToUpdate: null,
+    rationale: null,
+    sourceUrl: null,
+    lastChecked: null,
+  });
+  writeFileSync(file, JSON.stringify(apps, null, 2) + '\n');
+  return true;
+}
+
 /** Emit a machine-readable run record for error analysis. */
 export function emitRunRecord(record) {
   // Test isolation: dry_run.mjs points this at a temp dir. Production leaves unset.

@@ -162,6 +162,29 @@ export async function buildReleaseRecord(app) {
   return { found: false, slug: app.slug, repo: app.repo };
 }
 
+/**
+ * Validate an agent-proposed NEW app by RE-DERIVING from GitHub — never trusting
+ * the agent's claim. The repo must be well-formed and resolve to a real release
+ * or tag, so a hallucinated/nonexistent repo can never enter the registry. This
+ * is the integrity gate for autonomous catalog growth.
+ * @param {{ slug:string, name:string, repo:string }} cand
+ * @returns {Promise<{ ok:boolean, repo?:string, tagName?:string, reason?:string }>}
+ */
+export async function validateNewAppRepo({ slug, name, repo }) {
+  if (!/^[\w.-]+\/[\w.-]+$/.test(String(repo ?? ''))) {
+    return { ok: false, reason: `repo must be "owner/name", got "${repo}"` };
+  }
+  try {
+    const rec = await buildReleaseRecord({ slug, name, repo });
+    if (rec.found && rec.provenance?.source === 'github') {
+      return { ok: true, repo, tagName: rec.tagName };
+    }
+    return { ok: false, reason: 'no GitHub release or tag found for repo' };
+  } catch (err) {
+    return { ok: false, reason: String(err.message).slice(0, 160) };
+  }
+}
+
 function finalizeRecord(app, src) {
   return {
     found: true,
