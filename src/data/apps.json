@@ -97,5 +97,192 @@
     "sourceUrl": "https://github.com/louislam/uptime-kuma/releases/tag/2.4.0",
     "lastChecked": "2026-06-29",
     "rationale": "The 2.4.0 release notes list only additive new features (new notification providers, RSS incidents), optional improvements (bearer token support, gamedig token field), and bug fixes — none of which require migration or manual upgrade steps. Notably, the release patches a Remote Code Execution vulnerability in the LiquidJS dependency (GHSA-gf2q-c269-pqgc), making the update actively advisable for security. No breaking changes, deprecations, or required configuration changes are called out."
+  },
+  {
+    "slug": "frigate",
+    "name": "Frigate",
+    "repo": "blakeblackshear/frigate",
+    "latestVersion": null,
+    "changelogSummary": null,
+    "safeToUpdate": null,
+    "rationale": null,
+    "sourceUrl": null,
+    "lastChecked": null
+  },
+  {
+    "slug": "grafana",
+    "name": "Grafana",
+    "repo": "grafana/grafana",
+    "latestVersion": null,
+    "changelogSummary": null,
+    "safeToUpdate": null,
+    "rationale": null,
+    "sourceUrl": null,
+    "lastChecked": null
+  },
+  {
+    "slug": "portainer",
+    "name": "Portainer",
+    "repo": "portainer/portainer",
+    "latestVersion": null,
+    "changelogSummary": null,
+    "safeToUpdate": null,
+    "rationale": null,
+    "sourceUrl": null,
+    "lastChecked": null
+  },
+  {
+    "slug": "traefik",
+    "name": "Traefik",
+    "repo": "traefik/traefik",
+    "latestVersion": null,
+    "changelogSummary": null,
+    "safeToUpdate": null,
+    "rationale": null,
+    "sourceUrl": null,
+    "lastChecked": null
+  },
+  {
+    "slug": "authentik",
+    "name": "Authentik",
+    "repo": "goauthentik/authentik",
+    "latestVersion": null,
+    "changelogSummary": null,
+    "safeToUpdate": null,
+    "rationale": null,
+    "sourceUrl": null,
+    "lastChecked": null
+  },
+  {
+    "slug": "sonarr",
+    "name": "Sonarr",
+    "repo": "Sonarr/Sonarr",
+    "latestVersion": null,
+    "changelogSummary": null,
+    "safeToUpdate": null,
+    "rationale": null,
+    "sourceUrl": null,
+    "lastChecked": null
+  },
+  {
+    "slug": "radarr",
+    "name": "Radarr",
+    "repo": "Radarr/Radarr",
+    "latestVersion": null,
+    "changelogSummary": null,
+    "safeToUpdate": null,
+    "rationale": null,
+    "sourceUrl": null,
+    "lastChecked": null
+  },
+  {
+    "slug": "overseerr",
+    "name": "Overseerr",
+    "repo": "sct/overseerr",
+    "latestVersion": null,
+    "changelogSummary": null,
+    "safeToUpdate": null,
+    "rationale": null,
+    "sourceUrl": null,
+    "lastChecked": null
+  },
+  {
+    "slug": "navidrome",
+    "name": "Navidrome",
+    "repo": "navidrome/navidrome",
+    "latestVersion": null,
+    "changelogSummary": null,
+    "safeToUpdate": null,
+    "rationale": null,
+    "sourceUrl": null,
+    "lastChecked": null
+  },
+  {
+    "slug": "homepage",
+    "name": "Homepage",
+    "repo": "gethomepage/homepage",
+    "latestVersion": null,
+    "changelogSummary": null,
+    "safeToUpdate": null,
+    "rationale": null,
+    "sourceUrl": null,
+    "lastChecked": null
+  },
+  {
+    "slug": "mealie",
+    "name": "Mealie",
+    "repo": "mealie-recipes/mealie",
+    "latestVersion": null,
+    "changelogSummary": null,
+    "safeToUpdate": null,
+    "rationale": null,
+    "sourceUrl": null,
+    "lastChecked": null
+  },
+  {
+    "slug": "bookstack",
+    "name": "BookStack",
+    "repo": "BookStackApp/BookStack",
+    "latestVersion": null,
+    "changelogSummary": null,
+    "safeToUpdate": null,
+    "rationale": null,
+    "sourceUrl": null,
+    "lastChecked": null
+  },
+  {
+    "slug": "pi-hole",
+    "name": "Pi-hole",
+    "repo": "pi-hole/pi-hole",
+    "latestVersion": null,
+    "changelogSummary": null,
+    "safeToUpdate": null,
+    "rationale": null,
+    "sourceUrl": null,
+    "lastChecked": null
+  },
+  {
+    "slug": "n8n",
+    "name": "n8n",
+    "repo": "n8n-io/n8n",
+    "latestVersion": null,
+    "changelogSummary": null,
+    "safeToUpdate": null,
+    "rationale": null,
+    "sourceUrl": null,
+    "lastChecked": null
+  },
+  {
+    "slug": "dockge",
+    "name": "Dockge",
+    "repo": "louislam/dockge",
+    "latestVersion": null,
+    "changelogSummary": null,
+    "safeToUpdate": null,
+    "rationale": null,
+    "sourceUrl": null,
+    "lastChecked": null
+  },
+  {
+    "slug": "wg-easy",
+    "name": "wg-easy",
+    "repo": "wg-easy/wg-easy",
+    "latestVersion": null,
+    "changelogSummary": null,
+    "safeToUpdate": null,
+    "rationale": null,
+    "sourceUrl": null,
+    "lastChecked": null
+  },
+  {
+    "slug": "karakeep",
+    "name": "Karakeep",
+    "repo": "karakeep-app/karakeep",
+    "latestVersion": null,
+    "changelogSummary": null,
+    "safeToUpdate": null,
+    "rationale": null,
+    "sourceUrl": null,
+    "lastChecked": null
   }
 ]

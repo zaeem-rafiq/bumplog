@@ -4,10 +4,14 @@ import apps from '../../data/apps.json';
 import { toBadgeStatus, type App, type SafeToUpdate } from '../../data/types';
 
 export function getStaticPaths() {
-  return (apps as App[]).map((app) => ({
-    params: { slug: app.slug },
-    props: { app },
-  }));
+  // Only assessed apps get a page. Seeded-but-unbuilt apps (safeToUpdate null)
+  // are a backlog for the agent — they must not ship as thin "not assessed" pages.
+  return (apps as App[])
+    .filter((app) => app.safeToUpdate != null)
+    .map((app) => ({
+      params: { slug: app.slug },
+      props: { app },
+    }));
 }
 
 interface Props {

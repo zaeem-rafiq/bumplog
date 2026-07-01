@@ -4,7 +4,9 @@ import AppRow from '../components/AppRow.astro';
 import apps from '../data/apps.json';
 import { toBadgeStatus, type App, type SafeToUpdate } from '../data/types';
 
-const trackedApps = apps as App[];
+// Show only assessed apps — seeded-but-unbuilt entries (safeToUpdate null) are
+// the agent's backlog, not live content, so they stay off the homepage until built.
+const trackedApps = (apps as App[]).filter((a) => a.safeToUpdate != null);
 
 // Assessed apps lead, ordered by severity (safe, caution, breaking), pending
 // last. Stable name order within a group.
@@ -22,7 +24,7 @@ const counts = {
   safe: trackedApps.filter((a) => a.safeToUpdate === 'safe').length,
   caution: trackedApps.filter((a) => a.safeToUpdate === 'caution').length,
   breaking: trackedApps.filter((a) => a.safeToUpdate === 'breaking').length,
-  unknown: trackedApps.filter((a) => a.safeToUpdate == null).length,
+  unknown: trackedApps.filter((a) => a.safeToUpdate === 'unknown').length,
 };
 
 const FILTERS: { key: SafeToUpdate | 'all'; label: string }[] = [
