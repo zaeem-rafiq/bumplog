@@ -1,5 +1,19 @@
 [
   {
+    "date": "2026-07-01",
+    "title": "Is your container stack safe to update?",
+    "stage": "leading",
+    "day_index": 5,
+    "body": "Today's focus is three cornerstone tools that appear in most self-hosted setups: Portainer for container management, Pi-hole for DNS-level filtering, and Grafana for metrics and dashboards. All three ship updates at high velocity and carry real consequences if a breaking change goes unnoticed before a pull.\n\nFeedback from Immich readers flagged a specific pain point: database migrations that land without prominent warning. That pattern is not unique to Immich. Today's new pages will surface migration steps and schema changes at the top of the breaking-change section rather than burying them in release notes prose.\n\nThe safe-to-update badge on the Jellyfin page is drawing engagement, and readers are asking for plugin and API compatibility notes alongside it. Where upstream release notes carry that detail, today's builds will include it explicitly.\n\nTwo new apps are proposed for the catalog: Stirling-PDF, a fast-growing self-hosted document processing tool with active releases, and Actual Budget, an open-source personal finance app whose update stakes make a safety tracker genuinely useful.",
+    "metrics": {
+      "primary_metric": 0,
+      "returning_engaged_today": 0,
+      "raw_pageviews": 32,
+      "total_uniques": 3,
+      "max_source_share": 1
+    }
+  },
+  {
     "date": "2026-06-30",
     "title": "Day 4: freshness pass on high-velocity apps and sharper breaking-change notes",
     "stage": "leading",

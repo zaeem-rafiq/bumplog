@@ -169,5 +169,63 @@
     "citations": [
       "https://github.com/go-gitea/gitea/releases/tag/v1.26.4"
     ]
+  },
+  "portainer": {
+    "slug": "portainer",
+    "angle": "Is it safe to update Portainer? Breaking-change classification covering agent compatibility, API version deprecations, and Edge stack behavior shifts across releases.",
+    "name": "Portainer",
+    "tagName": "2.39.4",
+    "publishedAt": "2026-06-25T01:18:08Z",
+    "contentHash": "b7879c8f220d1fd93e9c94574f37022b4a45532fdb43dbdec5ff608f2ea5489b",
+    "provenance": {
+      "source": "github",
+      "url": "https://github.com/portainer/portainer/releases/tag/2.39.4",
+      "fetchedAt": "2026-07-01T13:01:02.371Z"
+    },
+    "summary": "Portainer 2.39.4 is primarily a security and bug-fix release. It addresses multiple CVEs in the go-git and Go standard library dependencies, covering a broad range of vulnerabilities. Notable bug fixes include a security patch preventing users without environment access from enumerating Kubernetes resources, a fix for a restore endpoint that could allow admin takeover on uninitialised instances, and a resolution for standard users being unable to redeploy team stacks or delete registry images. The Docker binary has been replaced with libstack, and a new API endpoint for refreshing Team/Group membership has been added.",
+    "safeToUpdate": "caution",
+    "rationale": "The replacement of the Docker binary with libstack is a notable internal behavioral change that may affect environment-specific workflows, warranting review before upgrading. The security fixes — particularly the Kubernetes resource enumeration bypass and the restore endpoint admin-takeover vulnerability — make updating advisable, but the libstack substitution means the update is worth reading about rather than applying blindly. No explicit breaking changes, required migrations, or manual upgrade steps are called out in the notes.",
+    "citations": [
+      "https://github.com/portainer/portainer/releases/tag/2.39.4"
+    ]
+  },
+  "pi-hole": {
+    "slug": "pi-hole",
+    "angle": "Is it safe to update Pi-hole? Focus on Gravity database migrations, configuration format changes, and DNS resolver behavior differences between major versions.",
+    "name": "Pi-hole",
+    "tagName": "v6.4.2",
+    "publishedAt": "2026-04-24T21:56:33Z",
+    "contentHash": "0a4aabc808d919b435f362fab28bc1440f215a6d669b631bc5791c5d50a1dd6e",
+    "provenance": {
+      "source": "github",
+      "url": "https://github.com/pi-hole/pi-hole/releases/tag/v6.4.2",
+      "fetchedAt": "2026-07-01T13:01:11.700Z"
+    },
+    "summary": "v6.4.2 delivers a security fix alongside a set of infrastructure and reliability improvements. A published security advisory has been patched in both the core installer and the FTL component. The release also tightens file ownership and permission handling, including a fix for .etag files after gravity runs and loosened requirements for local-file gravity sources. Installer behaviour is refined: the apt cache update is skipped when pihole-meta is already current, logrotate is now a declared dependency for DEB and RPM packages, and gravity error messages now include the curl exit code for easier debugging.",
+    "safeToUpdate": "caution",
+    "rationale": "The presence of a patched security advisory (GHSA-6w8x-p785-6pm4) makes updating advisable, but users should be aware of the permission and gravity-behaviour changes that could affect custom setups. No explicit breaking changes or required manual migration steps are called out in the notes, but the security nature of the release and the permission/ownership fixes warrant reading the advisory before updating.",
+    "citations": [
+      "https://github.com/pi-hole/pi-hole/releases/tag/v6.4.2",
+      "https://github.com/pi-hole/pi-hole/security/advisories/GHSA-6w8x-p785-6pm4"
+    ]
+  },
+  "grafana": {
+    "slug": "grafana",
+    "angle": "Is it safe to update Grafana? Dashboard JSON model changes, data source plugin API deprecations, and authentication backend removals flagged per release.",
+    "name": "Grafana",
+    "tagName": "v13.0.3",
+    "publishedAt": "2026-06-23T16:22:23Z",
+    "contentHash": "ee1768684cd4ae7f6b357441b6c090042ce76e1f1aa822f5d96692979aaf3532",
+    "provenance": {
+      "source": "github",
+      "url": "https://github.com/grafana/grafana/releases/tag/v13.0.3",
+      "fetchedAt": "2026-07-01T13:01:20.595Z"
+    },
+    "summary": "v13.0.3 is a patch release focused on provisioning reliability and bug fixes. Docker images based on Alpine are bumped to a newer base version. Provisioning now correctly writes folder metadata files when dashboards are created in or moved into new folders, and several provisioning edge cases are resolved including multi-org PR comment handling and folder-rename link tracking. A bad MySQL query in a datasource type column migration is fixed, and the datasources API now correctly rejects mismatched UIDs with a 400 error.",
+    "safeToUpdate": "safe",
+    "rationale": "The release notes list only bug fixes and minor enhancements with no breaking changes, required migrations, or manual upgrade steps called out. The MySQL migration query fix is notable but is described as a bug fix, implying it corrects an existing fault rather than introducing a schema change requiring action. No deprecations or behavioral changes are flagged.",
+    "citations": [
+      "https://github.com/grafana/grafana/releases/tag/v13.0.3"
+    ]
   }
 }

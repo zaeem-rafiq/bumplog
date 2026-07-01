@@ -1,0 +1,181 @@
+{
+  "date": "2026-07-01",
+  "status": "ok",
+  "mode": "live",
+  "trace": [
+    {
+      "step": "auth-guard",
+      "at": "2026-07-01T13:00:05.717Z",
+      "ok": true
+    },
+    {
+      "step": "verify-locks",
+      "at": "2026-07-01T13:00:05.720Z",
+      "ok": true,
+      "failures": []
+    },
+    {
+      "step": "pull-metrics",
+      "at": "2026-07-01T13:00:10.139Z",
+      "primary_metric": 0,
+      "engaged_uniques": 3,
+      "max_source_share": 1
+    },
+    {
+      "step": "feedback",
+      "at": "2026-07-01T13:00:10.142Z",
+      "count": 4,
+      "flagged": [
+        {
+          "id": "fb-injection-probe",
+          "reason": "injection-shaped content"
+        }
+      ]
+    },
+    {
+      "step": "gate",
+      "at": "2026-07-01T13:00:10.143Z",
+      "stage": "leading",
+      "day_index": 5,
+      "leading": {
+        "engaged_uniques": 3,
+        "distinct_sources": 1,
+        "max_source_share": 1,
+        "channel_cap_ok": false,
+        "on_track": false
+      },
+      "lagging": {
+        "returning_engaged_median": 0,
+        "target": 3,
+        "on_track": false
+      },
+      "channel_cap": 0.5,
+      "channel_cap_ok": false,
+      "gated_on_track": false
+    },
+    {
+      "step": "journal-honesty",
+      "at": "2026-07-01T13:01:01.942Z",
+      "ok": true,
+      "mismatches": [],
+      "missing": []
+    },
+    {
+      "step": "pivot-hysteresis",
+      "at": "2026-07-01T13:01:01.943Z",
+      "allowed": true,
+      "reason": "no prior pivot on record",
+      "lastPivotDate": null,
+      "daysSince": null,
+      "intent": false
+    },
+    {
+      "step": "judges",
+      "at": "2026-07-01T13:01:29.844Z",
+      "freshness": [
+        {
+          "slug": "portainer",
+          "verdict": "fresh",
+          "reason": "first publish for this app"
+        },
+        {
+          "slug": "pi-hole",
+          "verdict": "fresh",
+          "reason": "first publish for this app"
+        },
+        {
+          "slug": "grafana",
+          "verdict": "fresh",
+          "reason": "first publish for this app"
+        }
+      ],
+      "dark_pattern": []
+    },
+    {
+      "step": "catalog-growth",
+      "at": "2026-07-01T13:01:30.879Z",
+      "added": [
+        "stirling-pdf",
+        "actual"
+      ],
+      "rejected": []
+    },
+    {
+      "step": "journal-append",
+      "at": "2026-07-01T13:01:30.886Z",
+      "published": true
+    }
+  ],
+  "day_index": 5,
+  "start_date": "2026-06-27",
+  "gate": {
+    "stage": "leading",
+    "day_index": 5,
+    "leading": {
+      "engaged_uniques": 3,
+      "distinct_sources": 1,
+      "max_source_share": 1,
+      "channel_cap_ok": false,
+      "on_track": false
+    },
+    "lagging": {
+      "returning_engaged_median": 0,
+      "target": 3,
+      "on_track": false
+    },
+    "channel_cap": 0.5,
+    "channel_cap_ok": false,
+    "gated_on_track": false
+  },
+  "pivot": {
+    "allowed": true,
+    "reason": "no prior pivot on record",
+    "lastPivotDate": null,
+    "daysSince": null
+  },
+  "judges": {
+    "freshness": [
+      {
+        "slug": "portainer",
+        "verdict": "fresh",
+        "reason": "first publish for this app"
+      },
+      {
+        "slug": "pi-hole",
+        "verdict": "fresh",
+        "reason": "first publish for this app"
+      },
+      {
+        "slug": "grafana",
+        "verdict": "fresh",
+        "reason": "first publish for this app"
+      }
+    ],
+    "dark_pattern": []
+  },
+  "catalog_growth": [
+    {
+      "slug": "stirling-pdf",
+      "repo": "Frooodle/Stirling-PDF",
+      "added": true,
+      "reason": "added"
+    },
+    {
+      "slug": "actual",
+      "repo": "actualbudget/actual-server",
+      "added": true,
+      "reason": "added"
+    }
+  ],
+  "journal_published": true,
+  "journal_count": 5,
+  "published_slugs": [
+    "portainer",
+    "pi-hole",
+    "grafana"
+  ],
+  "budget": {
+    "turns": 43,
+    "minutes": 28.580516666666668
+  }
+}
