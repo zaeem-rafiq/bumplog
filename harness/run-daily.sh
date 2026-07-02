@@ -24,6 +24,10 @@ set -a
 set +a
 unset ANTHROPIC_API_KEY
 
+# 0) Pull visitor feedback from KV into the loop-readable inbox (non-fatal —
+#    the loop reads whatever the inbox already holds if the pull fails).
+node harness/pull-feedback.mjs || echo "feedback pull failed (non-fatal)"
+
 # 1) Governed content loop. Publishes to data files; always emits a run record.
 node harness/morning_loop.mjs
 RUN_RECORD="$REPO/harness/runs/run-$(date -u +%Y-%m-%d).json"
@@ -41,6 +45,10 @@ if ! grep -Eq '"status":[[:space:]]*"ok"' "$RUN_RECORD"; then
   echo "loop did not finish ok — no deploy. See $RUN_RECORD"
   exit 0
 fi
+
+# 1b) Refresh support-lifecycle data (non-fatal — a failed refresh keeps the
+#     committed src/data/eol.json; the site never depends on the network).
+node harness/eol.mjs || echo "eol refresh failed (non-fatal, keeping stale src/data/eol.json)"
 
 # 2) Build + deploy the static site (direct upload via stored wrangler OAuth).
 echo "building…"

@@ -47,10 +47,20 @@ const needsCare = stackApps.filter(
   ogType="article"
   wide={true}
 >
+  <link
+    rel="alternate"
+    type="application/rss+xml"
+    slot="head"
+    title={`Bumplog — ${stack.name} stack updates`}
+    href={`/stacks/${stack.slug}/feed.xml`}
+  />
   <article>
     <p class="breadcrumb"><a href="/stacks/">Stacks</a> <span aria-hidden="true">/</span> {stack.name}</p>
     <h1>{stack.name} stack</h1>
-    <p class="lede">{stack.description}</p>
+    <p class="lede">
+      {stack.description}
+      <a class="stack-feed" href={`/stacks/${stack.slug}/feed.xml`}>Follow this stack via RSS</a>
+    </p>
 
     {stackApps.length > 0 && (
       <ul class="summary" aria-label="Stack summary">
@@ -108,6 +118,11 @@ const needsCare = stackApps.filter(
 </BaseLayout>
 
 <style>
+  .stack-feed {
+    display: block;
+    margin-top: 0.4rem;
+    font-size: var(--text-sm);
+  }
   .stack-list {
     list-style: none;
     margin: 1.25rem 0 0;

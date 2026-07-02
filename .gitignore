@@ -10,6 +10,8 @@ dist/
 .output/
 .vercel/
 .netlify/
+# wrangler local state (miniflare sqlite/KV blobs from `wrangler pages dev`)
+.wrangler/
 
 # ── Harness runtime artifacts ────────────────────────────────────────────
 harness/cache/

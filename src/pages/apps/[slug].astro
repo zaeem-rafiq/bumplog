@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import apps from '../../data/apps.json';
 import { toBadgeStatus, type App, type SafeToUpdate } from '../../data/types';
+import { getLifecycle } from '../../lib/eol';
 
 export function getStaticPaths() {
   // Only assessed apps get a page. Seeded-but-unbuilt apps (safeToUpdate null)
@@ -33,6 +34,10 @@ const VERDICT_ANSWER: Record<SafeToUpdate, string> = {
 };
 const answer = VERDICT_ANSWER[status];
 
+// Support-lifecycle context (endoflife.date), rendered only when verified data
+// matches this app's current version — nothing is invented for uncovered apps.
+const lifecycle = getLifecycle(app.slug, app.latestVersion);
+
 // Structured data (schema.org): help search engines understand the "is it safe
 // to update" assessment. A TechArticle ABOUT the app (SoftwareApplication),
 // based on the cited GitHub release. Injected into <head> via the layout slot.
@@ -60,6 +65,13 @@ const jsonLdStr = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
   ogType="article"
 >
   <script type="application/ld+json" slot="head" is:inline set:html={jsonLdStr} />
+  <link
+    rel="alternate"
+    type="application/rss+xml"
+    slot="head"
+    title={`Bumplog — ${app.name} update safety`}
+    href={`/apps/${app.slug}/feed.xml`}
+  />
   <article>
     <p class="breadcrumb"><a href="/">Trackers</a> <span aria-hidden="true">/</span> {app.name}</p>
 
@@ -116,6 +128,18 @@ const jsonLdStr = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
               <dd class="placeholder">not yet checked</dd>
             )}
           </div>
+          {lifecycle && (
+            <div>
+              <dt>Support lifecycle</dt>
+              <dd>
+                {lifecycle.status === 'supported' && `${lifecycle.cycle} · actively supported`}
+                {lifecycle.status === 'eol-scheduled' && `${lifecycle.cycle} · supported until ${lifecycle.eolDate}`}
+                {lifecycle.status === 'eol' && `${lifecycle.cycle} · end of life${lifecycle.eolDate ? ` since ${lifecycle.eolDate}` : ''}`}
+                {' '}
+                <a class="lifecycle-source muted" href={lifecycle.link} rel="nofollow noopener">endoflife.date</a>
+              </dd>
+            </div>
+          )}
         </dl>
       </div>
     </section>
@@ -150,6 +174,13 @@ const jsonLdStr = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
           <span class="placeholder"> (specific release link pending)</span>
         )}
       </p>
+      <p class="source-card__follow muted">
+        Follow {app.name}: <a href={`/apps/${app.slug}/feed.xml`}>RSS</a>
+        <span aria-hidden="true">·</span>
+        <a href={`/api/v1/apps/${app.slug}.json`}>JSON</a>
+        <span aria-hidden="true">·</span>
+        <a href={`/badge/${app.slug}.svg`}>badge</a>
+      </p>
     </div>
   </article>
 </BaseLayout>
@@ -182,5 +213,15 @@ const jsonLdStr = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
   }
   .source-card__link {
     margin: 0;
+  }
+  .source-card__follow {
+    font-size: var(--text-sm);
+    margin: 0.85rem 0 0;
+  }
+  .source-card__follow span {
+    margin-inline: 0.35rem;
+  }
+  .lifecycle-source {
+    font-size: var(--text-xs);
   }
 </style>

@@ -1,0 +1,11 @@
+# Cloudflare Pages configuration for the bumplog project.
+# `wrangler pages deploy dist` reads this file and syncs the bindings below to
+# the Pages project — the FEEDBACK KV namespace backs functions/api/feedback.ts.
+# The namespace id is not a secret (access requires account auth).
+
+name = "bumplog"
+pages_build_output_dir = "dist"
+
+[[kv_namespaces]]
+binding = "FEEDBACK"
+id = "48592019710f40fc837aa753d149029e"

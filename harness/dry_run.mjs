@@ -441,6 +441,111 @@ async function main() {
     add('catalog_growth_governed', ok ? 'pass' : 'fail', `bad_repo_rejected=${bad.ok === false}; added=[${added.map((a) => a.slug).join(',')}]; processed=${res.length}`);
   }
 
+  // 26) public verdict API parity: /api/v1/apps.json exposes exactly the
+  //     assessed set (the hidden seed backlog must not leak), every entry
+  //     carries its page + badge URLs, and the count field is honest.
+  {
+    const { readFileSync } = await import('node:fs');
+    const apiFile = join(dirname(HARNESS_DIR), 'dist', 'api', 'v1', 'apps.json');
+    if (existsSync(apiFile)) {
+      try {
+        const api = JSON.parse(readFileSync(apiFile, 'utf8'));
+        const siteApps = JSON.parse(readFileSync(join(dirname(HARNESS_DIR), 'src', 'data', 'apps.json'), 'utf8'));
+        const assessedSlugs = siteApps.filter((a) => a.safeToUpdate != null).map((a) => a.slug).sort();
+        const apiSlugs = (api.apps ?? []).map((a) => a.slug).sort();
+        const slugsMatch = JSON.stringify(apiSlugs) === JSON.stringify(assessedSlugs);
+        const fieldsOk = (api.apps ?? []).every((a) => a.url && a.badge && a.safeToUpdate && 'sourceUrl' in a);
+        // Parity means VALUES, not just membership: a serializer regression
+        // that ships wrong verdicts must fail the proof harness.
+        const bySlug = new Map(siteApps.map((a) => [a.slug, a]));
+        const valueMismatch = (api.apps ?? []).filter((a) => {
+          const src = bySlug.get(a.slug);
+          return !src || a.safeToUpdate !== src.safeToUpdate || a.sourceUrl !== src.sourceUrl ||
+            a.rationale !== src.rationale || a.changelogSummary !== src.changelogSummary || a.latestVersion !== src.latestVersion;
+        }).map((a) => a.slug);
+        const ok = api.schema === 'bumplog.apps.v1' && slugsMatch && api.count === apiSlugs.length && fieldsOk && valueMismatch.length === 0;
+        add('api_endpoint_parity', ok ? 'pass' : 'fail',
+          `schema=${api.schema}; slugs_match_assessed=${slugsMatch} (${apiSlugs.length}/${assessedSlugs.length}); count_honest=${api.count === apiSlugs.length}; fields_ok=${fieldsOk}; value_mismatch=[${valueMismatch.join(',')}]`);
+      } catch (err) {
+        add('api_endpoint_parity', 'fail', `apps.json unreadable/invalid: ${err.message}`);
+      }
+    } else {
+      add('api_endpoint_parity', 'pending', 'no dist/api/v1/apps.json — run `npm run build` first');
+    }
+  }
+
+  // 27) verdict badges built: every assessed app ships /badge/{slug}.svg
+  //     carrying its status word (the embeddable signal must match the page).
+  {
+    const { readFileSync } = await import('node:fs');
+    const distDir = join(dirname(HARNESS_DIR), 'dist');
+    if (existsSync(join(distDir, 'index.html'))) {
+      const siteApps = JSON.parse(readFileSync(join(dirname(HARNESS_DIR), 'src', 'data', 'apps.json'), 'utf8'));
+      const assessed = siteApps.filter((a) => a.safeToUpdate != null);
+      const missing = [];
+      const wrong = [];
+      for (const app of assessed) {
+        const badgeFile = join(distDir, 'badge', `${app.slug}.svg`);
+        if (!existsSync(badgeFile)) { missing.push(app.slug); continue; }
+        const svg = readFileSync(badgeFile, 'utf8');
+        // Same well-formedness bar as the feeds: a raw ampersand (e.g. from an
+        // unescaped app name) makes the SVG invalid XML in every embed.
+        const rawAmp = /&(?!(amp|lt|gt|quot|apos|#\d+|#x[0-9a-fA-F]+);)/.test(svg);
+        if (!svg.includes(`>${app.safeToUpdate}</text>`) || !svg.includes('role="img"') || rawAmp) wrong.push(app.slug);
+      }
+      add('badge_svgs_built', missing.length === 0 && wrong.length === 0 ? 'pass' : 'fail',
+        `assessed=${assessed.length}; missing=[${missing.join(',')}]; status_mismatch=[${wrong.join(',')}]`);
+    } else {
+      add('badge_svgs_built', 'pending', 'no dist/ build yet — run `npm run build` first');
+    }
+  }
+
+  // 28) safety-annotated feeds are well-formed: site feed carries every
+  //     assessed app + every journal entry (≤50 cap), escaping holds (no raw
+  //     ampersands), and the per-app/per-stack feeds exist.
+  {
+    const { readFileSync } = await import('node:fs');
+    const distDir = join(dirname(HARNESS_DIR), 'dist');
+    const feedFile = join(distDir, 'feed.xml');
+    if (existsSync(feedFile)) {
+      const xml = readFileSync(feedFile, 'utf8');
+      const siteApps = JSON.parse(readFileSync(join(dirname(HARNESS_DIR), 'src', 'data', 'apps.json'), 'utf8'));
+      const journal = JSON.parse(readFileSync(join(dirname(HARNESS_DIR), 'src', 'data', 'journal.json'), 'utf8'));
+      const assessed = siteApps.filter((a) => a.safeToUpdate != null);
+      const expected = Math.min(50, assessed.length + journal.length);
+      const itemCount = (xml.match(/<item>/g) ?? []).length;
+      const wellFormed = xml.startsWith('<?xml') && xml.includes('<rss');
+      const rawAmp = /&(?!(amp|lt|gt|quot|apos|#\d+|#x[0-9a-fA-F]+);)/.test(xml);
+      const perApp = assessed.length === 0 || existsSync(join(distDir, 'apps', assessed[0].slug, 'feed.xml'));
+      const stacks = JSON.parse(readFileSync(join(dirname(HARNESS_DIR), 'src', 'data', 'stacks.json'), 'utf8'));
+      const perStack = stacks.length === 0 || existsSync(join(distDir, 'stacks', stacks[0].slug, 'feed.xml'));
+      const ok = wellFormed && !rawAmp && itemCount === expected && perApp && perStack;
+      add('feeds_wellformed', ok ? 'pass' : 'fail',
+        `wellformed=${wellFormed}; items=${itemCount}/${expected}; raw_amp=${rawAmp}; per_app=${perApp}; per_stack=${perStack}`);
+    } else {
+      add('feeds_wellformed', 'pending', 'no dist/feed.xml — run `npm run build` first');
+    }
+  }
+
+  // 29) lifecycle data shape: src/data/eol.json (written by harness/eol.mjs)
+  //     only ever contains verified endoflife.date products with valid cycle
+  //     shapes — the site renders nothing for apps absent from it.
+  {
+    const { readFileSync } = await import('node:fs');
+    try {
+      const eol = JSON.parse(readFileSync(join(dirname(HARNESS_DIR), 'src', 'data', 'eol.json'), 'utf8'));
+      const products = Object.entries(eol.products ?? {});
+      const badEntries = products.filter(([, p]) =>
+        !p || !String(p.link ?? '').startsWith('https://endoflife.date/') || !Array.isArray(p.cycles) ||
+        p.cycles.some((c) => typeof c.cycle !== 'string' || !(typeof c.eol === 'boolean' || typeof c.eol === 'string')));
+      const ok = typeof eol.products === 'object' && eol.products !== null && badEntries.length === 0;
+      add('eol_data_shape', ok ? 'pass' : 'fail',
+        `products=${products.length}; malformed=[${badEntries.map(([slug]) => slug).join(',')}]; generatedAt=${eol.generatedAt}`);
+    } catch (err) {
+      add('eol_data_shape', 'fail', `src/data/eol.json unreadable/invalid: ${err.message}`);
+    }
+  }
+
   print();
 }
 
@@ -470,6 +575,10 @@ const CHECKLIST = [
   ['combined_synthesis_parity', 'combined summarize+classify seam carries provenance, validates the safety enum, and skips the model on empty notes (parity with the two-call path)'],
   ['journal_title_brand_guard', 'journal title strips a trailing " — Bumplog" so the layout brand suffix is not doubled'],
   ['catalog_growth_governed', 'agent-proposed new apps are GitHub-validated, deduped, and capped before entering the registry; malformed/unverifiable repos rejected'],
+  ['api_endpoint_parity', 'public verdict API (/api/v1/apps.json) exposes exactly the assessed set — hidden backlog never leaks; count honest'],
+  ['badge_svgs_built', 'every assessed app ships an embeddable /badge/{slug}.svg whose status matches the published verdict'],
+  ['feeds_wellformed', 'safety-annotated RSS feeds built: site feed covers assessed apps + journal, escaping holds, per-app/per-stack feeds exist'],
+  ['eol_data_shape', 'lifecycle data (src/data/eol.json) contains only verified endoflife.date products with valid cycle shapes'],
 ];
 
 function print() {

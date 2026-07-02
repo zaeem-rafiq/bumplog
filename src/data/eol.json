@@ -1,0 +1,230 @@
+{
+ "generatedAt": "2026-07-02T04:16:45.082Z",
+ "source": "https://endoflife.date",
+ "products": {
+  "nextcloud": {
+   "product": "nextcloud",
+   "link": "https://endoflife.date/nextcloud",
+   "cycles": [
+    {
+     "cycle": "34",
+     "eol": "2027-06-30",
+     "latest": "34.0.1"
+    },
+    {
+     "cycle": "33",
+     "eol": "2027-02-28",
+     "latest": "33.0.6"
+    },
+    {
+     "cycle": "32",
+     "eol": "2026-09-30",
+     "latest": "32.0.12"
+    },
+    {
+     "cycle": "31",
+     "eol": "2026-02-28",
+     "latest": "31.0.14"
+    },
+    {
+     "cycle": "30",
+     "eol": "2025-10-31",
+     "latest": "30.0.17"
+    },
+    {
+     "cycle": "29",
+     "eol": "2025-04-30",
+     "latest": "29.0.16"
+    },
+    {
+     "cycle": "28",
+     "eol": "2024-12-31",
+     "latest": "28.0.14"
+    },
+    {
+     "cycle": "27",
+     "eol": "2024-06-30",
+     "latest": "27.1.11"
+    },
+    {
+     "cycle": "26",
+     "eol": "2024-03-31",
+     "latest": "26.0.13"
+    },
+    {
+     "cycle": "25",
+     "eol": "2023-10-31",
+     "latest": "25.0.13"
+    }
+   ]
+  },
+  "grafana": {
+   "product": "grafana",
+   "link": "https://endoflife.date/grafana",
+   "cycles": [
+    {
+     "cycle": "13.0",
+     "eol": "2027-01-09",
+     "latest": "13.0.3"
+    },
+    {
+     "cycle": "12.4",
+     "eol": "2027-05-24",
+     "latest": "12.4.5"
+    },
+    {
+     "cycle": "12.3",
+     "eol": "2026-08-19",
+     "latest": "12.3.8"
+    },
+    {
+     "cycle": "12.2",
+     "eol": "2026-06-23",
+     "latest": "12.2.10"
+    },
+    {
+     "cycle": "12.1",
+     "eol": "2026-04-22",
+     "latest": "12.1.10+security-01"
+    },
+    {
+     "cycle": "12.0",
+     "eol": "2026-02-05",
+     "latest": "12.0.10"
+    },
+    {
+     "cycle": "11.6",
+     "eol": "2026-06-25",
+     "latest": "11.6.16"
+    },
+    {
+     "cycle": "11.5",
+     "eol": "2025-10-28",
+     "latest": "11.5.10"
+    },
+    {
+     "cycle": "11.4",
+     "eol": "2025-09-05",
+     "latest": "11.4.8"
+    },
+    {
+     "cycle": "11.3",
+     "eol": "2025-07-22",
+     "latest": "11.3.9"
+    }
+   ]
+  },
+  "traefik": {
+   "product": "traefik",
+   "link": "https://endoflife.date/traefik",
+   "cycles": [
+    {
+     "cycle": "3.7",
+     "eol": false,
+     "latest": "3.7.6"
+    },
+    {
+     "cycle": "3.6",
+     "eol": false,
+     "latest": "3.6.22"
+    },
+    {
+     "cycle": "3.5",
+     "eol": "2025-11-07",
+     "latest": "3.5.6"
+    },
+    {
+     "cycle": "3.4",
+     "eol": "2025-07-23",
+     "latest": "3.4.5"
+    },
+    {
+     "cycle": "3.3",
+     "eol": "2025-05-05",
+     "latest": "3.3.7"
+    },
+    {
+     "cycle": "3.2",
+     "eol": "2025-01-06",
+     "latest": "3.2.5"
+    },
+    {
+     "cycle": "3.1",
+     "eol": "2024-10-28",
+     "latest": "3.1.7"
+    },
+    {
+     "cycle": "3.0",
+     "eol": "2024-07-15",
+     "latest": "3.0.4"
+    },
+    {
+     "cycle": "2.11",
+     "eol": "2026-02-01",
+     "latest": "2.11.51"
+    },
+    {
+     "cycle": "2.10",
+     "eol": "2024-02-12",
+     "latest": "2.10.7"
+    }
+   ]
+  },
+  "authentik": {
+   "product": "authentik",
+   "link": "https://endoflife.date/authentik",
+   "cycles": [
+    {
+     "cycle": "2026.5",
+     "eol": false,
+     "latest": "2026.5.3"
+    },
+    {
+     "cycle": "2026.2",
+     "eol": false,
+     "latest": "2026.2.4"
+    },
+    {
+     "cycle": "2025.12",
+     "eol": "2026-05-22",
+     "latest": "2025.12.6"
+    },
+    {
+     "cycle": "2025.10",
+     "eol": "2026-02-24",
+     "latest": "2025.10.4"
+    },
+    {
+     "cycle": "2025.8",
+     "eol": "2026-01-13",
+     "latest": "2025.8.6"
+    },
+    {
+     "cycle": "2025.6",
+     "eol": "2025-10-27",
+     "latest": "2025.6.4"
+    },
+    {
+     "cycle": "2025.4",
+     "eol": "2025-08-20",
+     "latest": "2025.4.4"
+    },
+    {
+     "cycle": "2024.12",
+     "eol": "2025-04-30",
+     "latest": "2024.12.5"
+    },
+    {
+     "cycle": "2023.10",
+     "eol": "2024-04-24",
+     "latest": "2023.10.7"
+    },
+    {
+     "cycle": "2022.12",
+     "eol": "2023-02-14",
+     "latest": "2022.12.3"
+    }
+   ]
+  }
+ }
+}

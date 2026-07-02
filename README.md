@@ -15,14 +15,30 @@ This repo holds two things:
 > content, or grow traffic — a separate headless Claude process (the "agent") does that,
 > inside what's here. See `harness/AGENT_BRIEF.md`.
 
+## Public endpoints (beyond the pages)
+```
+/api/v1/apps.json         read-only verdict API (assessed apps only; CORS open)
+/api/v1/apps/{slug}.json  one app's verdict + lifecycle context
+/badge/{slug}.svg         embeddable verdict badge (flat, square, brand colors)
+/feed.xml                 safety-annotated RSS (verdicts + journal)
+/apps/{slug}/feed.xml     per-app verdict feed
+/stacks/{slug}/feed.xml   per-stack verdict feed
+```
+All are built statically from `src/data/` — same provenance gates as the pages.
+
 ## Layout
 ```
 src/                      Astro site (hub, per-app, stacks, journal, feedback) — empty scaffolding
-functions/api/feedback.ts Cloudflare Pages Function stub (feedback intake → loop-readable store)
+src/lib/                  build-time helpers: api, feed, feed-items, eol
+functions/api/feedback.ts Cloudflare Pages Function (feedback intake → FEEDBACK KV;
+                          honeypot + 5/hr/IP rate limit + origin check; 503 if unbound)
+wrangler.toml             Pages config: FEEDBACK KV binding (synced on deploy)
 harness/
   analytics.mjs           READ-ONLY PostHog HogQL client (exact-to-contract metrics)
   releases.mjs            READ-ONLY GitHub pipeline (ETag cache, provenance, synthesis seams)
   morning_loop.mjs        the 9-step daily scaffold (TODO(agent) creative seams)
+  eol.mjs                 refresh endoflife.date lifecycle data → src/data/eol.json
+  pull-feedback.mjs       pull FEEDBACK KV records → feedback/inbox.jsonl (deduped)
   freeze_locks.mjs        one-shot writer for the frozen contract + guardrails
   dry_run.mjs             proof-of-success harness (13 checks)
   contract.lock.json      FROZEN success contract (written by freeze_locks)

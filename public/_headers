@@ -1,0 +1,16 @@
+# Cloudflare Pages headers.
+# The verdict API and badges are meant to be consumed cross-origin
+# (dashboards, READMEs, scripts) — open CORS, cache for an hour (the daily
+# loop republishes at most once a day).
+
+/api/v1/*
+  Access-Control-Allow-Origin: *
+  Cache-Control: public, max-age=3600
+
+/badge/*
+  Access-Control-Allow-Origin: *
+  Cache-Control: public, max-age=3600
+  Cross-Origin-Resource-Policy: cross-origin
+
+/feed.xml
+  Cache-Control: public, max-age=3600
