@@ -1,0 +1,193 @@
+{
+  "date": "2026-07-02",
+  "status": "ok",
+  "mode": "live",
+  "trace": [
+    {
+      "step": "auth-guard",
+      "at": "2026-07-02T13:00:08.197Z",
+      "ok": true
+    },
+    {
+      "step": "verify-locks",
+      "at": "2026-07-02T13:00:08.198Z",
+      "ok": true,
+      "failures": []
+    },
+    {
+      "step": "pull-metrics",
+      "at": "2026-07-02T13:00:14.736Z",
+      "primary_metric": 0,
+      "engaged_uniques": 3,
+      "max_source_share": 1
+    },
+    {
+      "step": "feedback",
+      "at": "2026-07-02T13:00:14.738Z",
+      "count": 4,
+      "flagged": [
+        {
+          "id": "fb-injection-probe",
+          "reason": "injection-shaped content"
+        }
+      ]
+    },
+    {
+      "step": "gate",
+      "at": "2026-07-02T13:00:14.739Z",
+      "stage": "leading",
+      "day_index": 6,
+      "leading": {
+        "engaged_uniques": 3,
+        "distinct_sources": 1,
+        "max_source_share": 1,
+        "channel_cap_ok": false,
+        "on_track": false
+      },
+      "lagging": {
+        "returning_engaged_median": 0,
+        "target": 3,
+        "on_track": false
+      },
+      "channel_cap": 0.5,
+      "channel_cap_ok": false,
+      "gated_on_track": false
+    },
+    {
+      "step": "journal-honesty",
+      "at": "2026-07-02T13:01:16.030Z",
+      "ok": true,
+      "mismatches": [],
+      "missing": []
+    },
+    {
+      "step": "pivot-hysteresis",
+      "at": "2026-07-02T13:01:16.031Z",
+      "allowed": true,
+      "reason": "no prior pivot on record",
+      "lastPivotDate": null,
+      "daysSince": null,
+      "intent": false
+    },
+    {
+      "step": "judges",
+      "at": "2026-07-02T13:02:05.574Z",
+      "freshness": [
+        {
+          "slug": "frigate",
+          "verdict": "fresh",
+          "reason": "first publish for this app"
+        },
+        {
+          "slug": "authentik",
+          "verdict": "fresh",
+          "reason": "first publish for this app"
+        },
+        {
+          "slug": "n8n",
+          "verdict": "fresh",
+          "reason": "first publish for this app"
+        }
+      ],
+      "dark_pattern": [
+        {
+          "name": "Breaking-change digest",
+          "verdict": "real-value",
+          "signatures": []
+        }
+      ]
+    },
+    {
+      "step": "catalog-growth",
+      "at": "2026-07-02T13:02:06.059Z",
+      "added": [
+        "syncthing",
+        "changedetection-io"
+      ],
+      "rejected": []
+    },
+    {
+      "step": "journal-append",
+      "at": "2026-07-02T13:02:06.067Z",
+      "published": true
+    }
+  ],
+  "day_index": 6,
+  "start_date": "2026-06-27",
+  "gate": {
+    "stage": "leading",
+    "day_index": 6,
+    "leading": {
+      "engaged_uniques": 3,
+      "distinct_sources": 1,
+      "max_source_share": 1,
+      "channel_cap_ok": false,
+      "on_track": false
+    },
+    "lagging": {
+      "returning_engaged_median": 0,
+      "target": 3,
+      "on_track": false
+    },
+    "channel_cap": 0.5,
+    "channel_cap_ok": false,
+    "gated_on_track": false
+  },
+  "pivot": {
+    "allowed": true,
+    "reason": "no prior pivot on record",
+    "lastPivotDate": null,
+    "daysSince": null
+  },
+  "judges": {
+    "freshness": [
+      {
+        "slug": "frigate",
+        "verdict": "fresh",
+        "reason": "first publish for this app"
+      },
+      {
+        "slug": "authentik",
+        "verdict": "fresh",
+        "reason": "first publish for this app"
+      },
+      {
+        "slug": "n8n",
+        "verdict": "fresh",
+        "reason": "first publish for this app"
+      }
+    ],
+    "dark_pattern": [
+      {
+        "name": "Breaking-change digest",
+        "verdict": "real-value",
+        "signatures": []
+      }
+    ]
+  },
+  "catalog_growth": [
+    {
+      "slug": "syncthing",
+      "repo": "syncthing/syncthing",
+      "added": true,
+      "reason": "added"
+    },
+    {
+      "slug": "changedetection-io",
+      "repo": "dgtlmoon/changedetection.io",
+      "added": true,
+      "reason": "added"
+    }
+  ],
+  "journal_published": true,
+  "journal_count": 6,
+  "published_slugs": [
+    "frigate",
+    "authentik",
+    "n8n"
+  ],
+  "budget": {
+    "turns": 42,
+    "minutes": 28.0355
+  }
+}

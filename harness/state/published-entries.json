@@ -227,5 +227,63 @@
     "citations": [
       "https://github.com/grafana/grafana/releases/tag/v13.0.3"
     ]
+  },
+  "frigate": {
+    "slug": "frigate",
+    "angle": "Is it safe to update Frigate? Summarize the latest release changelog, flag any breaking config-schema or MQTT/API changes, set the safety badge, link provenance.",
+    "name": "Frigate",
+    "tagName": "v0.17.2",
+    "publishedAt": "2026-06-28T12:12:11Z",
+    "contentHash": "e1f1af5e8123c4237a3c3de16da0ebd227cdb855ced0c0b18f5087c199008e80",
+    "provenance": {
+      "source": "github",
+      "url": "https://github.com/blakeblackshear/frigate/releases/tag/v0.17.2",
+      "fetchedAt": "2026-07-02T13:01:16.325Z"
+    },
+    "summary": "v0.17.2 is a maintenance release that patches six security vulnerabilities, several of them critical — including two remote code execution issues via go2rtc stream handling, RTSP credential leaks through nginx proxy caching, and authorization bypasses affecting viewer-role users. Three additional security issues affecting viewer-role privilege escalation and camera ACL enforcement are acknowledged but deferred to future releases. On the feature side, MP4 exports can now optionally embed recording segment chapter metadata, live page preview performance has been improved, and non-admin users can now use PTZ controls for cameras they have access to.",
+    "safeToUpdate": "caution",
+    "rationale": "The release contains no breaking config changes or required migrations, making the update itself straightforward. However, the security advisories — particularly the three unresolved issues around viewer-role privilege escalation and camera ACL bypasses — mean operators with publicly exposed instances or mixed-role user setups should review the advisories carefully before and after updating to understand residual risk.",
+    "citations": [
+      "https://github.com/blakeblackshear/frigate/releases/tag/v0.17.2"
+    ]
+  },
+  "authentik": {
+    "slug": "authentik",
+    "angle": "Safe-to-update page for Authentik: highlight breaking flow, policy, or blueprint changes and any required migration steps alongside a summarized changelog.",
+    "name": "Authentik",
+    "tagName": "version/2026.5.3",
+    "publishedAt": "2026-06-10T18:33:55Z",
+    "contentHash": "edfb9014a1c0e4d136d86e16e66edcc4b66b648c2ee8c7457ab6d6f033cd1716",
+    "provenance": {
+      "source": "github",
+      "url": "https://github.com/goauthentik/authentik/releases/tag/version/2026.5.3",
+      "fetchedAt": "2026-07-02T13:01:25.507Z"
+    },
+    "summary": "version/2026.5.3 is a patch release focused on bug fixes and security updates. Notable repairs include a fix for SCIM's interactive OAuth incorrectly overriding refresh tokens, a panic in the RADIUS provider log, and an exception in the endpoints/connectors agent when encountering an invalid auth type. The Docker outpost integration form's CA certificate filter is corrected, blueprint application now handles integrity exceptions gracefully, and a polyfill is added for Safari versions below 17.4. Two CVEs (CVE-2026-49443 and CVE-2026-49448) are addressed, and the Django dependency is bumped to v5.2.15.",
+    "safeToUpdate": "safe",
+    "rationale": "The release notes describe only bug fixes, a dependency security bump, and documentation improvements — no breaking changes, required migrations, or manual upgrade steps are called out. The two CVEs make applying this patch advisable promptly, but nothing in the notes indicates operator action beyond a standard update.",
+    "citations": [
+      "https://github.com/goauthentik/authentik/releases/tag/version/2026.5.3",
+      "https://github.com/goauthentik/authentik/releases/tag/version%2F2026.5.3"
+    ]
+  },
+  "n8n": {
+    "slug": "n8n",
+    "angle": "Is it safe to update n8n? Focus on workflow-breaking node changes, credential-schema changes, and any self-hosted-specific migration notes with provenance.",
+    "name": "n8n",
+    "tagName": "n8n@2.28.5",
+    "publishedAt": "2026-07-02T08:27:15Z",
+    "contentHash": "f5ef7f430e5f9c13bb7953bfe4f7ce828e88ed3bafb59f74fe6eb39456b5fd35",
+    "provenance": {
+      "source": "github",
+      "url": "https://github.com/n8n-io/n8n/releases/tag/n8n%402.28.5",
+      "fetchedAt": "2026-07-02T13:01:45.882Z"
+    },
+    "summary": "n8n@2.28.5 delivers three targeted bug fixes. Date values passed to the expression isolate are now correctly preserved, preventing silent type coercions in workflow expressions. The node creator panel correctly displays Free credits badges for Tool-variant nodes. Salesforce users on the JWT authentication path will no longer encounter errors caused by empty 204 responses, which are now handled gracefully.",
+    "safeToUpdate": "safe",
+    "rationale": "The release contains only bug fixes with no breaking changes, required migrations, deprecations, or manual upgrade steps mentioned in the notes. All three fixes are narrow and corrective in nature.",
+    "citations": [
+      "https://github.com/n8n-io/n8n/releases/tag/n8n%402.28.5"
+    ]
   }
 }

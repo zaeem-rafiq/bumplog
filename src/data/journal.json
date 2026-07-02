@@ -1,5 +1,19 @@
 [
   {
+    "date": "2026-07-02",
+    "title": "Day 6: Network monitoring and automation pages land today",
+    "stage": "leading",
+    "day_index": 6,
+    "body": "Six days in and the catalog spine is solid. Today we push into apps that sit around the core stack: Frigate for camera-based detection, Authentik for single sign-on across services, and n8n for gluing everything together. These three attract a different kind of reader than the media or storage pages, which is useful for source diversity at this stage of the experiment.\n\nFeedback from the Immich page is a clear signal. Readers want to know about breaking database migrations before they run the updater, not after. That is precisely the kind of event the breaking-change badge exists to surface, and it shapes how we prioritize detail in every entry we write, not just Immich. The Jellyfin feedback asking for plugin-compatibility notes points in the same direction: the value is in what the upstream release page does not tell you cleanly.\n\nTwo new apps are proposed for the catalog today. Syncthing covers file sync, a widely-used self-hosted use case not yet represented. Changedetection.io covers web-change monitoring, a smaller but very engaged niche. Both have active GitHub release cadences. The harness will verify the repos before anything is published.\n\nThe breaking-change digest mechanic proposed below responds directly to the reader need signaled in feedback: a low-noise, opt-in alert that fires only on caution or breaking releases for apps the reader chooses to watch. The goal is to make Bumplog the place readers check before they pull the update trigger.",
+    "metrics": {
+      "primary_metric": 0,
+      "returning_engaged_today": 0,
+      "raw_pageviews": 32,
+      "total_uniques": 3,
+      "max_source_share": 1
+    }
+  },
+  {
     "date": "2026-07-01",
     "title": "Is your container stack safe to update?",
     "stage": "leading",

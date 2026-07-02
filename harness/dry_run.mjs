@@ -546,6 +546,34 @@ async function main() {
     }
   }
 
+  // 30) custom 404 page built: without dist/404.html Cloudflare Pages enables
+  //     SPA fallback and serves the homepage with HTTP 200 for every unknown
+  //     path — soft-404s that poison crawlability and mask the status-code
+  //     deploy checks (verified live 2026-07-01: /api/v1/apps.json returned
+  //     homepage HTML with 200 before the endpoints were deployed).
+  {
+    const { readFileSync } = await import('node:fs');
+    const distDir = join(dirname(HARNESS_DIR), 'dist');
+    const notFoundFile = join(distDir, '404.html');
+    if (!existsSync(join(distDir, 'index.html'))) {
+      add('custom_404_built', 'pending', 'no dist/ build yet — run `npm run build` first');
+    } else if (!existsSync(notFoundFile)) {
+      add('custom_404_built', 'fail', 'dist/404.html MISSING — Cloudflare Pages will SPA-fallback every unknown path to the homepage with HTTP 200 (soft-404s)');
+    } else {
+      const html = readFileSync(notFoundFile, 'utf8');
+      // Must be the real not-found page (copy + recovery links), not a stray
+      // copy of the homepage or an empty shell.
+      const checks = {
+        copy: html.includes('Page not found'),
+        home_link: /href="\/"/.test(html),
+        stacks_link: /href="\/stacks\/"/.test(html),
+      };
+      const ok = Object.values(checks).every(Boolean);
+      add('custom_404_built', ok ? 'pass' : 'fail',
+        ok ? 'dist/404.html present with not-found copy + recovery links (/, /stacks/) — Pages SPA fallback disabled' : `dist/404.html present but wrong content: ${JSON.stringify(checks)}`);
+    }
+  }
+
   print();
 }
 
@@ -579,6 +607,7 @@ const CHECKLIST = [
   ['badge_svgs_built', 'every assessed app ships an embeddable /badge/{slug}.svg whose status matches the published verdict'],
   ['feeds_wellformed', 'safety-annotated RSS feeds built: site feed covers assessed apps + journal, escaping holds, per-app/per-stack feeds exist'],
   ['eol_data_shape', 'lifecycle data (src/data/eol.json) contains only verified endoflife.date products with valid cycle shapes'],
+  ['custom_404_built', 'custom 404 page built (dist/404.html) — disables Cloudflare Pages SPA fallback so unknown paths return real 404s, not the homepage with 200'],
 ];
 
 function print() {

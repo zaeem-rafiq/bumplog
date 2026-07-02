@@ -1,0 +1,56 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+// Astro emits this page as dist/404.html. Its presence disables Cloudflare
+// Pages' SPA fallback, which otherwise serves the homepage with HTTP 200 for
+// every unknown path — soft-404s that poison crawlability and mask
+// status-code deploy checks.
+---
+
+<BaseLayout
+  title="Page not found — Bumplog"
+  description="There's no page at this address. Browse the tracked apps or the stack dashboards to find what you were looking for."
+>
+  <div class="page-hero">
+    <p class="mono muted not-found-code" aria-hidden="true">404</p>
+    <h1>Page not found</h1>
+    <p class="lede">
+      There's no page at this address — it may have moved, or the link has a
+      typo. The pages below are the fastest way back.
+    </p>
+  </div>
+
+  <ul class="not-found-links">
+    <li>
+      <a href="/">Browse all tracked apps</a>
+      <span class="muted"> — every app Bumplog watches, with its current update verdict.</span>
+    </li>
+    <li>
+      <a href="/stacks/">Open the stack dashboards</a>
+      <span class="muted"> — curated bundles of apps, tracked together on one page.</span>
+    </li>
+  </ul>
+
+  <p class="muted not-found-report">
+    If a link on Bumplog brought you here, <a href="/feedback/">send feedback</a>
+    with the address so we can fix it.
+  </p>
+</BaseLayout>
+
+<style>
+  .not-found-code {
+    font-size: var(--text-sm);
+    margin-bottom: 0.5rem;
+  }
+  .not-found-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 0.85rem;
+  }
+  .not-found-report {
+    margin-top: 3rem;
+    font-size: var(--text-sm);
+  }
+</style>
