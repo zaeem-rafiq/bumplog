@@ -157,23 +157,23 @@
     "slug": "sonarr",
     "name": "Sonarr",
     "repo": "Sonarr/Sonarr",
-    "latestVersion": null,
-    "changelogSummary": null,
-    "safeToUpdate": null,
-    "rationale": null,
-    "sourceUrl": null,
-    "lastChecked": null
+    "latestVersion": "v4.0.19.2979",
+    "changelogSummary": "v4.0.19.2979 is a minimal patch release containing a single bug fix: basic authentication for qBittorrent download clients was broken and has been corrected. No new features, configuration changes, or migrations are included. Users who use qBittorrent with basic auth will see restored connectivity after updating.",
+    "safeToUpdate": "safe",
+    "rationale": "The release contains only one change — a bug fix for qBittorrent basic auth. The notes describe no breaking changes, required migrations, deprecations, or manual upgrade steps.",
+    "sourceUrl": "https://github.com/Sonarr/Sonarr/releases/tag/v4.0.19.2979",
+    "lastChecked": "2026-07-03"
   },
   {
     "slug": "radarr",
     "name": "Radarr",
     "repo": "Radarr/Radarr",
-    "latestVersion": null,
-    "changelogSummary": null,
-    "safeToUpdate": null,
-    "rationale": null,
-    "sourceUrl": null,
-    "lastChecked": null
+    "latestVersion": "v6.2.1.10461",
+    "changelogSummary": "v6.2.1.10461 delivers several qBittorrent reliability fixes including repaired basic auth, correct login handling for qBittorrent 5.2, API key support, reused authentication cookies, and a fix for credential-change test validation. On the database side, SQLite's busy timeout has been bumped to 1000ms and a new Postgres connection string option has been added for users preferring PostgreSQL. Other improvements include a Simkl Anime List integration, reduced data transfer when reading video streams, a quality modifier fix when augmenting quality from media info, and an upgrade to .NET 8.0.27. Docker users must update their container image rather than updating from within the container.",
+    "safeToUpdate": "safe",
+    "rationale": "The release notes contain no breaking changes, required migrations, or mandatory manual upgrade steps. The Docker guidance (update the image, do not update in-container) is standard Radarr procedure and not a new restriction introduced by this release. All changes are bug fixes, minor new integrations, and dependency bumps.",
+    "sourceUrl": "https://github.com/Radarr/Radarr/releases/tag/v6.2.1.10461",
+    "lastChecked": "2026-07-03"
   },
   {
     "slug": "overseerr",
@@ -311,6 +311,17 @@
     "slug": "syncthing",
     "name": "Syncthing",
     "repo": "syncthing/syncthing",
+    "latestVersion": "v2.1.1",
+    "changelogSummary": "v2.1.1 is a patch release that ships several bug fixes on top of the 2.1 feature base. Fixes include a broken REST-based upgrade path when Syncthing is running, incorrect permissions on versioner-archived directories, a mis-announced wildcard address in TCP hole-punching discovery, and a crash on zero-size protocol requests. The 2.1 series also introduced device/folder grouping in the GUI, HTTP/HTTPS CONNECT proxy support, an option to disable block indexing per folder to reduce database overhead, and configurable GUI session cookie duration and path.",
+    "safeToUpdate": "safe",
+    "rationale": "The release notes list only bug fixes and internal build/chore changes with no mention of breaking changes, required migrations, or manual upgrade steps. The new 2.1 features (grouping, proxy support, block indexing toggle, session cookie config) are additive and opt-in, requiring no action from existing users.",
+    "sourceUrl": "https://github.com/syncthing/syncthing/releases/tag/v2.1.1",
+    "lastChecked": "2026-07-03"
+  },
+  {
+    "slug": "changedetection-io",
+    "name": "Changedetection.io",
+    "repo": "dgtlmoon/changedetection.io",
     "latestVersion": null,
     "changelogSummary": null,
     "safeToUpdate": null,
@@ -319,9 +330,20 @@
     "lastChecked": null
   },
   {
-    "slug": "changedetection-io",
-    "name": "Changedetection.io",
-    "repo": "dgtlmoon/changedetection.io",
+    "slug": "prowlarr",
+    "name": "Prowlarr",
+    "repo": "Prowlarr/Prowlarr",
+    "latestVersion": null,
+    "changelogSummary": null,
+    "safeToUpdate": null,
+    "rationale": null,
+    "sourceUrl": null,
+    "lastChecked": null
+  },
+  {
+    "slug": "bazarr",
+    "name": "Bazarr",
+    "repo": "morpheus65535/bazarr",
     "latestVersion": null,
     "changelogSummary": null,
     "safeToUpdate": null,

@@ -1,5 +1,19 @@
 [
   {
+    "date": "2026-07-03",
+    "title": "Arr stack day: Sonarr, Radarr, and Syncthing",
+    "stage": "leading",
+    "day_index": 7,
+    "body": "Week one closes out with the media-automation layer. Sonarr and Radarr are among the most-searched self-hosted tools after the media servers themselves, and they share a release cadence that makes a paired 'safe to update?' page genuinely useful. Building them together lets the media stack dashboard gain two more tiles immediately.\n\nSyncthing is the day's third pick. It has a large installed base, ships breaking config-schema changes on major versions, and the question 'is it safe to update Syncthing?' has real long-tail search volume. It also broadens source diversity beyond the media cluster.\n\nFeedback from the Immich and Jellyfin pages confirms that breaking-change callouts are the content readers find most useful. That signal is shaping the build order for week two: apps with recent migration-heavy releases get prioritized over quieter ones.\n\nThe catalog is closing in on 30 apps. The next growth lever after today is the media and home-automation stack dashboards, which bundle multiple apps into a single bookmark-worthy page.",
+    "metrics": {
+      "primary_metric": 0,
+      "returning_engaged_today": 0,
+      "raw_pageviews": 32,
+      "total_uniques": 3,
+      "max_source_share": 1
+    }
+  },
+  {
     "date": "2026-07-02",
     "title": "Day 6: Network monitoring and automation pages land today",
     "stage": "leading",
