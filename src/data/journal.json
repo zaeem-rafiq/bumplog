@@ -1,5 +1,19 @@
 [
   {
+    "date": "2026-07-04",
+    "title": "Day 8: filling the gaps in the catalog",
+    "stage": "leading",
+    "day_index": 8,
+    "body": "Today's focus is on not-yet-built entries. Traefik is one of the most common reverse proxies in self-hosted stacks; its versioned releases and occasional breaking config changes make it a strong fit for the safe-to-update format. Navidrome rounds out the media section alongside Jellyfin, and Stirling-PDF adds a productivity anchor with a steady release cadence.\n\nVisitor feedback flagged Immich's v1.118 database migration as a surprise. That is exactly the kind of event this tracker should surface with a clear callout, so the Immich page is a candidate for an improved DB-migration breaking-change note format once a real new release is available to anchor the update.\n\nFeedback also asked about Plex in the media stack. Plex Media Server does not publish releases through a public open-source GitHub channel, so it cannot be tracked with provenance under the current contract. The note is logged.\n\nTwo new apps are proposed for catalog expansion: Linkwarden, an actively developed self-hosted bookmark manager, and Watchtower, the Docker container auto-updater. Watchtower has a useful irony for this tracker: it automates updates for other apps, so knowing its own safe-to-update status is genuinely relevant to anyone running it.",
+    "metrics": {
+      "primary_metric": 0,
+      "returning_engaged_today": 0,
+      "raw_pageviews": 11,
+      "total_uniques": 2,
+      "max_source_share": 1
+    }
+  },
+  {
     "date": "2026-07-03",
     "title": "Arr stack day: Sonarr, Radarr, and Syncthing",
     "stage": "leading",

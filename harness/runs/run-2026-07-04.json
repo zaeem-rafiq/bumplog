@@ -1,0 +1,193 @@
+{
+  "date": "2026-07-04",
+  "status": "ok",
+  "mode": "live",
+  "trace": [
+    {
+      "step": "auth-guard",
+      "at": "2026-07-04T13:00:11.544Z",
+      "ok": true
+    },
+    {
+      "step": "verify-locks",
+      "at": "2026-07-04T13:00:11.544Z",
+      "ok": true,
+      "failures": []
+    },
+    {
+      "step": "pull-metrics",
+      "at": "2026-07-04T13:00:16.012Z",
+      "primary_metric": 0,
+      "engaged_uniques": 2,
+      "max_source_share": 1
+    },
+    {
+      "step": "feedback",
+      "at": "2026-07-04T13:00:16.014Z",
+      "count": 4,
+      "flagged": [
+        {
+          "id": "fb-injection-probe",
+          "reason": "injection-shaped content"
+        }
+      ]
+    },
+    {
+      "step": "gate",
+      "at": "2026-07-04T13:00:16.015Z",
+      "stage": "leading",
+      "day_index": 8,
+      "leading": {
+        "engaged_uniques": 2,
+        "distinct_sources": 1,
+        "max_source_share": 1,
+        "channel_cap_ok": false,
+        "on_track": false
+      },
+      "lagging": {
+        "returning_engaged_median": 0,
+        "target": 3,
+        "on_track": false
+      },
+      "channel_cap": 0.5,
+      "channel_cap_ok": false,
+      "gated_on_track": false
+    },
+    {
+      "step": "journal-honesty",
+      "at": "2026-07-04T13:01:04.030Z",
+      "ok": true,
+      "mismatches": [],
+      "missing": []
+    },
+    {
+      "step": "pivot-hysteresis",
+      "at": "2026-07-04T13:01:04.032Z",
+      "allowed": true,
+      "reason": "no prior pivot on record",
+      "lastPivotDate": null,
+      "daysSince": null,
+      "intent": false
+    },
+    {
+      "step": "judges",
+      "at": "2026-07-04T13:02:30.434Z",
+      "freshness": [
+        {
+          "slug": "traefik",
+          "verdict": "fresh",
+          "reason": "first publish for this app"
+        },
+        {
+          "slug": "navidrome",
+          "verdict": "fresh",
+          "reason": "first publish for this app"
+        },
+        {
+          "slug": "stirling-pdf",
+          "verdict": "fresh",
+          "reason": "first publish for this app"
+        }
+      ],
+      "dark_pattern": [
+        {
+          "name": "Breaking-change digest",
+          "verdict": "real-value",
+          "signatures": []
+        }
+      ]
+    },
+    {
+      "step": "catalog-growth",
+      "at": "2026-07-04T13:02:31.241Z",
+      "added": [
+        "linkwarden",
+        "watchtower"
+      ],
+      "rejected": []
+    },
+    {
+      "step": "journal-append",
+      "at": "2026-07-04T13:02:31.262Z",
+      "published": true
+    }
+  ],
+  "day_index": 8,
+  "start_date": "2026-06-27",
+  "gate": {
+    "stage": "leading",
+    "day_index": 8,
+    "leading": {
+      "engaged_uniques": 2,
+      "distinct_sources": 1,
+      "max_source_share": 1,
+      "channel_cap_ok": false,
+      "on_track": false
+    },
+    "lagging": {
+      "returning_engaged_median": 0,
+      "target": 3,
+      "on_track": false
+    },
+    "channel_cap": 0.5,
+    "channel_cap_ok": false,
+    "gated_on_track": false
+  },
+  "pivot": {
+    "allowed": true,
+    "reason": "no prior pivot on record",
+    "lastPivotDate": null,
+    "daysSince": null
+  },
+  "judges": {
+    "freshness": [
+      {
+        "slug": "traefik",
+        "verdict": "fresh",
+        "reason": "first publish for this app"
+      },
+      {
+        "slug": "navidrome",
+        "verdict": "fresh",
+        "reason": "first publish for this app"
+      },
+      {
+        "slug": "stirling-pdf",
+        "verdict": "fresh",
+        "reason": "first publish for this app"
+      }
+    ],
+    "dark_pattern": [
+      {
+        "name": "Breaking-change digest",
+        "verdict": "real-value",
+        "signatures": []
+      }
+    ]
+  },
+  "catalog_growth": [
+    {
+      "slug": "linkwarden",
+      "repo": "linkwarden/linkwarden",
+      "added": true,
+      "reason": "added"
+    },
+    {
+      "slug": "watchtower",
+      "repo": "containrrr/watchtower",
+      "added": true,
+      "reason": "added"
+    }
+  ],
+  "journal_published": true,
+  "journal_count": 8,
+  "published_slugs": [
+    "traefik",
+    "navidrome",
+    "stirling-pdf"
+  ],
+  "budget": {
+    "turns": 42,
+    "minutes": 27.671366666666668
+  }
+}

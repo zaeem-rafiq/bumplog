@@ -135,12 +135,12 @@
     "slug": "traefik",
     "name": "Traefik",
     "repo": "traefik/traefik",
-    "latestVersion": null,
-    "changelogSummary": null,
-    "safeToUpdate": null,
-    "rationale": null,
-    "sourceUrl": null,
-    "lastChecked": null
+    "latestVersion": "v3.7.6",
+    "changelogSummary": "v3.7.6 patches three security CVEs related to HTTP/2 header memory exhaustion and ships a collection of bug fixes across middleware, Kubernetes integrations, and TLS. Notable corrections include CORS Max-Age defaulting incorrectly to zero, CORS wildcard handling when allow-credentials is enabled, and x-forwarded-port in forward-auth. Kubernetes users benefit from Gateway API status fixes, more deterministic EndpointSlice ordering, and ingress-nginx SSL passthrough and force-ssl-redirect corrections. Two new server-level options are introduced: one to strip request headers containing underscores, and one to configure the maximum request header size. A migration guide is explicitly required before upgrading.",
+    "safeToUpdate": "breaking",
+    "rationale": "The release notes open with an explicit directive to consult a version-specific migration guide, which is the clearest upstream signal that manual upgrade steps or breaking changes are present. The CORS wildcard and Max-Age behavioral fixes may silently alter responses for existing configurations that happened to rely on the prior (buggy) defaults. The new server options for header underscore removal and max header size may also carry default-value changes that affect running deployments.",
+    "sourceUrl": "https://github.com/traefik/traefik/releases/tag/v3.7.6",
+    "lastChecked": "2026-07-04"
   },
   {
     "slug": "authentik",
@@ -190,12 +190,12 @@
     "slug": "navidrome",
     "name": "Navidrome",
     "repo": "navidrome/navidrome",
-    "latestVersion": null,
-    "changelogSummary": null,
-    "safeToUpdate": null,
-    "rationale": null,
-    "sourceUrl": null,
-    "lastChecked": null
+    "latestVersion": "v0.62.0",
+    "changelogSummary": "Navidrome v0.62.0 delivers a significant security hardening pass, fixing six reported vulnerabilities covering cross-account data disclosure, player takeover, Last.fm session hijack, JWT bypass on share streams, and unauthorized access to transcoding config and radio management endpoints. The playback reporting flow is overhauled: the UI now uses the OpenSubsonic playbackReport extension with a redesigned Now Playing panel and a configurable reporting interval, replacing the old scrobble mechanism. Two configuration options are deprecated and renamed — EnforceNonRootUser and per-user/server transcode limits are new additions, while EnableTranscodingCancellation and SimilarSongsMatchThreshold move under new namespaced sections. Smart playlists gain ReplayGain fields and new track-presence operators, and five new UI themes are included.",
+    "safeToUpdate": "caution",
+    "rationale": "No hard breaking changes or mandatory migration steps are declared, but two config options are deprecated and renamed (EnableTranscodingCancellation → Transcoding.EnableCancellation; SimilarSongsMatchThreshold → Matcher.FuzzyThreshold), and the playback-reporting behavior is materially changed. Users with custom config or scrobble-dependent workflows should review the Configuration Changes table before upgrading. The security fixes are significant enough to make upgrading strongly advisable, but a quick config audit is warranted first.",
+    "sourceUrl": "https://github.com/navidrome/navidrome/releases/tag/v0.62.0",
+    "lastChecked": "2026-07-04"
   },
   {
     "slug": "homepage",
@@ -289,12 +289,12 @@
     "slug": "stirling-pdf",
     "name": "Stirling-PDF",
     "repo": "Frooodle/Stirling-PDF",
-    "latestVersion": null,
-    "changelogSummary": null,
-    "safeToUpdate": null,
-    "rationale": null,
-    "sourceUrl": null,
-    "lastChecked": null
+    "latestVersion": "v2.14.0",
+    "changelogSummary": "v2.14.0 introduces desktop hardware token signing via PKCS#11 and OS certificate stores, enabling USB and smart-card-based PDF signing on desktop builds. File sharing and shared signing have been restored to the top workbench bar, and the side menu for comments, annotations, and attachments has been redesigned with easier adding and new bulk-clear controls. A login agreement disclaimer feature is available for business deployments. Additional fixes address desktop login/refresh-token issues, settings.yml defaults alignment, and dead or mismapped settings entries.",
+    "safeToUpdate": "caution",
+    "rationale": "The fix to 'align settings.yml defaults and fix dead/mismapped settings' may silently change the effective value of previously inert or mis-keyed configuration entries, warranting a review of your settings.yml before upgrading. The enforcement of run-on-export policies on all PDF exit paths is also a behavioral change that could affect existing workflows. No explicit migration steps or breaking changes are called out, but these two changes are worth reading before deploying.",
+    "sourceUrl": "https://github.com/Stirling-Tools/Stirling-PDF/releases/tag/v2.14.0",
+    "lastChecked": "2026-07-04"
   },
   {
     "slug": "actual",
@@ -344,6 +344,28 @@
     "slug": "bazarr",
     "name": "Bazarr",
     "repo": "morpheus65535/bazarr",
+    "latestVersion": null,
+    "changelogSummary": null,
+    "safeToUpdate": null,
+    "rationale": null,
+    "sourceUrl": null,
+    "lastChecked": null
+  },
+  {
+    "slug": "linkwarden",
+    "name": "Linkwarden",
+    "repo": "linkwarden/linkwarden",
+    "latestVersion": null,
+    "changelogSummary": null,
+    "safeToUpdate": null,
+    "rationale": null,
+    "sourceUrl": null,
+    "lastChecked": null
+  },
+  {
+    "slug": "watchtower",
+    "name": "Watchtower",
+    "repo": "containrrr/watchtower",
     "latestVersion": null,
     "changelogSummary": null,
     "safeToUpdate": null,
