@@ -1,5 +1,19 @@
 [
   {
+    "date": "2026-07-05",
+    "title": "Day 9: filling the unbuilt gaps in the catalog",
+    "stage": "leading",
+    "day_index": 9,
+    "body": "Day nine. The core library of built pages is growing steadily, and reader feedback confirms that the 'safe to update?' angle resonates most — people want to know about breaking migrations and plugin compatibility, not just version numbers. That signal shapes today's work.\n\nToday's three unbuilt targets are Overseerr (the media-request layer that pairs naturally with the already-built Sonarr and Radarr pages), Homepage (the self-hosted dashboard that many people check every day and a strong bookmark candidate), and Actual Budget (a personal finance app with an active release cadence and a vocal community around data-format changes).\n\nTwo catalog additions are proposed: Ollama, which has become one of the highest-velocity self-hosted projects as local AI tooling matures, and Vikunja, a task management option that fills a gap in the productivity section. Both have enough release history to provide meaningful tracking.\n\nThe priority through the leading stage stays the same: breadth before depth. More unbuilt pages open more entry points for organic discovery before the returning-engaged gate becomes the binding constraint.",
+    "metrics": {
+      "primary_metric": 0,
+      "returning_engaged_today": 0,
+      "raw_pageviews": 0,
+      "total_uniques": 0,
+      "max_source_share": 0
+    }
+  },
+  {
     "date": "2026-07-04",
     "title": "Day 8: filling the gaps in the catalog",
     "stage": "leading",

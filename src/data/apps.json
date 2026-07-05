@@ -179,12 +179,12 @@
     "slug": "overseerr",
     "name": "Overseerr",
     "repo": "sct/overseerr",
-    "latestVersion": null,
-    "changelogSummary": null,
-    "safeToUpdate": null,
-    "rationale": null,
-    "sourceUrl": null,
-    "lastChecked": null
+    "latestVersion": "v1.35.0",
+    "changelogSummary": "Overseerr v1.35.0 delivers a broad set of bug fixes centered on TV series availability logic, including more reliable handling of partial seasons, specials, and availability sync. Push notification reliability is improved with resubscription logic and a local-storage flag, and email test notifications now correctly respect the allowSelfSigned setting. The Plex Watchlist API URL is updated to match a changed upstream endpoint. Notably, a 'prepare seerr migration' change is included alongside an upgrade of the runtime to Node 20, and a database cascade behavior for media entities is changed from update-cascade to remove-cascade.",
+    "safeToUpdate": "caution",
+    "rationale": "No explicit breaking changes or required manual migration steps are documented, but two changes warrant attention before upgrading: the media entity cascade mode change (from 'update' to 'remove') alters how deletions propagate to related database records and could affect data in edge cases, and the opaque 'prepare seerr migration' commit introduces unknown internal state changes whose user-facing impact is not explained in the notes. The Node 20 runtime upgrade and Plex Watchlist URL fix are routine but may surface issues in customized deployments.",
+    "sourceUrl": "https://github.com/sct/overseerr/releases/tag/v1.35.0",
+    "lastChecked": "2026-07-05"
   },
   {
     "slug": "navidrome",
@@ -201,12 +201,12 @@
     "slug": "homepage",
     "name": "Homepage",
     "repo": "gethomepage/homepage",
-    "latestVersion": null,
-    "changelogSummary": null,
-    "safeToUpdate": null,
-    "rationale": null,
-    "sourceUrl": null,
-    "lastChecked": null
+    "latestVersion": "v1.13.2",
+    "changelogSummary": "v1.13.2 is a maintenance-focused release with three bug fixes: compatibility with the Dispatcharr v24 API, the ability to explicitly overwrite cookie headers, and a correction to the Seerr widget that was incorrectly injecting an 'available' field. The remainder of the release consists entirely of dependency bumps and CI/tooling housekeeping, with no new user-facing features introduced.",
+    "safeToUpdate": "safe",
+    "rationale": "The release notes contain no breaking changes, required migrations, or manual upgrade steps. All three fixes are narrow widget/integration corrections that improve correctness without altering configuration or behavior for unaffected users. Dependency updates are routine and internal to the build.",
+    "sourceUrl": "https://github.com/gethomepage/homepage/releases/tag/v1.13.2",
+    "lastChecked": "2026-07-05"
   },
   {
     "slug": "mealie",
@@ -300,12 +300,12 @@
     "slug": "actual",
     "name": "Actual Budget",
     "repo": "actualbudget/actual-server",
-    "latestVersion": null,
-    "changelogSummary": null,
-    "safeToUpdate": null,
-    "rationale": null,
-    "sourceUrl": null,
-    "lastChecked": null
+    "latestVersion": "v25.2.1",
+    "changelogSummary": "Actual Budget v25.2.1: GitHub published no release notes for this tag. See the linked source.",
+    "safeToUpdate": "unknown",
+    "rationale": "No published release notes to assess. Review the linked source before updating.",
+    "sourceUrl": "https://github.com/actualbudget/actual-server/releases/tag/v25.2.1",
+    "lastChecked": "2026-07-05"
   },
   {
     "slug": "syncthing",
@@ -366,6 +366,17 @@
     "slug": "watchtower",
     "name": "Watchtower",
     "repo": "containrrr/watchtower",
+    "latestVersion": null,
+    "changelogSummary": null,
+    "safeToUpdate": null,
+    "rationale": null,
+    "sourceUrl": null,
+    "lastChecked": null
+  },
+  {
+    "slug": "ollama",
+    "name": "Ollama",
+    "repo": "ollama/ollama",
     "latestVersion": null,
     "changelogSummary": null,
     "safeToUpdate": null,

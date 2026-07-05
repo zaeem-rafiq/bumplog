@@ -399,5 +399,62 @@
     "citations": [
       "https://github.com/Stirling-Tools/Stirling-PDF/releases/tag/v2.14.0"
     ]
+  },
+  "overseerr": {
+    "slug": "overseerr",
+    "angle": "Is it safe to update Overseerr? Compatibility notes with Sonarr and Radarr, API-breaking changes, and migration requirements across recent releases.",
+    "name": "Overseerr",
+    "tagName": "v1.35.0",
+    "publishedAt": "2026-02-15T18:18:07Z",
+    "contentHash": "96ba673b3b92380af005a81782424de7b2707682bcf3d05aa60c3e57029fc6dc",
+    "provenance": {
+      "source": "github",
+      "url": "https://github.com/sct/overseerr/releases/tag/v1.35.0",
+      "fetchedAt": "2026-07-05T13:01:36.756Z"
+    },
+    "summary": "Overseerr v1.35.0 delivers a broad set of bug fixes centered on TV series availability logic, including more reliable handling of partial seasons, specials, and availability sync. Push notification reliability is improved with resubscription logic and a local-storage flag, and email test notifications now correctly respect the allowSelfSigned setting. The Plex Watchlist API URL is updated to match a changed upstream endpoint. Notably, a 'prepare seerr migration' change is included alongside an upgrade of the runtime to Node 20, and a database cascade behavior for media entities is changed from update-cascade to remove-cascade.",
+    "safeToUpdate": "caution",
+    "rationale": "No explicit breaking changes or required manual migration steps are documented, but two changes warrant attention before upgrading: the media entity cascade mode change (from 'update' to 'remove') alters how deletions propagate to related database records and could affect data in edge cases, and the opaque 'prepare seerr migration' commit introduces unknown internal state changes whose user-facing impact is not explained in the notes. The Node 20 runtime upgrade and Plex Watchlist URL fix are routine but may surface issues in customized deployments.",
+    "citations": [
+      "https://github.com/sct/overseerr/releases/tag/v1.35.0"
+    ]
+  },
+  "homepage": {
+    "slug": "homepage",
+    "angle": "Is it safe to update Homepage? Config-schema changes, widget breakage, and what each recent release actually touched.",
+    "name": "Homepage",
+    "tagName": "v1.13.2",
+    "publishedAt": "2026-06-09T18:04:57Z",
+    "contentHash": "8a5996e79ebdf00762a37ed595b546fdbde267af00e09724b276535e2a32726e",
+    "provenance": {
+      "source": "github",
+      "url": "https://github.com/gethomepage/homepage/releases/tag/v1.13.2",
+      "fetchedAt": "2026-07-05T13:02:06.874Z"
+    },
+    "summary": "v1.13.2 is a maintenance-focused release with three bug fixes: compatibility with the Dispatcharr v24 API, the ability to explicitly overwrite cookie headers, and a correction to the Seerr widget that was incorrectly injecting an 'available' field. The remainder of the release consists entirely of dependency bumps and CI/tooling housekeeping, with no new user-facing features introduced.",
+    "safeToUpdate": "safe",
+    "rationale": "The release notes contain no breaking changes, required migrations, or manual upgrade steps. All three fixes are narrow widget/integration corrections that improve correctness without altering configuration or behavior for unaffected users. Dependency updates are routine and internal to the build.",
+    "citations": [
+      "https://github.com/gethomepage/homepage/releases/tag/v1.13.2"
+    ]
+  },
+  "actual": {
+    "slug": "actual",
+    "angle": "Is it safe to update Actual Budget? Data-format migrations, sync-server compatibility, and breaking changes tracked release by release.",
+    "name": "Actual Budget",
+    "tagName": "v25.2.1",
+    "publishedAt": null,
+    "contentHash": "f9751426d40360966d348656ab163547267ab753303a82046096269df244492e",
+    "provenance": {
+      "source": "github",
+      "url": "https://github.com/actualbudget/actual-server/releases/tag/v25.2.1",
+      "fetchedAt": "2026-07-05T13:02:20.321Z"
+    },
+    "summary": "Actual Budget v25.2.1: GitHub published no release notes for this tag. See the linked source.",
+    "safeToUpdate": "unknown",
+    "rationale": "No published release notes to assess. Review the linked source before updating.",
+    "citations": [
+      "https://github.com/actualbudget/actual-server/releases/tag/v25.2.1"
+    ]
   }
 }

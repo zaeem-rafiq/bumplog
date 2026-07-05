@@ -1,0 +1,194 @@
+{
+  "date": "2026-07-05",
+  "status": "ok",
+  "mode": "live",
+  "trace": [
+    {
+      "step": "auth-guard",
+      "at": "2026-07-05T13:00:20.503Z",
+      "ok": true
+    },
+    {
+      "step": "verify-locks",
+      "at": "2026-07-05T13:00:20.513Z",
+      "ok": true,
+      "failures": []
+    },
+    {
+      "step": "pull-metrics",
+      "at": "2026-07-05T13:00:28.921Z",
+      "primary_metric": 0,
+      "engaged_uniques": 0,
+      "max_source_share": 0
+    },
+    {
+      "step": "feedback",
+      "at": "2026-07-05T13:00:28.924Z",
+      "count": 4,
+      "flagged": [
+        {
+          "id": "fb-injection-probe",
+          "reason": "injection-shaped content"
+        }
+      ]
+    },
+    {
+      "step": "gate",
+      "at": "2026-07-05T13:00:28.924Z",
+      "stage": "leading",
+      "day_index": 9,
+      "leading": {
+        "engaged_uniques": 0,
+        "distinct_sources": 0,
+        "max_source_share": 0,
+        "channel_cap_ok": true,
+        "on_track": false
+      },
+      "lagging": {
+        "returning_engaged_median": 0,
+        "target": 3,
+        "on_track": false
+      },
+      "channel_cap": 0.5,
+      "channel_cap_ok": true,
+      "gated_on_track": false
+    },
+    {
+      "step": "journal-honesty",
+      "at": "2026-07-05T13:01:36.450Z",
+      "ok": true,
+      "mismatches": [],
+      "missing": []
+    },
+    {
+      "step": "pivot-hysteresis",
+      "at": "2026-07-05T13:01:36.456Z",
+      "allowed": true,
+      "reason": "no prior pivot on record",
+      "lastPivotDate": null,
+      "daysSince": null,
+      "intent": false
+    },
+    {
+      "step": "judges",
+      "at": "2026-07-05T13:02:38.866Z",
+      "freshness": [
+        {
+          "slug": "overseerr",
+          "verdict": "fresh",
+          "reason": "first publish for this app"
+        },
+        {
+          "slug": "homepage",
+          "verdict": "fresh",
+          "reason": "first publish for this app"
+        },
+        {
+          "slug": "actual",
+          "verdict": "fresh",
+          "reason": "first publish for this app"
+        }
+      ],
+      "dark_pattern": [
+        {
+          "name": "weekly-breaking-digest",
+          "verdict": "real-value",
+          "signatures": []
+        }
+      ]
+    },
+    {
+      "step": "catalog-growth",
+      "at": "2026-07-05T13:02:39.583Z",
+      "added": [
+        "ollama"
+      ],
+      "rejected": [
+        "vikunja:no GitHub release or tag found for repo"
+      ]
+    },
+    {
+      "step": "journal-append",
+      "at": "2026-07-05T13:02:39.598Z",
+      "published": true
+    }
+  ],
+  "day_index": 9,
+  "start_date": "2026-06-27",
+  "gate": {
+    "stage": "leading",
+    "day_index": 9,
+    "leading": {
+      "engaged_uniques": 0,
+      "distinct_sources": 0,
+      "max_source_share": 0,
+      "channel_cap_ok": true,
+      "on_track": false
+    },
+    "lagging": {
+      "returning_engaged_median": 0,
+      "target": 3,
+      "on_track": false
+    },
+    "channel_cap": 0.5,
+    "channel_cap_ok": true,
+    "gated_on_track": false
+  },
+  "pivot": {
+    "allowed": true,
+    "reason": "no prior pivot on record",
+    "lastPivotDate": null,
+    "daysSince": null
+  },
+  "judges": {
+    "freshness": [
+      {
+        "slug": "overseerr",
+        "verdict": "fresh",
+        "reason": "first publish for this app"
+      },
+      {
+        "slug": "homepage",
+        "verdict": "fresh",
+        "reason": "first publish for this app"
+      },
+      {
+        "slug": "actual",
+        "verdict": "fresh",
+        "reason": "first publish for this app"
+      }
+    ],
+    "dark_pattern": [
+      {
+        "name": "weekly-breaking-digest",
+        "verdict": "real-value",
+        "signatures": []
+      }
+    ]
+  },
+  "catalog_growth": [
+    {
+      "slug": "ollama",
+      "repo": "ollama/ollama",
+      "added": true,
+      "reason": "added"
+    },
+    {
+      "slug": "vikunja",
+      "repo": "vikunja/vikunja",
+      "added": false,
+      "reason": "no GitHub release or tag found for repo"
+    }
+  ],
+  "journal_published": true,
+  "journal_count": 9,
+  "published_slugs": [
+    "overseerr",
+    "homepage",
+    "actual"
+  ],
+  "budget": {
+    "turns": 42,
+    "minutes": 27.68175
+  }
+}
