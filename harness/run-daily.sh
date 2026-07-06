@@ -57,6 +57,12 @@ echo "deploying via wrangler OAuth…"
 npx --yes wrangler pages deploy dist --project-name bumplog --commit-dirty=true \
   || echo "deploy FAILED — content is published locally; will retry next run"
 
+# 2c) Project today's verdicts to the OWNED Mastodon account. Non-fatal and
+#     inert without MASTODON_INSTANCE/MASTODON_TOKEN; defaults to a review queue
+#     (tasks/discovery/queue/) until MASTODON_MODE=auto. Runs after deploy so the
+#     linked pages are live. See harness/social/DECISION.md.
+node harness/social/post-daily.mjs || echo "social post failed (non-fatal)"
+
 # 3) Commit the audit trail locally (no push).
 git add -A
 git commit -m "chore(daily): bumplog cycle $(date -u +%Y-%m-%d)" >/dev/null 2>&1 \
