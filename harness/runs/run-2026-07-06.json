@@ -1,0 +1,193 @@
+{
+  "date": "2026-07-06",
+  "status": "ok",
+  "mode": "live",
+  "trace": [
+    {
+      "step": "auth-guard",
+      "at": "2026-07-06T13:00:09.587Z",
+      "ok": true
+    },
+    {
+      "step": "verify-locks",
+      "at": "2026-07-06T13:00:09.588Z",
+      "ok": true,
+      "failures": []
+    },
+    {
+      "step": "pull-metrics",
+      "at": "2026-07-06T13:00:13.218Z",
+      "primary_metric": 0,
+      "engaged_uniques": 0,
+      "max_source_share": 0
+    },
+    {
+      "step": "feedback",
+      "at": "2026-07-06T13:00:13.226Z",
+      "count": 4,
+      "flagged": [
+        {
+          "id": "fb-injection-probe",
+          "reason": "injection-shaped content"
+        }
+      ]
+    },
+    {
+      "step": "gate",
+      "at": "2026-07-06T13:00:13.252Z",
+      "stage": "leading",
+      "day_index": 10,
+      "leading": {
+        "engaged_uniques": 0,
+        "distinct_sources": 0,
+        "max_source_share": 0,
+        "channel_cap_ok": true,
+        "on_track": false
+      },
+      "lagging": {
+        "returning_engaged_median": 0,
+        "target": 3,
+        "on_track": false
+      },
+      "channel_cap": 0.5,
+      "channel_cap_ok": true,
+      "gated_on_track": false
+    },
+    {
+      "step": "journal-honesty",
+      "at": "2026-07-06T13:01:10.010Z",
+      "ok": true,
+      "mismatches": [],
+      "missing": []
+    },
+    {
+      "step": "pivot-hysteresis",
+      "at": "2026-07-06T13:01:10.012Z",
+      "allowed": true,
+      "reason": "no prior pivot on record",
+      "lastPivotDate": null,
+      "daysSince": null,
+      "intent": false
+    },
+    {
+      "step": "judges",
+      "at": "2026-07-06T13:02:18.153Z",
+      "freshness": [
+        {
+          "slug": "ollama",
+          "verdict": "fresh",
+          "reason": "first publish for this app"
+        },
+        {
+          "slug": "dockge",
+          "verdict": "fresh",
+          "reason": "first publish for this app"
+        },
+        {
+          "slug": "linkwarden",
+          "verdict": "fresh",
+          "reason": "first publish for this app"
+        }
+      ],
+      "dark_pattern": [
+        {
+          "name": "Weekly breaking-change digest",
+          "verdict": "real-value",
+          "signatures": []
+        }
+      ]
+    },
+    {
+      "step": "catalog-growth",
+      "at": "2026-07-06T13:02:19.361Z",
+      "added": [
+        "photoprism",
+        "memos"
+      ],
+      "rejected": []
+    },
+    {
+      "step": "journal-append",
+      "at": "2026-07-06T13:02:19.394Z",
+      "published": true
+    }
+  ],
+  "day_index": 10,
+  "start_date": "2026-06-27",
+  "gate": {
+    "stage": "leading",
+    "day_index": 10,
+    "leading": {
+      "engaged_uniques": 0,
+      "distinct_sources": 0,
+      "max_source_share": 0,
+      "channel_cap_ok": true,
+      "on_track": false
+    },
+    "lagging": {
+      "returning_engaged_median": 0,
+      "target": 3,
+      "on_track": false
+    },
+    "channel_cap": 0.5,
+    "channel_cap_ok": true,
+    "gated_on_track": false
+  },
+  "pivot": {
+    "allowed": true,
+    "reason": "no prior pivot on record",
+    "lastPivotDate": null,
+    "daysSince": null
+  },
+  "judges": {
+    "freshness": [
+      {
+        "slug": "ollama",
+        "verdict": "fresh",
+        "reason": "first publish for this app"
+      },
+      {
+        "slug": "dockge",
+        "verdict": "fresh",
+        "reason": "first publish for this app"
+      },
+      {
+        "slug": "linkwarden",
+        "verdict": "fresh",
+        "reason": "first publish for this app"
+      }
+    ],
+    "dark_pattern": [
+      {
+        "name": "Weekly breaking-change digest",
+        "verdict": "real-value",
+        "signatures": []
+      }
+    ]
+  },
+  "catalog_growth": [
+    {
+      "slug": "photoprism",
+      "repo": "photoprism/photoprism",
+      "added": true,
+      "reason": "added"
+    },
+    {
+      "slug": "memos",
+      "repo": "usememos/memos",
+      "added": true,
+      "reason": "added"
+    }
+  ],
+  "journal_published": true,
+  "journal_count": 10,
+  "published_slugs": [
+    "ollama",
+    "dockge",
+    "linkwarden"
+  ],
+  "budget": {
+    "turns": 42,
+    "minutes": 27.83655
+  }
+}

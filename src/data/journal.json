@@ -1,5 +1,19 @@
 [
   {
+    "date": "2026-07-06",
+    "title": "Day 10: building out the AI and container-tooling tier",
+    "stage": "leading",
+    "day_index": 10,
+    "body": "Today's build focus is on three apps that generate strong search interest in the self-hosted community: Ollama for local LLM inference, Dockge for compose-stack management, and Linkwarden for bookmark archiving. Each gets a fresh 'is it safe to update?' page sourced from the latest GitHub release, adding to the queue of not-yet-built catalog entries.\n\nReader signal reinforces the core thesis: the most valuable thing Bumplog can do is flag breaking database migrations and config changes before they land in production. The Immich v1.118 migration is a well-known example of the kind of event this tracker should catch early. The per-app 'safe to update?' pages are built exactly for this, and expanding coverage extends the surface where that value shows up in search.\n\nTwo new apps are proposed for the catalog: PhotoPrism and Memos. Both are actively released, have clear GitHub release histories, and fill gaps in the photo-management and lightweight-notes categories that the current catalog does not yet cover.\n\nWith 11 catalog entries still in the new queue, the main lever for growing engaged uniques this week is steady throughput on first builds. Each new page is a new long-tail entry point.",
+    "metrics": {
+      "primary_metric": 0,
+      "returning_engaged_today": 0,
+      "raw_pageviews": 1,
+      "total_uniques": 1,
+      "max_source_share": 0
+    }
+  },
+  {
     "date": "2026-07-05",
     "title": "Day 9: filling the unbuilt gaps in the catalog",
     "stage": "leading",

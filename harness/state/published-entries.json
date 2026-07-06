@@ -456,5 +456,62 @@
     "citations": [
       "https://github.com/actualbudget/actual-server/releases/tag/v25.2.1"
     ]
+  },
+  "ollama": {
+    "slug": "ollama",
+    "angle": "First build for Ollama, covering the latest release with a focus on model-format changes, API breakage, and whether existing model libraries need a re-pull after upgrading.",
+    "name": "Ollama",
+    "tagName": "v0.31.1",
+    "publishedAt": "2026-06-30T22:10:17Z",
+    "contentHash": "48b451c1fc124fd6223b0926ff9eed7bee99083b5d4dcb9f030458996ad1c1d4",
+    "provenance": {
+      "source": "github",
+      "url": "https://github.com/ollama/ollama/releases/tag/v0.31.1",
+      "fetchedAt": "2026-07-06T13:01:10.627Z"
+    },
+    "summary": "v0.31.1 delivers a major performance boost for Gemma 4 on Apple Silicon, with multi-token prediction (MTP) enabled by default that generates tokens nearly 90% faster on a coding-agent benchmark. The speedup is auto-tuned at runtime and requires no configuration changes. Under the hood, the MLX engine is updated to its latest version with a new small-batch matrix multiplication kernel, Gemma 4 MoE model loading is tightened, and the underlying llama.cpp engine is updated to build 9840. No behavioral changes to model output are introduced.",
+    "safeToUpdate": "safe",
+    "rationale": "The release notes describe only performance improvements and engine updates with no breaking changes, required migrations, or manual upgrade steps called out. The MTP speedup is on by default and explicitly noted to not change model output, making this a routine performance release.",
+    "citations": [
+      "https://github.com/ollama/ollama/releases/tag/v0.31.1"
+    ]
+  },
+  "dockge": {
+    "slug": "dockge",
+    "angle": "First build for Dockge, summarizing its release cadence and any compose-file compatibility or data-directory migration notes.",
+    "name": "Dockge",
+    "tagName": "1.5.0",
+    "publishedAt": "2025-03-30T17:42:59Z",
+    "contentHash": "53779d20e4628f82a8704a020ebf592d81e2b24652a61be539d744ee592590f9",
+    "provenance": {
+      "source": "github",
+      "url": "https://github.com/louislam/dockge/releases/tag/1.5.0",
+      "fetchedAt": "2026-07-06T13:01:18.062Z"
+    },
+    "summary": "Dockge 1.5.0 disables the Console feature by default for security reasons; users who need it must explicitly opt in via an environment variable. The release updates the bundled Docker client and Docker Compose to recent versions, and resolves a long-standing bug where YAML comments were lost when reordering items. Additional fixes address compose version warnings, a security advisory (GHSA-7vx4-hf96-mqq6), and minor UI polish such as removing an unnecessary scrollbar. Translation coverage is expanded with contributions from dozens of community members, including a new Irish language addition.",
+    "safeToUpdate": "caution",
+    "rationale": "The release notes explicitly flag a breaking change: the Console feature is now disabled by default, requiring users who rely on it to set DOCKGE_ENABLE_CONSOLE=true before or after upgrading to restore prior behavior. Everything else — dependency bumps, bug fixes, translations — is routine and requires no migration.",
+    "citations": [
+      "https://github.com/louislam/dockge/releases/tag/1.5.0"
+    ]
+  },
+  "linkwarden": {
+    "slug": "linkwarden",
+    "angle": "First build for Linkwarden, highlighting database migration requirements and any API changes that affect browser-extension or API consumers.",
+    "name": "Linkwarden",
+    "tagName": "v2.14.1",
+    "publishedAt": "2026-04-22T23:15:02Z",
+    "contentHash": "e7930ac1da97402434770247c10136d23176a2c415f8395c2c92f652f6901715",
+    "provenance": {
+      "source": "github",
+      "url": "https://github.com/linkwarden/linkwarden/releases/tag/v2.14.1",
+      "fetchedAt": "2026-07-06T13:01:27.417Z"
+    },
+    "summary": "v2.14.1 introduces support for serving preserved HTML archives from a separate public hostname, isolating untrusted archived pages from the main application — a security-oriented addition that requires optional configuration via a dedicated user content domain setup. Tag selection UX has been improved, and several bug fixes are included.",
+    "safeToUpdate": "caution",
+    "rationale": "The new user content domain feature is opt-in and not required, but administrators interested in the security isolation benefit will need to follow a separate setup guide. No breaking changes or mandatory migrations are noted, but the new hostname configuration is worth reviewing before updating if you serve HTML archives.",
+    "citations": [
+      "https://github.com/linkwarden/linkwarden/releases/tag/v2.14.1"
+    ]
   }
 }

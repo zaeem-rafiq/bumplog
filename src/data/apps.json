@@ -257,12 +257,12 @@
     "slug": "dockge",
     "name": "Dockge",
     "repo": "louislam/dockge",
-    "latestVersion": null,
-    "changelogSummary": null,
-    "safeToUpdate": null,
-    "rationale": null,
-    "sourceUrl": null,
-    "lastChecked": null
+    "latestVersion": "1.5.0",
+    "changelogSummary": "Dockge 1.5.0 disables the Console feature by default for security reasons; users who need it must explicitly opt in via an environment variable. The release updates the bundled Docker client and Docker Compose to recent versions, and resolves a long-standing bug where YAML comments were lost when reordering items. Additional fixes address compose version warnings, a security advisory (GHSA-7vx4-hf96-mqq6), and minor UI polish such as removing an unnecessary scrollbar. Translation coverage is expanded with contributions from dozens of community members, including a new Irish language addition.",
+    "safeToUpdate": "caution",
+    "rationale": "The release notes explicitly flag a breaking change: the Console feature is now disabled by default, requiring users who rely on it to set DOCKGE_ENABLE_CONSOLE=true before or after upgrading to restore prior behavior. Everything else — dependency bumps, bug fixes, translations — is routine and requires no migration.",
+    "sourceUrl": "https://github.com/louislam/dockge/releases/tag/1.5.0",
+    "lastChecked": "2026-07-06"
   },
   {
     "slug": "wg-easy",
@@ -358,12 +358,12 @@
     "slug": "linkwarden",
     "name": "Linkwarden",
     "repo": "linkwarden/linkwarden",
-    "latestVersion": null,
-    "changelogSummary": null,
-    "safeToUpdate": null,
-    "rationale": null,
-    "sourceUrl": null,
-    "lastChecked": null
+    "latestVersion": "v2.14.1",
+    "changelogSummary": "v2.14.1 introduces support for serving preserved HTML archives from a separate public hostname, isolating untrusted archived pages from the main application — a security-oriented addition that requires optional configuration via a dedicated user content domain setup. Tag selection UX has been improved, and several bug fixes are included.",
+    "safeToUpdate": "caution",
+    "rationale": "The new user content domain feature is opt-in and not required, but administrators interested in the security isolation benefit will need to follow a separate setup guide. No breaking changes or mandatory migrations are noted, but the new hostname configuration is worth reviewing before updating if you serve HTML archives.",
+    "sourceUrl": "https://github.com/linkwarden/linkwarden/releases/tag/v2.14.1",
+    "lastChecked": "2026-07-06"
   },
   {
     "slug": "watchtower",
@@ -381,6 +381,28 @@
     "slug": "ollama",
     "name": "Ollama",
     "repo": "ollama/ollama",
+    "latestVersion": "v0.31.1",
+    "changelogSummary": "v0.31.1 delivers a major performance boost for Gemma 4 on Apple Silicon, with multi-token prediction (MTP) enabled by default that generates tokens nearly 90% faster on a coding-agent benchmark. The speedup is auto-tuned at runtime and requires no configuration changes. Under the hood, the MLX engine is updated to its latest version with a new small-batch matrix multiplication kernel, Gemma 4 MoE model loading is tightened, and the underlying llama.cpp engine is updated to build 9840. No behavioral changes to model output are introduced.",
+    "safeToUpdate": "safe",
+    "rationale": "The release notes describe only performance improvements and engine updates with no breaking changes, required migrations, or manual upgrade steps called out. The MTP speedup is on by default and explicitly noted to not change model output, making this a routine performance release.",
+    "sourceUrl": "https://github.com/ollama/ollama/releases/tag/v0.31.1",
+    "lastChecked": "2026-07-06"
+  },
+  {
+    "slug": "photoprism",
+    "name": "PhotoPrism",
+    "repo": "photoprism/photoprism",
+    "latestVersion": null,
+    "changelogSummary": null,
+    "safeToUpdate": null,
+    "rationale": null,
+    "sourceUrl": null,
+    "lastChecked": null
+  },
+  {
+    "slug": "memos",
+    "name": "Memos",
+    "repo": "usememos/memos",
     "latestVersion": null,
     "changelogSummary": null,
     "safeToUpdate": null,
