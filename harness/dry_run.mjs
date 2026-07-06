@@ -574,6 +574,28 @@ async function main() {
     }
   }
 
+  // 31) verdict-enum integrity: every app with a non-null safeToUpdate carries an
+  //     allowed value, and every 'unmaintained' entry has a non-empty rationale
+  //     (the "no longer maintained" callout + social phrase must never render
+  //     without a reason). Offline/deterministic — reads the committed registry.
+  {
+    const { readFileSync } = await import('node:fs');
+    const ALLOWED = new Set(['safe', 'caution', 'breaking', 'unknown', 'unmaintained']);
+    try {
+      const siteApps = JSON.parse(readFileSync(join(dirname(HARNESS_DIR), 'src', 'data', 'apps.json'), 'utf8'));
+      const badVerdict = siteApps.filter((a) => a.safeToUpdate != null && !ALLOWED.has(a.safeToUpdate)).map((a) => a.slug);
+      const unmaintainedNoReason = siteApps
+        .filter((a) => a.safeToUpdate === 'unmaintained' && !String(a.rationale ?? '').trim())
+        .map((a) => a.slug);
+      const unmaintainedCount = siteApps.filter((a) => a.safeToUpdate === 'unmaintained').length;
+      const ok = badVerdict.length === 0 && unmaintainedNoReason.length === 0;
+      add('verdict_enum_integrity', ok ? 'pass' : 'fail',
+        `apps=${siteApps.length}; unmaintained=${unmaintainedCount}; bad_verdict=[${badVerdict.join(',')}]; unmaintained_missing_rationale=[${unmaintainedNoReason.join(',')}]`);
+    } catch (err) {
+      add('verdict_enum_integrity', 'fail', `src/data/apps.json unreadable/invalid: ${err.message}`);
+    }
+  }
+
   print();
 }
 
@@ -608,6 +630,7 @@ const CHECKLIST = [
   ['feeds_wellformed', 'safety-annotated RSS feeds built: site feed covers assessed apps + journal, escaping holds, per-app/per-stack feeds exist'],
   ['eol_data_shape', 'lifecycle data (src/data/eol.json) contains only verified endoflife.date products with valid cycle shapes'],
   ['custom_404_built', 'custom 404 page built (dist/404.html) — disables Cloudflare Pages SPA fallback so unknown paths return real 404s, not the homepage with 200'],
+  ['verdict_enum_integrity', 'every app verdict is in the allowed set {safe,caution,breaking,unknown,unmaintained}; every unmaintained entry has a non-empty rationale'],
 ];
 
 function print() {

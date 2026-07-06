@@ -13,6 +13,11 @@ const apps = [
     rationale: 'This release requires a database migration and changes the default consumer path; back up before upgrading.',
   },
   { slug: 'draft-app', name: 'Draft', latestVersion: null, safeToUpdate: null, rationale: '' }, // unassessed
+  {
+    slug: 'overseerr', name: 'Overseerr', latestVersion: 'v1.35.0', safeToUpdate: 'unmaintained',
+    rationale: 'The sct/overseerr repository is archived and read-only — no further fixes or security patches.',
+    successor: 'Jellyseerr',
+  },
 ];
 
 // 1) format: contains verified route, verdict emoji, tags, and fits the limit.
@@ -43,7 +48,23 @@ const noop = await runSocial({
 });
 assert.equal(noop.posted.length, 0, 'no candidates → no posts');
 
-console.log('mastodon.test.mjs: all', 5, 'checks passed');
+// 6) unmaintained: formats with the ⚫ emoji, the "no longer maintained" phrase,
+//    and appends the successor line — all within the 500-char limit.
+const dead = formatVerdictPost(apps[3]);
+assert.ok(dead.startsWith('⚫'), 'unmaintained → black circle');
+assert.ok(dead.includes('no longer maintained'), 'unmaintained phrase present');
+assert.ok(dead.includes('Successor: Jellyseerr'), 'appends the successor');
+assert.ok(dead.includes('/apps/overseerr/'), 'keeps the verified route');
+assert.ok(dead.length <= 500, 'unmaintained post within 500-char limit');
+// overflow: a huge rationale still keeps the successor line and the link.
+const deadHuge = formatVerdictPost({ ...apps[3], rationale: 'x'.repeat(2000) });
+assert.ok(
+  deadHuge.length <= 500 && deadHuge.includes('Successor: Jellyseerr') && deadHuge.includes('/apps/overseerr/'),
+  'overflow drops reason but keeps successor + link',
+);
+
+console.log('mastodon.test.mjs: all', 6, 'checks passed');
 console.log('\n--- sample toots ---\n');
 console.log(safe, '\n');
-console.log(formatVerdictPost(apps[1]));
+console.log(formatVerdictPost(apps[1]), '\n');
+console.log(dead);

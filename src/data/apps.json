@@ -180,11 +180,12 @@
     "name": "Overseerr",
     "repo": "sct/overseerr",
     "latestVersion": "v1.35.0",
-    "changelogSummary": "Overseerr v1.35.0 delivers a broad set of bug fixes centered on TV series availability logic, including more reliable handling of partial seasons, specials, and availability sync. Push notification reliability is improved with resubscription logic and a local-storage flag, and email test notifications now correctly respect the allowSelfSigned setting. The Plex Watchlist API URL is updated to match a changed upstream endpoint. Notably, a 'prepare seerr migration' change is included alongside an upgrade of the runtime to Node 20, and a database cascade behavior for media entities is changed from update-cascade to remove-cascade.",
-    "safeToUpdate": "caution",
-    "rationale": "No explicit breaking changes or required manual migration steps are documented, but two changes warrant attention before upgrading: the media entity cascade mode change (from 'update' to 'remove') alters how deletions propagate to related database records and could affect data in edge cases, and the opaque 'prepare seerr migration' commit introduces unknown internal state changes whose user-facing impact is not explained in the notes. The Node 20 runtime upgrade and Plex Watchlist URL fix are routine but may surface issues in customized deployments.",
+    "changelogSummary": null,
+    "safeToUpdate": "unmaintained",
+    "rationale": "The sct/overseerr repository is archived and read-only (last activity Feb 2026) — no further fixes or security patches. Last release was v1.35.0. Consider migrating to the actively-maintained fork Jellyseerr.",
     "sourceUrl": "https://github.com/sct/overseerr/releases/tag/v1.35.0",
-    "lastChecked": "2026-07-05"
+    "lastChecked": "2026-07-06",
+    "successor": "Jellyseerr"
   },
   {
     "slug": "navidrome",
@@ -288,24 +289,26 @@
   {
     "slug": "stirling-pdf",
     "name": "Stirling-PDF",
-    "repo": "Frooodle/Stirling-PDF",
+    "repo": "Stirling-Tools/Stirling-PDF",
     "latestVersion": "v2.14.0",
-    "changelogSummary": "v2.14.0 introduces desktop hardware token signing via PKCS#11 and OS certificate stores, enabling USB and smart-card-based PDF signing on desktop builds. File sharing and shared signing have been restored to the top workbench bar, and the side menu for comments, annotations, and attachments has been redesigned with easier adding and new bulk-clear controls. A login agreement disclaimer feature is available for business deployments. Additional fixes address desktop login/refresh-token issues, settings.yml defaults alignment, and dead or mismapped settings entries.",
-    "safeToUpdate": "caution",
-    "rationale": "The fix to 'align settings.yml defaults and fix dead/mismapped settings' may silently change the effective value of previously inert or mis-keyed configuration entries, warranting a review of your settings.yml before upgrading. The enforcement of run-on-export policies on all PDF exit paths is also a behavioral change that could affect existing workflows. No explicit migration steps or breaking changes are called out, but these two changes are worth reading before deploying.",
+    "changelogSummary": null,
+    "safeToUpdate": "unknown",
+    "rationale": "Repointed from the moved Frooodle/Stirling-PDF to Stirling-Tools/Stirling-PDF; full safety assessment pending the next daily run.",
     "sourceUrl": "https://github.com/Stirling-Tools/Stirling-PDF/releases/tag/v2.14.0",
-    "lastChecked": "2026-07-04"
+    "lastChecked": "2026-07-06",
+    "successor": null
   },
   {
     "slug": "actual",
     "name": "Actual Budget",
-    "repo": "actualbudget/actual-server",
-    "latestVersion": "v25.2.1",
-    "changelogSummary": "Actual Budget v25.2.1: GitHub published no release notes for this tag. See the linked source.",
+    "repo": "actualbudget/actual",
+    "latestVersion": "v26.7.0",
+    "changelogSummary": null,
     "safeToUpdate": "unknown",
-    "rationale": "No published release notes to assess. Review the linked source before updating.",
-    "sourceUrl": "https://github.com/actualbudget/actual-server/releases/tag/v25.2.1",
-    "lastChecked": "2026-07-05"
+    "rationale": "Repointed from the archived actualbudget/actual-server to the maintained monorepo actualbudget/actual; full safety assessment pending the next daily run.",
+    "sourceUrl": "https://github.com/actualbudget/actual/releases/tag/v26.7.0",
+    "lastChecked": "2026-07-06",
+    "successor": null
   },
   {
     "slug": "syncthing",
@@ -368,10 +371,11 @@
     "repo": "containrrr/watchtower",
     "latestVersion": null,
     "changelogSummary": null,
-    "safeToUpdate": null,
-    "rationale": null,
+    "safeToUpdate": "unmaintained",
+    "rationale": "The containrrr/watchtower repository is archived and read-only (last activity Dec 2025) — no further fixes or security patches. Consider the maintained fork nicholas-fedor/watchtower.",
     "sourceUrl": null,
-    "lastChecked": null
+    "lastChecked": "2026-07-06",
+    "successor": "nicholas-fedor/watchtower"
   },
   {
     "slug": "ollama",

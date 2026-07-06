@@ -15,6 +15,7 @@ const STATUS_COLOR: Record<SafeToUpdate, string> = {
   caution: '#9a7420',
   breaking: '#c8432e',
   unknown: '#7a7873',
+  unmaintained: '#4b5563',
 };
 
 const LABEL = 'bumplog';

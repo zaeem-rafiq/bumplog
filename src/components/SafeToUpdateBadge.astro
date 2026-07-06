@@ -15,6 +15,7 @@ const LABELS: Record<SafeToUpdate, string> = {
   caution: 'Update with care',
   breaking: 'Breaking changes',
   unknown: 'Not yet assessed',
+  unmaintained: 'No longer maintained',
 };
 
 const label = LABELS[status];
@@ -33,6 +34,9 @@ const label = LABELS[status];
     )}
     {status === 'unknown' && (
       <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 13.5a5.5 5.5 0 100-11 5.5 5.5 0 000 11z" opacity="0.55" /><path d="M8 7.5v3.2" /><path d="M8 5.1h.01" /></svg>
+    )}
+    {status === 'unmaintained' && (
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 13.5a5.5 5.5 0 100-11 5.5 5.5 0 000 11z" /><path d="M4.6 4.6l6.8 6.8" /></svg>
     )}
   </span>
   {label}
@@ -69,4 +73,5 @@ const label = LABELS[status];
   .badge--caution { color: var(--status-caution-fg); }
   .badge--breaking { color: var(--status-breaking-fg); }
   .badge--unknown { color: var(--status-unknown-fg); }
+  .badge--unmaintained { color: var(--status-unmaintained-fg); }
 </style>

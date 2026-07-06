@@ -31,8 +31,10 @@ const VERDICT_ANSWER: Record<SafeToUpdate, string> = {
   caution: 'Update with care.',
   breaking: 'Holds breaking changes.',
   unknown: 'Not assessed yet.',
+  unmaintained: 'No longer maintained.',
 };
 const answer = VERDICT_ANSWER[status];
+const unmaintained = status === 'unmaintained';
 
 // Support-lifecycle context (endoflife.date), rendered only when verified data
 // matches this app's current version — nothing is invented for uncovered apps.
@@ -82,6 +84,23 @@ const jsonLdStr = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
       </p>
     </header>
 
+    {unmaintained && (
+      <aside class="unmaintained-callout" role="note" aria-label="No longer maintained">
+        <div class="unmaintained-callout__head">
+          <span class="unmaintained-callout__glyph" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" /><path d="M5.6 5.6l12.8 12.8" /></svg>
+          </span>
+          <p class="unmaintained-callout__title">{app.name} is no longer maintained.</p>
+        </div>
+        {app.rationale && <p class="unmaintained-callout__body">{app.rationale}</p>}
+        {app.successor && (
+          <p class="unmaintained-callout__successor">
+            <span class="unmaintained-callout__successor-label">Successor:</span> {app.successor}
+          </p>
+        )}
+      </aside>
+    )}
+
     <section class={`verdict verdict--${status}`} aria-labelledby="verdict-answer">
       <div class="verdict__head">
         <span class="verdict__glyph" aria-hidden="true">
@@ -96,6 +115,9 @@ const jsonLdStr = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
           )}
           {status === 'unknown' && (
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v6" /><path d="M12 16.5h.01" /><circle cx="12" cy="12" r="9" opacity="0.5" /></svg>
+          )}
+          {status === 'unmaintained' && (
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" /><path d="M5.6 5.6l12.8 12.8" /></svg>
           )}
         </span>
         <h2 class="verdict__answer" id="verdict-answer">{answer}</h2>
@@ -223,5 +245,55 @@ const jsonLdStr = JSON.stringify(jsonLd).replace(/</g, '\\u003c');
   }
   .lifecycle-source {
     font-size: var(--text-xs);
+  }
+
+  /* Prominent "no longer maintained" warning — a filled slate card that reads
+     as a clear dead-end, distinct from the normal verdict section below it. */
+  .unmaintained-callout {
+    margin: 0 0 1.75rem;
+    padding: 1.15rem 1.3rem 1.3rem;
+    background: var(--status-unmaintained-bg);
+    border: 1px solid var(--status-unmaintained-border);
+    border-left: 4px solid var(--status-unmaintained-solid);
+  }
+  .unmaintained-callout__head {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+  }
+  .unmaintained-callout__glyph {
+    width: 1.5rem;
+    height: 1.5rem;
+    flex: none;
+    display: grid;
+    place-items: center;
+    color: var(--status-unmaintained-fg);
+  }
+  .unmaintained-callout__glyph svg {
+    width: 1.35rem;
+    height: 1.35rem;
+    display: block;
+  }
+  .unmaintained-callout__title {
+    margin: 0;
+    font-weight: 600;
+    font-size: var(--text-md);
+    color: var(--color-text);
+    letter-spacing: -0.01em;
+  }
+  .unmaintained-callout__body {
+    margin: 0.75rem 0 0;
+    line-height: 1.6;
+    color: var(--color-text);
+    max-width: 62ch;
+  }
+  .unmaintained-callout__successor {
+    margin: 0.75rem 0 0;
+    font-size: var(--text-sm);
+    color: var(--color-text);
+  }
+  .unmaintained-callout__successor-label {
+    color: var(--color-text-muted);
+    font-weight: 500;
   }
 </style>

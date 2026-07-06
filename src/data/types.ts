@@ -4,7 +4,7 @@
 // as a clearly-marked empty/placeholder state.
 
 /** Whether it is safe to update an app right now. */
-export type SafeToUpdate = 'safe' | 'caution' | 'breaking' | 'unknown';
+export type SafeToUpdate = 'safe' | 'caution' | 'breaking' | 'unknown' | 'unmaintained';
 
 /** A tracked self-hosted app. See src/data/apps.json. */
 export interface App {
@@ -26,6 +26,8 @@ export interface App {
   sourceUrl: string | null;
   /** ISO 8601 timestamp of the last check. null until filled. */
   lastChecked: string | null;
+  /** Maintained alternative when this app is unmaintained (name or "owner/repo"). null if none. */
+  successor?: string | null;
 }
 
 /** A curated bundle of apps (the "bookmark engine"). See src/data/stacks.json. */

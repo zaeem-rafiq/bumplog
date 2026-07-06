@@ -29,7 +29,7 @@ interface Props {
 const { stack, stackApps } = Astro.props;
 
 // Sort assessed-first (safe → caution → breaking), pending last.
-const ORDER: Record<SafeToUpdate, number> = { safe: 0, caution: 1, breaking: 2, unknown: 3 };
+const ORDER: Record<SafeToUpdate, number> = { safe: 0, caution: 1, breaking: 2, unmaintained: 3, unknown: 4 };
 const sortedApps = [...stackApps].sort((a, b) => {
   const d = ORDER[toBadgeStatus(a.safeToUpdate)] - ORDER[toBadgeStatus(b.safeToUpdate)];
   return d !== 0 ? d : a.name.localeCompare(b.name);

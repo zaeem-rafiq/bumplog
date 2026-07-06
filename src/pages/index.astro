@@ -10,7 +10,7 @@ const trackedApps = (apps as App[]).filter((a) => a.safeToUpdate != null);
 
 // Assessed apps lead, ordered by severity (safe, caution, breaking), pending
 // last. Stable name order within a group.
-const ORDER: Record<SafeToUpdate, number> = { safe: 0, caution: 1, breaking: 2, unknown: 3 };
+const ORDER: Record<SafeToUpdate, number> = { safe: 0, caution: 1, breaking: 2, unmaintained: 3, unknown: 4 };
 const sorted = [...trackedApps].sort((a, b) => {
   const sa = ORDER[toBadgeStatus(a.safeToUpdate)];
   const sb = ORDER[toBadgeStatus(b.safeToUpdate)];
@@ -24,6 +24,7 @@ const counts = {
   safe: trackedApps.filter((a) => a.safeToUpdate === 'safe').length,
   caution: trackedApps.filter((a) => a.safeToUpdate === 'caution').length,
   breaking: trackedApps.filter((a) => a.safeToUpdate === 'breaking').length,
+  unmaintained: trackedApps.filter((a) => a.safeToUpdate === 'unmaintained').length,
   unknown: trackedApps.filter((a) => a.safeToUpdate === 'unknown').length,
 };
 
@@ -32,6 +33,7 @@ const FILTERS: { key: SafeToUpdate | 'all'; label: string }[] = [
   { key: 'safe', label: 'Safe' },
   { key: 'caution', label: 'Caution' },
   { key: 'breaking', label: 'Breaking' },
+  { key: 'unmaintained', label: 'Unmaintained' },
   { key: 'unknown', label: 'Pending' },
 ];
 const activeFilters = FILTERS.filter((f) => f.key === 'all' || counts[f.key as SafeToUpdate] > 0);
@@ -61,6 +63,9 @@ const activeFilters = FILTERS.filter((f) => f.key === 'all' || counts[f.key as S
         )}
         {counts.breaking > 0 && (
           <li class="summary__item"><span class="summary__dot summary__dot--breaking"></span><span class="summary__num">{counts.breaking}</span> breaking</li>
+        )}
+        {counts.unmaintained > 0 && (
+          <li class="summary__item"><span class="summary__dot summary__dot--unmaintained"></span><span class="summary__num">{counts.unmaintained}</span> unmaintained</li>
         )}
         {counts.unknown > 0 && (
           <li class="summary__item"><span class="summary__dot summary__dot--unknown"></span><span class="summary__num">{counts.unknown}</span> pending</li>

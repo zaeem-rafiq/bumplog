@@ -12,6 +12,7 @@ const VERDICT_LABEL: Record<SafeToUpdate, string> = {
   caution: 'Update with care',
   breaking: 'Holds breaking changes',
   unknown: 'Not assessed yet',
+  unmaintained: 'No longer maintained',
 };
 
 /** One item per (app, version, verdict). The guid changes whenever the daily

@@ -96,6 +96,24 @@ export async function ghFetch(path, { cacheKey } = {}) {
   return { status: 200, data, fromCache: false, remaining };
 }
 
+/**
+ * Fetch the GitHub REPO object and report whether it is archived (read-only).
+ * The `archived` flag lives on GET /repos/{owner}/{repo}, NOT on the releases
+ * endpoint. Reuses ghFetch (auth + ETag cache). A 404 (repo gone) reports
+ * archived:false with found:false so callers halt gracefully rather than crash.
+ * @param {string} repo  "owner/name"
+ * @returns {Promise<{ found:boolean, archived:boolean }>}
+ */
+export async function fetchRepoMeta(repo) {
+  const [owner, name] = String(repo).split('/');
+  if (!owner || !name) throw new Error(`repo must be "owner/name", got "${repo}"`);
+  const res = await ghFetch(`/repos/${owner}/${name}`, {
+    cacheKey: `${owner}_${name}_repo`,
+  });
+  if (res.status === 404 || !res.data) return { found: false, archived: false };
+  return { found: true, archived: res.data.archived === true };
+}
+
 /** Stable content hash of a release's source-meaningful fields (for freshness checks). */
 export function releaseContentHash({ tagName, publishedAt, body }) {
   return createHash('sha256')
@@ -124,6 +142,11 @@ export async function buildReleaseRecord(app) {
   const [owner, repo] = String(app.repo).split('/');
   if (!owner || !repo) throw new Error(`app.repo must be "owner/name", got "${app.repo}"`);
 
+  // Whether the repo is archived (read-only) — lives on the repo object, not the
+  // releases endpoint. Carried on the record so the classifier can short-circuit
+  // an archived repo to 'unmaintained' without spending an LLM call on a dead repo.
+  const meta = await fetchRepoMeta(app.repo);
+
   // Try GitHub Releases first.
   const rel = await ghFetch(`/repos/${owner}/${repo}/releases/latest`, {
     cacheKey: `${owner}_${repo}_latest_release`,
@@ -139,6 +162,7 @@ export async function buildReleaseRecord(app) {
       raw_body: r.body ?? '',
       sourceUrl: r.html_url,
       prerelease: r.prerelease,
+      archived: meta.archived,
     });
   }
 
@@ -156,10 +180,11 @@ export async function buildReleaseRecord(app) {
       raw_body: '',
       sourceUrl: `https://github.com/${owner}/${repo}/releases/tag/${t.name}`,
       prerelease: false,
+      archived: meta.archived,
     });
   }
 
-  return { found: false, slug: app.slug, repo: app.repo };
+  return { found: false, slug: app.slug, repo: app.repo, archived: meta.archived };
 }
 
 /**
@@ -176,6 +201,11 @@ export async function validateNewAppRepo({ slug, name, repo }) {
   }
   try {
     const rec = await buildReleaseRecord({ slug, name, repo });
+    // An archived (read-only) repo must never be ADDED as a new live app — it can
+    // receive no further releases or security patches.
+    if (rec.archived === true) {
+      return { ok: false, reason: 'repository is archived' };
+    }
     if (rec.found && rec.provenance?.source === 'github') {
       return { ok: true, repo, tagName: rec.tagName };
     }
@@ -196,6 +226,8 @@ function finalizeRecord(app, src) {
     releaseName: src.name,
     publishedAt: src.publishedAt,
     prerelease: src.prerelease,
+    // Archived (read-only) repo → classifier short-circuits to 'unmaintained'.
+    archived: src.archived === true,
     // Provenance — REQUIRED on every published datum.
     provenance: { source: 'github', url: src.sourceUrl, fetchedAt: new Date().toISOString() },
     contentHash: releaseContentHash({
@@ -235,7 +267,9 @@ export async function buildAllRecords() {
 const SUMMARY_MAX_CHARS = 1500;
 const RATIONALE_MAX_CHARS = 600;
 const RAW_BODY_INPUT_CHARS = 6000;
-const SAFE_VALUES = new Set(['safe', 'caution', 'breaking', 'unknown']);
+const SAFE_VALUES = new Set(['safe', 'caution', 'breaking', 'unknown', 'unmaintained']);
+const ARCHIVED_RATIONALE =
+  'This repository is archived and read-only — no further fixes or security patches.';
 
 function clamp(s, n) {
   const str = typeof s === 'string' ? s.trim() : '';
@@ -304,6 +338,15 @@ export async function summarizeChangelog(record, llm) {
 export async function flagBreakingChanges(record, llm) {
   const url = record?.provenance?.url;
   const raw = (record?.raw_body ?? '').trim();
+  // Archived (read-only) repo → deterministic 'unmaintained'. Never spend an LLM
+  // call classifying a dead repo; keep the last known release fields on record.
+  if (record?.archived === true) {
+    return {
+      safeToUpdate: 'unmaintained',
+      rationale: ARCHIVED_RATIONALE,
+      citations: withSource([], record),
+    };
+  }
   if (!raw) {
     return {
       safeToUpdate: 'unknown',
@@ -351,6 +394,18 @@ export async function flagBreakingChanges(record, llm) {
 export async function summarizeAndClassify(record, llm) {
   const url = record?.provenance?.url;
   const raw = (record?.raw_body ?? '').trim();
+  // Archived (read-only) repo → deterministic 'unmaintained', no LLM call. Keep
+  // the last known latestVersion/sourceUrl (the final release before archival is
+  // still useful); the summary is a deterministic stub, not model-generated.
+  if (record?.archived === true) {
+    return {
+      summary: `${record.name} ${record.tagName ?? ''}`.trim() +
+        ': repository archived and read-only. See the linked source.',
+      safeToUpdate: 'unmaintained',
+      rationale: ARCHIVED_RATIONALE,
+      citations: withSource([], record),
+    };
+  }
   if (!raw) {
     return {
       summary: `${record.name} ${record.tagName}: GitHub published no release notes for this ${record.kind}. See the linked source.`,

@@ -81,6 +81,14 @@
   --status-unknown-solid: oklch(0.62 0.009 60);
   --status-unknown-icon: oklch(0.5 0.01 60);
 
+  /* Unmaintained: cool slate (#4b5563) — deliberately distinct from unknown's
+     warm gray. Reads as a firm "dead-end" state, not a "pending" one. */
+  --status-unmaintained-bg: oklch(0.955 0.006 260);
+  --status-unmaintained-fg: oklch(0.44 0.03 260);
+  --status-unmaintained-border: oklch(0.88 0.01 260);
+  --status-unmaintained-solid: oklch(0.44 0.03 260);
+  --status-unmaintained-icon: oklch(0.44 0.03 260);
+
   --content-width: 46rem;
   --wide-width: 64rem;
   --radius-sm: 0;
@@ -136,6 +144,12 @@
     --status-unknown-border: oklch(0.35 0.009 60);
     --status-unknown-solid: oklch(0.56 0.009 60);
     --status-unknown-icon: oklch(0.56 0.009 60);
+
+    --status-unmaintained-bg: oklch(0.29 0.014 260);
+    --status-unmaintained-fg: oklch(0.78 0.02 260);
+    --status-unmaintained-border: oklch(0.41 0.016 260);
+    --status-unmaintained-solid: oklch(0.6 0.022 260);
+    --status-unmaintained-icon: oklch(0.62 0.022 260);
 
     --shadow-sm: 0 1px 2px oklch(0 0 0 / 0.45);
     --shadow-md: 0 4px 14px oklch(0 0 0 / 0.5), 0 1px 3px oklch(0 0 0 / 0.4);
@@ -396,6 +410,7 @@ time {
 .summary__dot--caution { background: var(--status-caution-solid); }
 .summary__dot--breaking { background: var(--status-breaking-solid); }
 .summary__dot--unknown { background: var(--status-unknown-solid); }
+.summary__dot--unmaintained { background: var(--status-unmaintained-solid); }
 
 /* Verdict: a solid status glyph + a serif answer. No rail, no eyebrow. */
 .verdict {
@@ -407,6 +422,7 @@ time {
 .verdict--caution { --v-icon: var(--status-caution-icon); }
 .verdict--breaking { --v-icon: var(--status-breaking-icon); }
 .verdict--unknown { --v-icon: var(--status-unknown-icon); }
+.verdict--unmaintained { --v-icon: var(--status-unmaintained-icon); }
 
 .verdict__head {
   display: flex;

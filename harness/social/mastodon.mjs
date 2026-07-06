@@ -24,6 +24,7 @@ const VERDICT = {
   caution: { emoji: '🟠', phrase: 'update with caution' },
   breaking: { emoji: '🔴', phrase: 'breaking changes — read before you upgrade' },
   unknown: { emoji: '⚪', phrase: 'changes unclear — check the notes' },
+  unmaintained: { emoji: '⚫', phrase: 'no longer maintained' },
 };
 
 /** First sentence of the strongest available reason, trimmed to `max` chars. */
@@ -45,10 +46,16 @@ export function formatVerdictPost(app) {
   const tags = `#selfhosted ${hashtag(app.slug)}`;
   const header = `${v.emoji} ${app.name} ${app.latestVersion} — ${v.phrase}.`;
   const reason = shortReason(app);
-  const parts = [header, reason, url, tags].filter(Boolean);
+  const successor = app.successor ? `Successor: ${app.successor}` : '';
+  const parts = [header, reason, successor, url, tags].filter(Boolean);
   let post = parts.join('\n\n');
   if (post.length > MASTODON_MAX_LEN) {
-    // Drop the reason first (header + link + tags are non-negotiable).
+    // Over budget: keep the successor (it's the actionable takeaway) but drop the
+    // reason. Header + link + tags are non-negotiable.
+    post = [header, successor, url, tags].filter(Boolean).join('\n\n');
+  }
+  if (post.length > MASTODON_MAX_LEN) {
+    // Still over: the successor line is droppable too, like the reason.
     post = [header, url, tags].join('\n\n');
   }
   return post;

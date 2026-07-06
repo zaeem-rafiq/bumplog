@@ -16,6 +16,8 @@ export interface ApiAppEntry {
   /** Provenance: the GitHub release this verdict traces to. */
   sourceUrl: string | null;
   lastChecked: string | null;
+  /** Maintained alternative when unmaintained (name or "owner/repo"); null otherwise. */
+  successor: string | null;
   /** The human-readable verdict page. */
   url: string;
   /** Embeddable SVG badge for this app's verdict. */
@@ -39,6 +41,7 @@ export function toApiEntry(app: App, base: string): ApiAppEntry {
     changelogSummary: app.changelogSummary,
     sourceUrl: app.sourceUrl,
     lastChecked: app.lastChecked,
+    successor: app.successor ?? null,
     url: `${base}/apps/${app.slug}/`,
     badge: `${base}/badge/${app.slug}.svg`,
     lifecycle: getLifecycle(app.slug, app.latestVersion),
