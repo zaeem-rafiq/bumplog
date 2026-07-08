@@ -1,0 +1,83 @@
+{
+  "date": "2026-07-07",
+  "status": "error",
+  "mode": "live",
+  "trace": [
+    {
+      "step": "auth-guard",
+      "at": "2026-07-07T13:00:05.375Z",
+      "ok": true
+    },
+    {
+      "step": "verify-locks",
+      "at": "2026-07-07T13:00:05.376Z",
+      "ok": true,
+      "failures": []
+    },
+    {
+      "step": "pull-metrics",
+      "at": "2026-07-07T13:00:11.001Z",
+      "primary_metric": 0,
+      "engaged_uniques": 2,
+      "max_source_share": 1
+    },
+    {
+      "step": "feedback",
+      "at": "2026-07-07T13:00:11.003Z",
+      "count": 4,
+      "flagged": [
+        {
+          "id": "fb-injection-probe",
+          "reason": "injection-shaped content"
+        }
+      ]
+    },
+    {
+      "step": "gate",
+      "at": "2026-07-07T13:00:11.004Z",
+      "stage": "leading",
+      "day_index": 11,
+      "leading": {
+        "engaged_uniques": 2,
+        "distinct_sources": 1,
+        "max_source_share": 1,
+        "channel_cap_ok": false,
+        "on_track": false
+      },
+      "lagging": {
+        "returning_engaged_median": 0,
+        "target": 3,
+        "on_track": false
+      },
+      "channel_cap": 0.5,
+      "channel_cap_ok": false,
+      "gated_on_track": false
+    }
+  ],
+  "day_index": 11,
+  "start_date": "2026-06-27",
+  "gate": {
+    "stage": "leading",
+    "day_index": 11,
+    "leading": {
+      "engaged_uniques": 2,
+      "distinct_sources": 1,
+      "max_source_share": 1,
+      "channel_cap_ok": false,
+      "on_track": false
+    },
+    "lagging": {
+      "returning_engaged_median": 0,
+      "target": 3,
+      "on_track": false
+    },
+    "channel_cap": 0.5,
+    "channel_cap_ok": false,
+    "gated_on_track": false
+  },
+  "error": "Error: claude -p exited 1 (claude-sonnet-4-6): \n    at runLLM (file:///Users/zaeemkhan/Projects/bumplog/harness/lib/llm.mjs:121:13)\n    at async draftJournalViaAgent (file:///Users/zaeemkhan/Projects/bumplog/harness/morning_loop.mjs:437:15)\n    at async runLoop (file:///Users/zaeemkhan/Projects/bumplog/harness/morning_loop.mjs:127:11)",
+  "budget": {
+    "turns": 55,
+    "minutes": 29.86735
+  }
+}

@@ -1,0 +1,193 @@
+{
+  "date": "2026-07-08",
+  "status": "ok",
+  "mode": "live",
+  "trace": [
+    {
+      "step": "auth-guard",
+      "at": "2026-07-08T13:00:30.321Z",
+      "ok": true
+    },
+    {
+      "step": "verify-locks",
+      "at": "2026-07-08T13:00:30.345Z",
+      "ok": true,
+      "failures": []
+    },
+    {
+      "step": "pull-metrics",
+      "at": "2026-07-08T13:00:34.000Z",
+      "primary_metric": 0,
+      "engaged_uniques": 2,
+      "max_source_share": 1
+    },
+    {
+      "step": "feedback",
+      "at": "2026-07-08T13:00:34.010Z",
+      "count": 4,
+      "flagged": [
+        {
+          "id": "fb-injection-probe",
+          "reason": "injection-shaped content"
+        }
+      ]
+    },
+    {
+      "step": "gate",
+      "at": "2026-07-08T13:00:34.012Z",
+      "stage": "leading",
+      "day_index": 12,
+      "leading": {
+        "engaged_uniques": 2,
+        "distinct_sources": 1,
+        "max_source_share": 1,
+        "channel_cap_ok": false,
+        "on_track": false
+      },
+      "lagging": {
+        "returning_engaged_median": 0,
+        "target": 3,
+        "on_track": false
+      },
+      "channel_cap": 0.5,
+      "channel_cap_ok": false,
+      "gated_on_track": false
+    },
+    {
+      "step": "journal-honesty",
+      "at": "2026-07-08T13:01:36.707Z",
+      "ok": true,
+      "mismatches": [],
+      "missing": []
+    },
+    {
+      "step": "pivot-hysteresis",
+      "at": "2026-07-08T13:01:36.713Z",
+      "allowed": true,
+      "reason": "no prior pivot on record",
+      "lastPivotDate": null,
+      "daysSince": null,
+      "intent": false
+    },
+    {
+      "step": "judges",
+      "at": "2026-07-08T13:02:32.399Z",
+      "freshness": [
+        {
+          "slug": "mealie",
+          "verdict": "fresh",
+          "reason": "first publish for this app"
+        },
+        {
+          "slug": "photoprism",
+          "verdict": "fresh",
+          "reason": "first publish for this app"
+        },
+        {
+          "slug": "changedetection-io",
+          "verdict": "fresh",
+          "reason": "first publish for this app"
+        }
+      ],
+      "dark_pattern": [
+        {
+          "name": "Weekly breaking-change digest",
+          "verdict": "real-value",
+          "signatures": []
+        }
+      ]
+    },
+    {
+      "step": "catalog-growth",
+      "at": "2026-07-08T13:02:33.856Z",
+      "added": [
+        "kavita",
+        "filebrowser"
+      ],
+      "rejected": []
+    },
+    {
+      "step": "journal-append",
+      "at": "2026-07-08T13:02:33.865Z",
+      "published": true
+    }
+  ],
+  "day_index": 12,
+  "start_date": "2026-06-27",
+  "gate": {
+    "stage": "leading",
+    "day_index": 12,
+    "leading": {
+      "engaged_uniques": 2,
+      "distinct_sources": 1,
+      "max_source_share": 1,
+      "channel_cap_ok": false,
+      "on_track": false
+    },
+    "lagging": {
+      "returning_engaged_median": 0,
+      "target": 3,
+      "on_track": false
+    },
+    "channel_cap": 0.5,
+    "channel_cap_ok": false,
+    "gated_on_track": false
+  },
+  "pivot": {
+    "allowed": true,
+    "reason": "no prior pivot on record",
+    "lastPivotDate": null,
+    "daysSince": null
+  },
+  "judges": {
+    "freshness": [
+      {
+        "slug": "mealie",
+        "verdict": "fresh",
+        "reason": "first publish for this app"
+      },
+      {
+        "slug": "photoprism",
+        "verdict": "fresh",
+        "reason": "first publish for this app"
+      },
+      {
+        "slug": "changedetection-io",
+        "verdict": "fresh",
+        "reason": "first publish for this app"
+      }
+    ],
+    "dark_pattern": [
+      {
+        "name": "Weekly breaking-change digest",
+        "verdict": "real-value",
+        "signatures": []
+      }
+    ]
+  },
+  "catalog_growth": [
+    {
+      "slug": "kavita",
+      "repo": "Kareadita/Kavita",
+      "added": true,
+      "reason": "added"
+    },
+    {
+      "slug": "filebrowser",
+      "repo": "filebrowser/filebrowser",
+      "added": true,
+      "reason": "added"
+    }
+  ],
+  "journal_published": true,
+  "journal_count": 11,
+  "published_slugs": [
+    "mealie",
+    "photoprism",
+    "changedetection-io"
+  ],
+  "budget": {
+    "turns": 42,
+    "minutes": 27.9409
+  }
+}

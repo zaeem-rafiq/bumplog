@@ -513,5 +513,62 @@
     "citations": [
       "https://github.com/linkwarden/linkwarden/releases/tag/v2.14.1"
     ]
+  },
+  "mealie": {
+    "slug": "mealie",
+    "angle": "First build: safe-to-update page highlighting any breaking schema or database migrations in recent Mealie releases, with the update badge classified from the GitHub release notes and a direct provenance link.",
+    "name": "Mealie",
+    "tagName": "v3.20.1",
+    "publishedAt": "2026-06-26T21:18:54Z",
+    "contentHash": "37bb282ab94fbd1236a142922938a516669815bf288bcf51147ce146060b2355",
+    "provenance": {
+      "source": "github",
+      "url": "https://github.com/mealie-recipes/mealie/releases/tag/v3.20.1",
+      "fetchedAt": "2026-07-08T13:01:37.404Z"
+    },
+    "summary": "v3.20.1 is a small patch release fixing a bug where ingredient quantities were invisible in number inputs until the field was interacted with. The release also includes a security-flagged update to the pydantic-settings dependency, along with routine bumps to FastAPI, Node.js, and the coverage tooling.",
+    "safeToUpdate": "safe",
+    "rationale": "The release notes describe a single UI bug fix and dependency updates only. There are no breaking changes, required migrations, or manual upgrade steps called out.",
+    "citations": [
+      "https://github.com/mealie-recipes/mealie/releases/tag/v3.20.1"
+    ]
+  },
+  "photoprism": {
+    "slug": "photoprism",
+    "angle": "First build: surface any index-rebuild or library-migration warnings in recent PhotoPrism versions; useful comparison context for readers who also run Immich.",
+    "name": "PhotoPrism",
+    "tagName": "260601-a7d098548",
+    "publishedAt": "2026-06-01T20:36:40Z",
+    "contentHash": "c4d30458523620669523f3052bfdd109f12cc184dbab7b6603d046cb66bcd8c7",
+    "provenance": {
+      "source": "github",
+      "url": "https://github.com/photoprism/photoprism/releases/tag/260601-a7d098548",
+      "fetchedAt": "2026-07-08T13:01:51.352Z"
+    },
+    "summary": "Release 260601-a7d098548 is a service release focused on security hardening and reliability fixes. Notable additions include a configurable free disk space threshold that automatically pauses indexing, importing, and uploading to prevent storage volumes from filling up, and a new option to exclude specific formats from FFmpeg processing. Security improvements include reinforced user profile authorization checks, removal of a vulnerable Pebble binary (CVE-2026-39821), and an upgrade of libheif from v1.21.2 to v1.22.2 addressing 17 CVEs. Several bugs are also resolved, including fixes for hidden stack recovery, VAAPI transcoding compatibility with FFmpeg 8, folder album deletion loops, and PNG ICC profile handling.",
+    "safeToUpdate": "caution",
+    "rationale": "No explicit breaking changes or required migration steps are called out, but the libheif upgrade (17 CVE fixes) and the VAAPI/FFmpeg 8 transcoding changes may affect video playback or transcoding behavior for users relying on hardware acceleration. The new free-disk-space threshold is opt-in but represents a behavioral change to indexing that admins should be aware of before updating.",
+    "citations": [
+      "https://github.com/photoprism/photoprism/releases/tag/260601-a7d098548"
+    ]
+  },
+  "changedetection-io": {
+    "slug": "changedetection-io",
+    "angle": "First build: cover the recent release cadence, flag any config-breaking changes, and explain the self-hoster use case to help readers decide whether to add it to their stack.",
+    "name": "Changedetection.io",
+    "tagName": "0.55.7",
+    "publishedAt": "2026-05-25T16:47:59Z",
+    "contentHash": "0e2c78c6cd6087d8224899321f3e6deadef48d78df7e4026ad34b7871c8f5746",
+    "provenance": {
+      "source": "github",
+      "url": "https://github.com/dgtlmoon/changedetection.io/releases/tag/0.55.7",
+      "fetchedAt": "2026-07-08T13:02:05.115Z"
+    },
+    "summary": "Version 0.55.7 is a targeted bug fix addressing a settings conflict between wtforms and pydantic in the LLM UI configuration panel. This is a narrow patch with a single change and no new features or behavioral modifications for users not using the LLM integration. Users who rely on LLM-related settings will see corrected behavior in that settings interface.",
+    "safeToUpdate": "safe",
+    "rationale": "The release contains a single UI bug fix with no breaking changes, required migrations, or configuration steps called out in the notes. The fix is scoped to the LLM settings panel, making it a low-risk patch update for all users.",
+    "citations": [
+      "https://github.com/dgtlmoon/changedetection.io/releases/tag/0.55.7"
+    ]
   }
 }

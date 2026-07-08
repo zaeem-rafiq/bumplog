@@ -1,5 +1,5 @@
 {
- "generatedAt": "2026-07-06T13:02:25.088Z",
+ "generatedAt": "2026-07-08T13:02:40.233Z",
  "source": "https://endoflife.date",
  "products": {
   "nextcloud": {
@@ -63,6 +63,11 @@
    "link": "https://endoflife.date/grafana",
    "cycles": [
     {
+     "cycle": "13.1",
+     "eol": "2027-03-20",
+     "latest": "13.1.0"
+    },
+    {
      "cycle": "13.0",
      "eol": "2027-01-09",
      "latest": "13.0.3"
@@ -106,11 +111,6 @@
      "cycle": "11.4",
      "eol": "2025-09-05",
      "latest": "11.4.8"
-    },
-    {
-     "cycle": "11.3",
-     "eol": "2025-07-22",
-     "latest": "11.3.9"
     }
    ]
   },
@@ -125,7 +125,7 @@
     },
     {
      "cycle": "3.6",
-     "eol": false,
+     "eol": "2026-05-05",
      "latest": "3.6.22"
     },
     {
@@ -177,12 +177,12 @@
     {
      "cycle": "2026.5",
      "eol": false,
-     "latest": "2026.5.3"
+     "latest": "2026.5.4"
     },
     {
      "cycle": "2026.2",
      "eol": false,
-     "latest": "2026.2.4"
+     "latest": "2026.2.5"
     },
     {
      "cycle": "2025.12",

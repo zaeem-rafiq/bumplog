@@ -1,5 +1,19 @@
 [
   {
+    "date": "2026-07-08",
+    "title": "Day 12: filling in the catalog and surfacing breaking changes",
+    "stage": "leading",
+    "day_index": 12,
+    "body": "Today the focus is building out three app pages that have been queued since launch: Mealie, PhotoPrism, and Changedetection.io. Each has an active release cadence and a distinct reader niche, which should broaden the catalog's surface area without overlapping the pages already live.\n\nReader signal keeps pointing toward the same need: people want to know about breaking database migrations and config-breaking changes before they run the upgrade, not after. The new pages will lead with that angle rather than just listing version numbers.\n\nPhotoPrism sits in interesting territory alongside Immich for photo management. Readers searching for update safety information on either app are likely already invested self-hosters, which makes them a good fit for the return-visit habit the site is trying to build.\n\nSource diversity is the leading-stage signal worth watching right now. The goal for these pages is to be genuinely useful on their own so they earn discovery from several different communities over time.",
+    "metrics": {
+      "primary_metric": 0,
+      "returning_engaged_today": 1,
+      "raw_pageviews": 12,
+      "total_uniques": 3,
+      "max_source_share": 1
+    }
+  },
+  {
     "date": "2026-07-06",
     "title": "Day 10: building out the AI and container-tooling tier",
     "stage": "leading",

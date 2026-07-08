@@ -213,12 +213,12 @@
     "slug": "mealie",
     "name": "Mealie",
     "repo": "mealie-recipes/mealie",
-    "latestVersion": null,
-    "changelogSummary": null,
-    "safeToUpdate": null,
-    "rationale": null,
-    "sourceUrl": null,
-    "lastChecked": null
+    "latestVersion": "v3.20.1",
+    "changelogSummary": "v3.20.1 is a small patch release fixing a bug where ingredient quantities were invisible in number inputs until the field was interacted with. The release also includes a security-flagged update to the pydantic-settings dependency, along with routine bumps to FastAPI, Node.js, and the coverage tooling.",
+    "safeToUpdate": "safe",
+    "rationale": "The release notes describe a single UI bug fix and dependency updates only. There are no breaking changes, required migrations, or manual upgrade steps called out.",
+    "sourceUrl": "https://github.com/mealie-recipes/mealie/releases/tag/v3.20.1",
+    "lastChecked": "2026-07-08"
   },
   {
     "slug": "bookstack",
@@ -325,12 +325,12 @@
     "slug": "changedetection-io",
     "name": "Changedetection.io",
     "repo": "dgtlmoon/changedetection.io",
-    "latestVersion": null,
-    "changelogSummary": null,
-    "safeToUpdate": null,
-    "rationale": null,
-    "sourceUrl": null,
-    "lastChecked": null
+    "latestVersion": "0.55.7",
+    "changelogSummary": "Version 0.55.7 is a targeted bug fix addressing a settings conflict between wtforms and pydantic in the LLM UI configuration panel. This is a narrow patch with a single change and no new features or behavioral modifications for users not using the LLM integration. Users who rely on LLM-related settings will see corrected behavior in that settings interface.",
+    "safeToUpdate": "safe",
+    "rationale": "The release contains a single UI bug fix with no breaking changes, required migrations, or configuration steps called out in the notes. The fix is scoped to the LLM settings panel, making it a low-risk patch update for all users.",
+    "sourceUrl": "https://github.com/dgtlmoon/changedetection.io/releases/tag/0.55.7",
+    "lastChecked": "2026-07-08"
   },
   {
     "slug": "prowlarr",
@@ -392,6 +392,17 @@
     "slug": "photoprism",
     "name": "PhotoPrism",
     "repo": "photoprism/photoprism",
+    "latestVersion": "260601-a7d098548",
+    "changelogSummary": "Release 260601-a7d098548 is a service release focused on security hardening and reliability fixes. Notable additions include a configurable free disk space threshold that automatically pauses indexing, importing, and uploading to prevent storage volumes from filling up, and a new option to exclude specific formats from FFmpeg processing. Security improvements include reinforced user profile authorization checks, removal of a vulnerable Pebble binary (CVE-2026-39821), and an upgrade of libheif from v1.21.2 to v1.22.2 addressing 17 CVEs. Several bugs are also resolved, including fixes for hidden stack recovery, VAAPI transcoding compatibility with FFmpeg 8, folder album deletion loops, and PNG ICC profile handling.",
+    "safeToUpdate": "caution",
+    "rationale": "No explicit breaking changes or required migration steps are called out, but the libheif upgrade (17 CVE fixes) and the VAAPI/FFmpeg 8 transcoding changes may affect video playback or transcoding behavior for users relying on hardware acceleration. The new free-disk-space threshold is opt-in but represents a behavioral change to indexing that admins should be aware of before updating.",
+    "sourceUrl": "https://github.com/photoprism/photoprism/releases/tag/260601-a7d098548",
+    "lastChecked": "2026-07-08"
+  },
+  {
+    "slug": "memos",
+    "name": "Memos",
+    "repo": "usememos/memos",
     "latestVersion": null,
     "changelogSummary": null,
     "safeToUpdate": null,
@@ -400,9 +411,20 @@
     "lastChecked": null
   },
   {
-    "slug": "memos",
-    "name": "Memos",
-    "repo": "usememos/memos",
+    "slug": "kavita",
+    "name": "Kavita",
+    "repo": "Kareadita/Kavita",
+    "latestVersion": null,
+    "changelogSummary": null,
+    "safeToUpdate": null,
+    "rationale": null,
+    "sourceUrl": null,
+    "lastChecked": null
+  },
+  {
+    "slug": "filebrowser",
+    "name": "File Browser",
+    "repo": "filebrowser/filebrowser",
     "latestVersion": null,
     "changelogSummary": null,
     "safeToUpdate": null,
