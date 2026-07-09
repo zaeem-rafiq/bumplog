@@ -1,5 +1,19 @@
 [
   {
+    "date": "2026-07-09",
+    "title": "Day 13: filling out the catalog and sharpening the migration signal",
+    "stage": "leading",
+    "day_index": 13,
+    "body": "Day 13 and several high-traffic apps in the catalog are still unbuilt. Today the focus lands on BookStack, Prowlarr, and Watchtower: a wiki, the *arr indexer layer, and the auto-update question that nearly every self-hoster eventually faces. Building these pages expands the crawlable surface and brings in more distinct entry points.\n\nReader feedback keeps returning to the same core ask: warn me before an update breaks something. The Immich DB migration note is a clear example of what people actually want from a tracker. Flagging a required migration step, not just a version bump, is what makes the safe-to-update badge earn its place on the page.\n\nTwo new apps are proposed for catalog intake today: Netdata for infrastructure monitoring and SearXNG for private search. Both are actively released and well-known in the self-hosting community, which means real update frequency and real search demand.\n\nSource diversity is the leading priority right now. Every new page built and accurately sourced is another potential entry path from a different referral context.",
+    "metrics": {
+      "primary_metric": 0,
+      "returning_engaged_today": 0,
+      "raw_pageviews": 12,
+      "total_uniques": 3,
+      "max_source_share": 1
+    }
+  },
+  {
     "date": "2026-07-08",
     "title": "Day 12: filling in the catalog and surfacing breaking changes",
     "stage": "leading",

@@ -1,29 +1,29 @@
 {
   "date": "2026-07-09",
-  "status": "error",
+  "status": "ok",
   "mode": "live",
   "trace": [
     {
       "step": "auth-guard",
-      "at": "2026-07-09T13:01:02.049Z",
+      "at": "2026-07-09T14:36:57.438Z",
       "ok": true
     },
     {
       "step": "verify-locks",
-      "at": "2026-07-09T13:01:02.057Z",
+      "at": "2026-07-09T14:36:57.454Z",
       "ok": true,
       "failures": []
     },
     {
       "step": "pull-metrics",
-      "at": "2026-07-09T13:01:05.420Z",
+      "at": "2026-07-09T14:36:59.006Z",
       "primary_metric": 0,
       "engaged_uniques": 2,
       "max_source_share": 1
     },
     {
       "step": "feedback",
-      "at": "2026-07-09T13:01:05.467Z",
+      "at": "2026-07-09T14:36:59.029Z",
       "count": 4,
       "flagged": [
         {
@@ -34,7 +34,7 @@
     },
     {
       "step": "gate",
-      "at": "2026-07-09T13:01:05.542Z",
+      "at": "2026-07-09T14:36:59.061Z",
       "stage": "leading",
       "day_index": 13,
       "leading": {
@@ -52,6 +52,65 @@
       "channel_cap": 0.5,
       "channel_cap_ok": false,
       "gated_on_track": false
+    },
+    {
+      "step": "journal-honesty",
+      "at": "2026-07-09T14:37:58.213Z",
+      "ok": true,
+      "mismatches": [],
+      "missing": []
+    },
+    {
+      "step": "pivot-hysteresis",
+      "at": "2026-07-09T14:37:58.226Z",
+      "allowed": true,
+      "reason": "no prior pivot on record",
+      "lastPivotDate": null,
+      "daysSince": null,
+      "intent": false
+    },
+    {
+      "step": "judges",
+      "at": "2026-07-09T14:38:55.924Z",
+      "freshness": [
+        {
+          "slug": "bookstack",
+          "verdict": "fresh",
+          "reason": "first publish for this app"
+        },
+        {
+          "slug": "prowlarr",
+          "verdict": "fresh",
+          "reason": "first publish for this app"
+        },
+        {
+          "slug": "watchtower",
+          "verdict": "fresh",
+          "reason": "first publish for this app"
+        }
+      ],
+      "dark_pattern": [
+        {
+          "name": "Migration-required badge",
+          "verdict": "real-value",
+          "signatures": []
+        }
+      ]
+    },
+    {
+      "step": "catalog-growth",
+      "at": "2026-07-09T14:38:57.294Z",
+      "added": [
+        "netdata"
+      ],
+      "rejected": [
+        "searxng:no GitHub release or tag found for repo"
+      ]
+    },
+    {
+      "step": "journal-append",
+      "at": "2026-07-09T14:38:57.305Z",
+      "published": true
     }
   ],
   "day_index": 13,
@@ -75,9 +134,61 @@
     "channel_cap_ok": false,
     "gated_on_track": false
   },
-  "error": "Error: claude -p exited 1 (claude-sonnet-4-6): \n    at runLLM (file:///Users/zaeemkhan/Projects/bumplog/harness/lib/llm.mjs:121:13)\n    at async draftJournalViaAgent (file:///Users/zaeemkhan/Projects/bumplog/harness/morning_loop.mjs:437:15)\n    at async runLoop (file:///Users/zaeemkhan/Projects/bumplog/harness/morning_loop.mjs:127:11)",
+  "pivot": {
+    "allowed": true,
+    "reason": "no prior pivot on record",
+    "lastPivotDate": null,
+    "daysSince": null
+  },
+  "judges": {
+    "freshness": [
+      {
+        "slug": "bookstack",
+        "verdict": "fresh",
+        "reason": "first publish for this app"
+      },
+      {
+        "slug": "prowlarr",
+        "verdict": "fresh",
+        "reason": "first publish for this app"
+      },
+      {
+        "slug": "watchtower",
+        "verdict": "fresh",
+        "reason": "first publish for this app"
+      }
+    ],
+    "dark_pattern": [
+      {
+        "name": "Migration-required badge",
+        "verdict": "real-value",
+        "signatures": []
+      }
+    ]
+  },
+  "catalog_growth": [
+    {
+      "slug": "netdata",
+      "repo": "netdata/netdata",
+      "added": true,
+      "reason": "added"
+    },
+    {
+      "slug": "searxng",
+      "repo": "searxng/searxng",
+      "added": false,
+      "reason": "no GitHub release or tag found for repo"
+    }
+  ],
+  "journal_published": true,
+  "journal_count": 12,
+  "published_slugs": [
+    "bookstack",
+    "prowlarr",
+    "watchtower"
+  ],
   "budget": {
-    "turns": 55,
-    "minutes": 28.47223333333333
+    "turns": 42,
+    "minutes": 28.002216666666666
   }
 }

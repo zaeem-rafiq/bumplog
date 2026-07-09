@@ -224,12 +224,12 @@
     "slug": "bookstack",
     "name": "BookStack",
     "repo": "BookStackApp/BookStack",
-    "latestVersion": null,
-    "changelogSummary": null,
-    "safeToUpdate": null,
-    "rationale": null,
-    "sourceUrl": null,
-    "lastChecked": null
+    "latestVersion": "v26.05.2",
+    "changelogSummary": "v26.05.2 is a security patch addressing edge-case vulnerabilities in URL filtering, redirect handling, and comment permission checks. Content allow-filtering was extended to cover protocols inside srcset attributes, and URL filtering was consolidated into a more robust centralized utility. A missing visibility-permission check on comment deletion was also corrected. The release additionally adds Serbian as a selectable language and refreshes PHP dependencies and translations.",
+    "safeToUpdate": "caution",
+    "rationale": "No breaking changes, schema migrations, or manual upgrade steps are mentioned, so the update itself is low-risk. However, the maintainers explicitly advise upgrading for any instance with public access or untrusted editors, and the behavioral changes to URL/srcset filtering and comment permission enforcement are security-relevant and worth verifying against any custom content policies before deploying.",
+    "sourceUrl": "https://github.com/BookStackApp/BookStack/releases/tag/v26.05.2",
+    "lastChecked": "2026-07-09"
   },
   {
     "slug": "pi-hole",
@@ -336,12 +336,12 @@
     "slug": "prowlarr",
     "name": "Prowlarr",
     "repo": "Prowlarr/Prowlarr",
-    "latestVersion": null,
-    "changelogSummary": null,
-    "safeToUpdate": null,
-    "rationale": null,
-    "sourceUrl": null,
-    "lastChecked": null
+    "latestVersion": "v2.4.0.5397",
+    "changelogSummary": "v2.4.0.5397 delivers a range of fixes and new capabilities. qBittorrent integration sees the most attention: basic auth is fixed, API key support is added, authentication cookie reuse is improved, and a bug where credential-change tests always passed is resolved. Newznab parameter handling is corrected for minage, minsize, and maxsize fields, and a limit=0 query bug is also fixed. New features include a Postgres connection string option, Basic Auth support for sync applications, and a MyAnonamouse switch to session-cookie-free downloads. The runtime is bumped to .NET 8.0.27, and several indexers (SecretCinema, MyAnonamouse, ZonaQ, SceneTime) receive fixes or updates.",
+    "safeToUpdate": "caution",
+    "rationale": "The release introduces meaningful behavioral changes — including a new Postgres connection string option, qBittorrent authentication overhaul (API keys, basic auth, cookie handling), and a MyAnonamouse download method change — that users relying on those integrations should review before updating. Non-docker users are explicitly instructed to switch their update branch to 'master' in Settings, and docker users must update the container image rather than updating in-place. No hard migration steps or data-breaking changes are called out, but the auth and integration changes warrant a quick read.",
+    "sourceUrl": "https://github.com/Prowlarr/Prowlarr/releases/tag/v2.4.0.5397",
+    "lastChecked": "2026-07-09"
   },
   {
     "slug": "bazarr",
@@ -369,12 +369,12 @@
     "slug": "watchtower",
     "name": "Watchtower",
     "repo": "containrrr/watchtower",
-    "latestVersion": null,
-    "changelogSummary": null,
+    "latestVersion": "v1.7.1",
+    "changelogSummary": "Watchtower v1.7.1: repository archived and read-only. See the linked source.",
     "safeToUpdate": "unmaintained",
-    "rationale": "The containrrr/watchtower repository is archived and read-only (last activity Dec 2025) — no further fixes or security patches. Consider the maintained fork nicholas-fedor/watchtower.",
-    "sourceUrl": null,
-    "lastChecked": "2026-07-06",
+    "rationale": "This repository is archived and read-only — no further fixes or security patches.",
+    "sourceUrl": "https://github.com/containrrr/watchtower/releases/tag/v1.7.1",
+    "lastChecked": "2026-07-09",
     "successor": "nicholas-fedor/watchtower"
   },
   {
@@ -425,6 +425,17 @@
     "slug": "filebrowser",
     "name": "File Browser",
     "repo": "filebrowser/filebrowser",
+    "latestVersion": null,
+    "changelogSummary": null,
+    "safeToUpdate": null,
+    "rationale": null,
+    "sourceUrl": null,
+    "lastChecked": null
+  },
+  {
+    "slug": "netdata",
+    "name": "Netdata",
+    "repo": "netdata/netdata",
     "latestVersion": null,
     "changelogSummary": null,
     "safeToUpdate": null,
