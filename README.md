@@ -96,3 +96,8 @@ node harness/morning_loop.mjs --dry-run  # control-flow only, no publish, no LLM
 ## Deploy
 Connect to a free-tier host (Cloudflare Pages / Netlify), point `bumplog.org` at it, run the
 initial deploy, and set DNS. Those are publish/DNS actions performed by a human, not the harness.
+
+## License
+[MIT](LICENSE) © Zaeem Khan. The code is free to use, modify, and self-host. The daily
+synthesis, its data, and the hosted service at [bumplog.org](https://www.bumplog.org) are the
+operation, not the license — the MIT grant covers this source, not the running pipeline.

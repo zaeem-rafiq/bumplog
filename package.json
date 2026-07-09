@@ -4,6 +4,13 @@
   "private": true,
   "type": "module",
   "description": "Bumplog — the self-hosted update tracker. Public, crawlable static site.",
+  "license": "MIT",
+  "author": "Zaeem Khan",
+  "homepage": "https://www.bumplog.org",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zaeem-rafiq/bumplog.git"
+  },
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
