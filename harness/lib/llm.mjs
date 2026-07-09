@@ -111,14 +111,21 @@ export async function runLLM(opts) {
 
     const { stdout, code, stderr } = await spawnCapture('claude', args, opts.timeoutMs ?? caps.max_wall_clock_minutes * 60000);
 
-    if (/rate.?limit|429|overloaded/i.test(stderr)) {
-      throw new RateLimitError(`claude -p rate-limited (${model}).`);
+    // `claude -p --output-format json` reports failures in STDOUT (the envelope's
+    // is_error / subtype / api_error_status / result), not stderr. Classify from
+    // BOTH streams so (a) a failure is diagnosable instead of a blank "exited N"
+    // and (b) a transient overload / 429 / 529 surfaced in stdout routes to
+    // RateLimitError (graceful halt + resume next window) instead of a hard,
+    // no-retry run failure. classifyResult never scans a SUCCESSFUL call's output.
+    const verdict = classifyResult({ code, stdout, stderr });
+    if (verdict.kind === 'rate-limit') {
+      throw new RateLimitError(`claude -p rate-limited/overloaded (${model}): ${verdict.detail.slice(0, 200)}`);
     }
-    if (/credit|billing|payment|insufficient|api rate/i.test(stderr)) {
-      throw new BillingChangeError(`claude -p reported a billing/credit condition (${model}): ${stderr.slice(0, 200)}`);
+    if (verdict.kind === 'billing') {
+      throw new BillingChangeError(`claude -p reported a billing/credit condition (${model}): ${verdict.detail.slice(0, 200)}`);
     }
-    if (code !== 0) {
-      throw new Error(`claude -p exited ${code} (${model}): ${stderr.slice(0, 300)}`);
+    if (verdict.kind === 'error') {
+      throw new Error(`claude -p failed (exit ${code}, ${model}): ${verdict.detail.slice(0, 300)}`);
     }
 
     let envelope;
@@ -154,6 +161,56 @@ export async function runLLM(opts) {
   }
   // Unreachable: the loop returns on success and throws on exhausted retries.
   throw new Error(`claude -p produced no result (${model})`);
+}
+
+/**
+ * Classify a finished `claude -p --output-format json` invocation from BOTH
+ * streams. `claude -p` reports failures in STDOUT (the envelope's is_error /
+ * subtype / api_error_status / result); transport problems land on stderr — so
+ * neither stream alone is enough. Returns { kind, detail }:
+ *   'ok'         — succeeded; the caller reads the result.
+ *   'rate-limit' — overload / 429 / 529 → caller halts gracefully and resumes.
+ *   'billing'    — credit / billing / reprice → caller refuses to bill.
+ *   'error'      — any other failure; `detail` is the human-readable reason.
+ *
+ * The tripwire patterns run ONLY over a FAILED call's signal (stderr + the
+ * envelope's error fields + a failed call's result text). A SUCCESSFUL call's
+ * result is model output and is never scanned — a journal body that happens to
+ * say "rate limit" or "billing" must not trip a halt.
+ */
+export function classifyResult({ code, stdout, stderr }) {
+  let isError = false;
+  let subtype = null;
+  let apiStatus = null;
+  let result = '';
+  let jsonParsed = true;
+  try {
+    const env = JSON.parse(stdout);
+    isError = env.is_error === true;
+    subtype = typeof env.subtype === 'string' ? env.subtype : null;
+    apiStatus = env.api_error_status ?? null;
+    result = typeof env.result === 'string' ? env.result : '';
+  } catch {
+    jsonParsed = false; // stdout was not the JSON envelope (e.g. killed before it printed)
+  }
+
+  const failed = code !== 0 || isError || (subtype !== null && subtype !== 'success');
+  if (!failed) return { kind: 'ok', detail: '' };
+
+  const apiStatusText = apiStatus == null
+    ? ''
+    : typeof apiStatus === 'string' ? apiStatus : JSON.stringify(apiStatus);
+  const detail = [
+    stderr.trim(),
+    subtype && subtype !== 'success' ? `subtype=${subtype}` : '',
+    apiStatusText ? `api_error_status=${apiStatusText}` : '',
+    result.trim(),
+    jsonParsed ? '' : stdout.trim(), // include raw stdout only when it wasn't JSON
+  ].filter(Boolean).join(' | ') || '(no detail on stdout or stderr)';
+
+  if (/rate.?limit|429|529|overloaded/i.test(detail)) return { kind: 'rate-limit', detail };
+  if (/credit|billing|payment|insufficient|api rate/i.test(detail)) return { kind: 'billing', detail };
+  return { kind: 'error', detail };
 }
 
 /**
