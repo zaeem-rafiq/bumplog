@@ -77,3 +77,16 @@ schedule. Treat the working tree as "anything here ships in the next cycle." Bef
 launchd job is armed: commit or stash in-progress work, or keep experiments outside the repo
 (e.g. the session scratchpad). If a prototype must live in the repo, wire+test it deliberately
 or revert it before the next 8 AM run — don't leave it dangling.
+
+## 2026-07-09 — Don't infer "site is down / not deployed" from a WebFetch 403 or README scaffold language
+**Module:** session reasoning (OSS-eligibility assessment)
+**What went wrong:** I told the user bumplog was "not deployed / empty scaffold." I inferred it
+from (a) the README describing `src/` as scaffolding + calling deploy a pending human action, and
+(b) a WebFetch to `https://www.bumplog.org` returning HTTP 403. Both were misleading: the 403 was
+Cloudflare blocking WebFetch's bot user-agent, and the README text described intent, not current
+prod state. A real-UA `curl` returned HTTP 200 — the site was live the whole time.
+**What to do instead:** Never assert a URL is down/unreachable from a single WebFetch 403/blocked
+result — Cloudflare and other WAFs routinely 403 automated fetchers. Confirm liveness with a
+browser-like `curl -A "Mozilla/5.0" -o /dev/null -w '%{http_code}'` (or the Playwright MCP) before
+claiming a site's deployment status. And treat README "future/intent" phrasing as intent, not a
+verified statement of production reality — check the running system.
