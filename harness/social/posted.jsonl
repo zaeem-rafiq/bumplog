@@ -5,3 +5,6 @@
 {"date":"2026-07-08","slug":"mealie","version":"v3.20.1","status_url":"https://mastodon.social/@bumplog/116884490654989158","id":"116884490654989158"}
 {"date":"2026-07-08","slug":"photoprism","version":"260601-a7d098548","status_url":"https://mastodon.social/@bumplog/116884490702573704","id":"116884490702573704"}
 {"date":"2026-07-08","slug":"changedetection-io","version":"0.55.7","status_url":"https://mastodon.social/@bumplog/116884490761563572","id":"116884490761563572"}
+{"date":"2026-07-10","slug":"bazarr","version":"v1.6.0","status_url":"https://mastodon.social/@bumplog/116895814321571286","id":"116895814321571286"}
+{"date":"2026-07-10","slug":"wg-easy","version":"v15.3.0","status_url":"https://mastodon.social/@bumplog/116895814417866222","id":"116895814417866222"}
+{"date":"2026-07-10","slug":"netdata","version":"v2.10.3","status_url":"https://mastodon.social/@bumplog/116895814458274735","id":"116895814458274735"}

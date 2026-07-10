@@ -1,0 +1,193 @@
+{
+  "date": "2026-07-10",
+  "status": "ok",
+  "mode": "live",
+  "trace": [
+    {
+      "step": "auth-guard",
+      "at": "2026-07-10T13:00:11.067Z",
+      "ok": true
+    },
+    {
+      "step": "verify-locks",
+      "at": "2026-07-10T13:00:11.071Z",
+      "ok": true,
+      "failures": []
+    },
+    {
+      "step": "pull-metrics",
+      "at": "2026-07-10T13:00:17.987Z",
+      "primary_metric": 0,
+      "engaged_uniques": 2,
+      "max_source_share": 1
+    },
+    {
+      "step": "feedback",
+      "at": "2026-07-10T13:00:17.995Z",
+      "count": 4,
+      "flagged": [
+        {
+          "id": "fb-injection-probe",
+          "reason": "injection-shaped content"
+        }
+      ]
+    },
+    {
+      "step": "gate",
+      "at": "2026-07-10T13:00:17.996Z",
+      "stage": "leading",
+      "day_index": 14,
+      "leading": {
+        "engaged_uniques": 2,
+        "distinct_sources": 1,
+        "max_source_share": 1,
+        "channel_cap_ok": false,
+        "on_track": false
+      },
+      "lagging": {
+        "returning_engaged_median": 0,
+        "target": 3,
+        "on_track": false
+      },
+      "channel_cap": 0.5,
+      "channel_cap_ok": false,
+      "gated_on_track": false
+    },
+    {
+      "step": "journal-honesty",
+      "at": "2026-07-10T13:01:11.823Z",
+      "ok": true,
+      "mismatches": [],
+      "missing": []
+    },
+    {
+      "step": "pivot-hysteresis",
+      "at": "2026-07-10T13:01:11.824Z",
+      "allowed": true,
+      "reason": "no prior pivot on record",
+      "lastPivotDate": null,
+      "daysSince": null,
+      "intent": false
+    },
+    {
+      "step": "judges",
+      "at": "2026-07-10T13:02:27.042Z",
+      "freshness": [
+        {
+          "slug": "bazarr",
+          "verdict": "fresh",
+          "reason": "first publish for this app"
+        },
+        {
+          "slug": "wg-easy",
+          "verdict": "fresh",
+          "reason": "first publish for this app"
+        },
+        {
+          "slug": "netdata",
+          "verdict": "fresh",
+          "reason": "first publish for this app"
+        }
+      ],
+      "dark_pattern": [
+        {
+          "name": "Weekly breaking-changes digest page",
+          "verdict": "real-value",
+          "signatures": []
+        }
+      ]
+    },
+    {
+      "step": "catalog-growth",
+      "at": "2026-07-10T13:02:28.106Z",
+      "added": [
+        "calibre-web",
+        "grocy"
+      ],
+      "rejected": []
+    },
+    {
+      "step": "journal-append",
+      "at": "2026-07-10T13:02:28.117Z",
+      "published": true
+    }
+  ],
+  "day_index": 14,
+  "start_date": "2026-06-27",
+  "gate": {
+    "stage": "leading",
+    "day_index": 14,
+    "leading": {
+      "engaged_uniques": 2,
+      "distinct_sources": 1,
+      "max_source_share": 1,
+      "channel_cap_ok": false,
+      "on_track": false
+    },
+    "lagging": {
+      "returning_engaged_median": 0,
+      "target": 3,
+      "on_track": false
+    },
+    "channel_cap": 0.5,
+    "channel_cap_ok": false,
+    "gated_on_track": false
+  },
+  "pivot": {
+    "allowed": true,
+    "reason": "no prior pivot on record",
+    "lastPivotDate": null,
+    "daysSince": null
+  },
+  "judges": {
+    "freshness": [
+      {
+        "slug": "bazarr",
+        "verdict": "fresh",
+        "reason": "first publish for this app"
+      },
+      {
+        "slug": "wg-easy",
+        "verdict": "fresh",
+        "reason": "first publish for this app"
+      },
+      {
+        "slug": "netdata",
+        "verdict": "fresh",
+        "reason": "first publish for this app"
+      }
+    ],
+    "dark_pattern": [
+      {
+        "name": "Weekly breaking-changes digest page",
+        "verdict": "real-value",
+        "signatures": []
+      }
+    ]
+  },
+  "catalog_growth": [
+    {
+      "slug": "calibre-web",
+      "repo": "janeczku/calibre-web",
+      "added": true,
+      "reason": "added"
+    },
+    {
+      "slug": "grocy",
+      "repo": "grocy/grocy",
+      "added": true,
+      "reason": "added"
+    }
+  ],
+  "journal_published": true,
+  "journal_count": 13,
+  "published_slugs": [
+    "bazarr",
+    "wg-easy",
+    "netdata"
+  ],
+  "budget": {
+    "turns": 42,
+    "minutes": 27.715833333333332
+  }
+}

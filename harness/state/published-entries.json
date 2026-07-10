@@ -627,5 +627,62 @@
     "citations": [
       "https://github.com/containrrr/watchtower/releases/tag/v1.7.1"
     ]
+  },
+  "bazarr": {
+    "slug": "bazarr",
+    "angle": "Is it safe to update Bazarr? Breaking changes and subtitle-provider compatibility notes across recent releases.",
+    "name": "Bazarr",
+    "tagName": "v1.6.0",
+    "publishedAt": "2026-07-04T12:43:35Z",
+    "contentHash": "891d07517bc2535dc2274e6634058347d269c7fec84ac3595c3df2b55344b72c",
+    "provenance": {
+      "source": "github",
+      "url": "https://github.com/morpheus65535/bazarr/releases/tag/v1.6.0",
+      "fetchedAt": "2026-07-10T13:01:12.391Z"
+    },
+    "summary": "v1.6.0 removes the Podnapisi provider entirely since the service is no longer online, so any users relying on it will need to switch to an alternative source. The release adds two new Bulgarian subtitle providers (Bayflix and Vladoon) and fixes a command-injection vulnerability (CWE-78) in subtitle post-processing by switching to safer subprocess invocation. Several provider improvements land as well: better rate-limit handling for SubDL, fixed RegieLive.ro downloads, improved audio and Chinese subtitle language detection, and a dramatic Sonarr/Radarr sync performance boost. A new option lets you disable SSL verification globally for providers, and the base config file path can now be set via an environment variable.",
+    "safeToUpdate": "caution",
+    "rationale": "The permanent removal of the Podnapisi provider is a functional breaking point for anyone who had it configured — those users must reconfigure their subtitle sources before or after upgrading. All other changes are fixes, improvements, and additions with no stated migration steps, making this otherwise a routine update.",
+    "citations": [
+      "https://github.com/morpheus65535/bazarr/releases/tag/v1.6.0"
+    ]
+  },
+  "wg-easy": {
+    "slug": "wg-easy",
+    "angle": "Is it safe to update wg-easy? Config migration warnings and peer-config compatibility flags from recent releases.",
+    "name": "wg-easy",
+    "tagName": "v15.3.0",
+    "publishedAt": "2026-05-18T10:24:50Z",
+    "contentHash": "1b2efe35aa4acac37b8586e83d1122fec72ad5134519aa10f41506290f0a114a",
+    "provenance": {
+      "source": "github",
+      "url": "https://github.com/wg-easy/wg-easy/releases/tag/v15.3.0",
+      "fetchedAt": "2026-07-10T13:01:24.112Z"
+    },
+    "summary": "v15.3.0 introduces server-side enforcement of Allowed IP rules via a new per-client firewall filtering feature, which requires review of the updated FAQ docs to configure correctly. AmneziaWG support is extended with H1–H4 range configuration. Mobile UI layout is improved, hook inputs are upgraded to textareas for easier editing, and QR codes can now be displayed via CLI, copied, or downloaded as PNG. A number of bug fixes land as well, including a fix for an error when re-enabling a disabled client and a trailing newline correction in Prometheus metrics output.",
+    "safeToUpdate": "caution",
+    "rationale": "The new server-side firewall filtering feature actively enforces Allowed IP rules in a way that did not exist before, which could change traffic behavior for existing clients depending on their configuration. The release notes link to dedicated documentation on how to enable and use this feature, signaling it warrants a read-before-upgrade. No explicit breaking changes or mandatory migration steps are called out, but the behavioral shift in IP enforcement makes a configuration review prudent.",
+    "citations": [
+      "https://github.com/wg-easy/wg-easy/releases/tag/v15.3.0"
+    ]
+  },
+  "netdata": {
+    "slug": "netdata",
+    "angle": "Is it safe to update Netdata? Agent versus Cloud mode changes, plugin API breaks, and config migration notes.",
+    "name": "Netdata",
+    "tagName": "v2.10.3",
+    "publishedAt": "2026-04-27T17:04:47Z",
+    "contentHash": "ed8a70daed42810999feea84a0f3c7bb178ca35d42241311f1f4ad1f6bdb391d",
+    "provenance": {
+      "source": "github",
+      "url": "https://github.com/netdata/netdata/releases/tag/v2.10.3",
+      "fetchedAt": "2026-07-10T13:01:35.968Z"
+    },
+    "summary": "v2.10.3 is a targeted patch release fixing four distinct bugs. Most notably, a shared-memory pool leak in the eBPF plugin has been resolved — on busy hosts this leak would exhaust a 32,768-slot pool within roughly 15 hours and then spin a CPU core at 100%, so the fix will noticeably reduce CPU consumption for affected users. The SNMP collector's uptime source has been switched to avoid a ~497-day counter wrap, while preserving the existing metric name and a fallback path. Dynamic config job-name validation was loosened for service discovery, vnode, and secret-store names to allow dots (e.g., FQDNs), and a PowerStore hardware struct field causing response-decoding errors was removed.",
+    "safeToUpdate": "safe",
+    "rationale": "The release notes describe only bug fixes with no breaking changes, required migrations, or manual upgrade steps called out. The behavioral changes (SNMP uptime source, job-name validation) are backward-compatible by design — the existing metric name is preserved and stricter collector rules remain intact.",
+    "citations": [
+      "https://github.com/netdata/netdata/releases/tag/v2.10.3"
+    ]
   }
 }

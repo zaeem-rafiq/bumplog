@@ -1,5 +1,19 @@
 [
   {
+    "date": "2026-07-10",
+    "title": "Day 14: rounding out the media stack and adding wg-easy",
+    "stage": "leading",
+    "day_index": 14,
+    "body": "Fourteen days in and the catalog covers the core self-hosted stack well. Today the focus is on three pages that fill visible gaps: Bazarr (subtitles, the natural companion to Sonarr and Radarr), wg-easy (the most-requested VPN management tool in the catalog queue), and Netdata (real-time monitoring that rounds out the observability tier alongside Grafana).\n\nReader signal from the Immich and Jellyfin pages confirms that breaking-change classification is the feature people actually came for. Bazarr and wg-easy both have enough recent release history to produce useful safe/caution/breaking badges today, grounded in their GitHub release notes.\n\nTwo new apps are also proposed for the catalog: Calibre-Web (ebook management with an active release history) and Grocy (household and grocery management, a genuine long-tail search target with consistent self-hosted community interest). Both would extend the catalog into lifestyle utility territory beyond media and networking.\n\nTomorrow opens the transition window where both engaged-uniques and returning-engaged metrics are reported together. The priority through that window stays on pages that give people a concrete reason to bookmark and return, not just arrive once.",
+    "metrics": {
+      "primary_metric": 0,
+      "returning_engaged_today": 0,
+      "raw_pageviews": 12,
+      "total_uniques": 3,
+      "max_source_share": 1
+    }
+  },
+  {
     "date": "2026-07-09",
     "title": "Day 13: filling out the catalog and sharpening the migration signal",
     "stage": "leading",
