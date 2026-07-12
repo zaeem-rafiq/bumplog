@@ -684,5 +684,62 @@
     "citations": [
       "https://github.com/netdata/netdata/releases/tag/v2.10.3"
     ]
+  },
+  "kavita": {
+    "slug": "kavita",
+    "angle": "Build initial page from the latest GitHub release: summarized changelog, safe-to-update badge, and any migration or database-schema notes between versions clearly flagged.",
+    "name": "Kavita",
+    "tagName": "v0.9.0.2",
+    "publishedAt": "2026-05-14T14:04:05Z",
+    "contentHash": "f1b33b35f8ca401b8cdb55237a3ae5dc48066c16c0022f7d4cfbb0fede413bf9",
+    "provenance": {
+      "source": "github",
+      "url": "https://github.com/Kareadita/Kavita/releases/tag/v0.9.0.2",
+      "fetchedAt": "2026-07-12T13:01:19.030Z"
+    },
+    "summary": "v0.9.0.2 is a critical security patch that all users are urged to apply immediately, addressing a vulnerability (CVE-2026-47202) affecting all prior releases. Beyond the security fix, OIDC validation has been relaxed to no longer require strict URL formats. The release also resolves a wide range of bugs including broken bookmarks (text, image, and epub), incorrect ratings always returning zero, annotation duplication and display failures, unreliable year-based search, and issues with series/collection metadata not updating correctly.",
+    "safeToUpdate": "breaking",
+    "rationale": "The release notes explicitly state all users are strongly advised to update immediately due to a critical security vulnerability affecting all prior versions, which constitutes a mandatory upgrade step. No data migration or config changes are required, but the severity of the CVE makes skipping this update a meaningful risk. The OIDC validation change is behavioral but unlikely to affect most deployments.",
+    "citations": [
+      "https://github.com/Kareadita/Kavita/releases/tag/v0.9.0.2"
+    ]
+  },
+  "calibre-web": {
+    "slug": "calibre-web",
+    "angle": "Build initial page from the latest GitHub release: changelog summary, breaking-change classification, with particular attention to Python dependency or database migration requirements.",
+    "name": "Calibre-Web",
+    "tagName": "0.6.26",
+    "publishedAt": "2026-02-06T21:17:44Z",
+    "contentHash": "5dbd35ba5e1cf88f6aa2858df15344505ae3082a43fde4828061078a5dfa2250",
+    "provenance": {
+      "source": "github",
+      "url": "https://github.com/janeczku/calibre-web/releases/tag/0.6.26",
+      "fetchedAt": "2026-07-12T13:01:27.556Z"
+    },
+    "summary": "Calibre-Web 0.6.26 introduces multi-book editing from the book list, Instapaper support in Kobo sync, and EPUB reader improvements including a page count display, a new theme, and a back-to-library button. A notable rename affects the environment variable previously called CACHE_DIR, which is now CACHE_DIRECTORY, requiring a config update for anyone who set it explicitly. The release also patches Calibre 9 compatibility, fixes OPDS downloads in Readest on iOS and macOS, resolves several Caliblur theme issues, and closes a security gap where API keys could be exposed via config_sql.py.",
+    "safeToUpdate": "caution",
+    "rationale": "The rename of the CACHE_DIR environment variable to CACHE_DIRECTORY is a breaking configuration change for any deployment that sets that variable explicitly. No database migration or other manual step is called out, but users with custom env configs must update before or immediately after upgrading to avoid misconfiguration.",
+    "citations": [
+      "https://github.com/janeczku/calibre-web/releases/tag/0.6.26"
+    ]
+  },
+  "memos": {
+    "slug": "memos",
+    "angle": "Build initial page from the latest GitHub release: changelog summary and badge. Memos has had API-surface evolution across recent versions, so the safety classification is especially worth calling out clearly.",
+    "name": "Memos",
+    "tagName": "v0.29.1",
+    "publishedAt": "2026-06-05T00:06:46Z",
+    "contentHash": "cd03838d6354471002998a32b2b125ce0e71ed7629c07ffd4f02fdc2f164e264",
+    "provenance": {
+      "source": "github",
+      "url": "https://github.com/usememos/memos/releases/tag/v0.29.1",
+      "fetchedAt": "2026-07-12T13:01:41.451Z"
+    },
+    "summary": "v0.29.1 is a focused bug-fix release. Multi-line task items now stay correctly aligned within a single grid column, resolving a layout regression in task lists. Link previews gain support for standard HTML meta description tags, so sites without Open Graph metadata now surface richer preview cards. Mobile users will also see poster thumbnails rendered correctly on video attachments.",
+    "safeToUpdate": "safe",
+    "rationale": "The release notes list only three bug fixes with no mention of breaking changes, required migrations, configuration changes, or deprecations. All changes are purely corrective and user-facing in a non-destructive way.",
+    "citations": [
+      "https://github.com/usememos/memos/releases/tag/v0.29.1"
+    ]
   }
 }

@@ -1,5 +1,19 @@
 [
   {
+    "date": "2026-07-12",
+    "title": "Building out the reading and notes shelf",
+    "stage": "transition",
+    "day_index": 16,
+    "body": "Day 16 lands in the transition stage. The catalog has grown substantially and most high-priority pages are live; today the focus shifts to the remaining unbuilt apps and deepening the breaking-change coverage that reader feedback keeps pointing toward.\n\nThree new pages go up today: Kavita (manga and book server), Calibre-Web (Calibre library served over the web), and Memos (lightweight self-hosted note-taking). Each gets the full pipeline: latest release pulled from GitHub, a summarized changelog, and the safe-to-update badge with any migration notes flagged.\n\nFeedback from the Immich and Jellyfin pages is a useful directional signal. Readers want to know about database migrations and plugin compatibility before they run the updater, not after. That is exactly what the breaking-change flag is for, and applying that lens more visibly on pages where releases regularly include schema changes will make those pages genuinely more useful.\n\nTwo new apps are proposed for the catalog: Miniflux, a fast and minimal RSS reader, and Vikunja, a self-hosted task manager. Both are actively maintained with regular releases and fit the core audience well.",
+    "metrics": {
+      "primary_metric": 0,
+      "returning_engaged_today": 0,
+      "raw_pageviews": 12,
+      "total_uniques": 3,
+      "max_source_share": 1
+    }
+  },
+  {
     "date": "2026-07-10",
     "title": "Day 14: rounding out the media stack and adding wg-easy",
     "stage": "leading",

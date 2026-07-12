@@ -403,23 +403,23 @@
     "slug": "memos",
     "name": "Memos",
     "repo": "usememos/memos",
-    "latestVersion": null,
-    "changelogSummary": null,
-    "safeToUpdate": null,
-    "rationale": null,
-    "sourceUrl": null,
-    "lastChecked": null
+    "latestVersion": "v0.29.1",
+    "changelogSummary": "v0.29.1 is a focused bug-fix release. Multi-line task items now stay correctly aligned within a single grid column, resolving a layout regression in task lists. Link previews gain support for standard HTML meta description tags, so sites without Open Graph metadata now surface richer preview cards. Mobile users will also see poster thumbnails rendered correctly on video attachments.",
+    "safeToUpdate": "safe",
+    "rationale": "The release notes list only three bug fixes with no mention of breaking changes, required migrations, configuration changes, or deprecations. All changes are purely corrective and user-facing in a non-destructive way.",
+    "sourceUrl": "https://github.com/usememos/memos/releases/tag/v0.29.1",
+    "lastChecked": "2026-07-12"
   },
   {
     "slug": "kavita",
     "name": "Kavita",
     "repo": "Kareadita/Kavita",
-    "latestVersion": null,
-    "changelogSummary": null,
-    "safeToUpdate": null,
-    "rationale": null,
-    "sourceUrl": null,
-    "lastChecked": null
+    "latestVersion": "v0.9.0.2",
+    "changelogSummary": "v0.9.0.2 is a critical security patch that all users are urged to apply immediately, addressing a vulnerability (CVE-2026-47202) affecting all prior releases. Beyond the security fix, OIDC validation has been relaxed to no longer require strict URL formats. The release also resolves a wide range of bugs including broken bookmarks (text, image, and epub), incorrect ratings always returning zero, annotation duplication and display failures, unreliable year-based search, and issues with series/collection metadata not updating correctly.",
+    "safeToUpdate": "breaking",
+    "rationale": "The release notes explicitly state all users are strongly advised to update immediately due to a critical security vulnerability affecting all prior versions, which constitutes a mandatory upgrade step. No data migration or config changes are required, but the severity of the CVE makes skipping this update a meaningful risk. The OIDC validation change is behavioral but unlikely to affect most deployments.",
+    "sourceUrl": "https://github.com/Kareadita/Kavita/releases/tag/v0.9.0.2",
+    "lastChecked": "2026-07-12"
   },
   {
     "slug": "filebrowser",
@@ -447,6 +447,17 @@
     "slug": "calibre-web",
     "name": "Calibre-Web",
     "repo": "janeczku/calibre-web",
+    "latestVersion": "0.6.26",
+    "changelogSummary": "Calibre-Web 0.6.26 introduces multi-book editing from the book list, Instapaper support in Kobo sync, and EPUB reader improvements including a page count display, a new theme, and a back-to-library button. A notable rename affects the environment variable previously called CACHE_DIR, which is now CACHE_DIRECTORY, requiring a config update for anyone who set it explicitly. The release also patches Calibre 9 compatibility, fixes OPDS downloads in Readest on iOS and macOS, resolves several Caliblur theme issues, and closes a security gap where API keys could be exposed via config_sql.py.",
+    "safeToUpdate": "caution",
+    "rationale": "The rename of the CACHE_DIR environment variable to CACHE_DIRECTORY is a breaking configuration change for any deployment that sets that variable explicitly. No database migration or other manual step is called out, but users with custom env configs must update before or immediately after upgrading to avoid misconfiguration.",
+    "sourceUrl": "https://github.com/janeczku/calibre-web/releases/tag/0.6.26",
+    "lastChecked": "2026-07-12"
+  },
+  {
+    "slug": "grocy",
+    "name": "Grocy",
+    "repo": "grocy/grocy",
     "latestVersion": null,
     "changelogSummary": null,
     "safeToUpdate": null,
@@ -455,9 +466,20 @@
     "lastChecked": null
   },
   {
-    "slug": "grocy",
-    "name": "Grocy",
-    "repo": "grocy/grocy",
+    "slug": "miniflux",
+    "name": "Miniflux",
+    "repo": "miniflux/v2",
+    "latestVersion": null,
+    "changelogSummary": null,
+    "safeToUpdate": null,
+    "rationale": null,
+    "sourceUrl": null,
+    "lastChecked": null
+  },
+  {
+    "slug": "vikunja",
+    "name": "Vikunja",
+    "repo": "go-vikunja/vikunja",
     "latestVersion": null,
     "changelogSummary": null,
     "safeToUpdate": null,
