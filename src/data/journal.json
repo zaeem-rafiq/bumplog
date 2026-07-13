@@ -1,5 +1,19 @@
 [
   {
+    "date": "2026-07-13",
+    "title": "Catalog expansion: Karakeep, File Browser, and Miniflux",
+    "stage": "transition",
+    "day_index": 17,
+    "body": "Day 17 lands in the transition window. The immediate priority is closing the remaining 'not yet built' slots in the catalog. Karakeep, File Browser, and Miniflux all have active release histories and a meaningful self-hosted audience, making them the logical next three to synthesize.\n\nReader feedback from the Immich page is a useful signal: the v1.118 database migration caught people off guard. That is exactly the scenario the breaking-change flag exists for. Today's synthesis pass on Karakeep and the other new entries will apply the same scrutiny to migration notes, schema changes, and config-format bumps.\n\nJellyfin readers are asking for plugin-compatibility context alongside the safety badge. That detail is worth surfacing when release notes mention plugin API changes; it goes on the backlog for the next Jellyfin release rather than a forced refresh today.\n\nWith the catalog growing steadily, the latter half of this stage is about making sure existing pages stay current and that the 'is it safe to update?' answer reflects the actual latest release, not a stale snapshot.",
+    "metrics": {
+      "primary_metric": 0,
+      "returning_engaged_today": 0,
+      "raw_pageviews": 17,
+      "total_uniques": 2,
+      "max_source_share": 1
+    }
+  },
+  {
     "date": "2026-07-12",
     "title": "Building out the reading and notes shelf",
     "stage": "transition",

@@ -279,12 +279,12 @@
     "slug": "karakeep",
     "name": "Karakeep",
     "repo": "karakeep-app/karakeep",
-    "latestVersion": null,
-    "changelogSummary": null,
-    "safeToUpdate": null,
-    "rationale": null,
-    "sourceUrl": null,
-    "lastChecked": null
+    "latestVersion": "v0.32.0",
+    "changelogSummary": "Karakeep v0.32.0 brings a major mobile app redesign with more native screens and a customizable reader toolbar, plus the long-awaited Safari extension now available on the App Store. The release makes a significant push toward AI-agent use with an official published skill, a heavily improved CLI that now supports persistent auth config via 'karakeep auth init', and new granular API key scopes to limit agent permissions. The browser extension gains experimental built-in SingleFile support for crawling authenticated pages client-side, eliminating the need for a separate extension. Additional highlights include keyboard shortcuts for the bookmark grid, new import sources (OneTab and Readwise Reader), timestamp localization, and a noted security fix.",
+    "safeToUpdate": "caution",
+    "rationale": "No explicit breaking changes or required migration steps are documented, but the release contains meaningful behavioral shifts worth reviewing: links opened in the mobile reader now launch an in-app browser by default, the CLI received 'major improvements' including a new auth-init workflow that may affect existing automation, and the release notes reference an 'Important Security fix' whose full description is truncated in the provided text and should be read in full before upgrading.",
+    "sourceUrl": "https://github.com/karakeep-app/karakeep/releases/tag/v0.32.0",
+    "lastChecked": "2026-07-13"
   },
   {
     "slug": "stirling-pdf",
@@ -425,12 +425,12 @@
     "slug": "filebrowser",
     "name": "File Browser",
     "repo": "filebrowser/filebrowser",
-    "latestVersion": null,
-    "changelogSummary": null,
-    "safeToUpdate": null,
-    "rationale": null,
-    "sourceUrl": null,
-    "lastChecked": null
+    "latestVersion": "v2.63.18",
+    "changelogSummary": "v2.63.18 is a maintenance release delivering translation updates and a deduplication fix for the Portuguese language entry. A bug causing unnecessary recursive conflict checks during copy and move operations has been resolved, which should improve reliability and performance for those actions. The EPUB reader receives a UI fix ensuring the table-of-contents button no longer overlaps the header. Dependencies have also been updated.",
+    "safeToUpdate": "safe",
+    "rationale": "The release contains only bug fixes, translation updates, and dependency bumps. No breaking changes, required migrations, or configuration changes are mentioned in the notes.",
+    "sourceUrl": "https://github.com/filebrowser/filebrowser/releases/tag/v2.63.18",
+    "lastChecked": "2026-07-13"
   },
   {
     "slug": "netdata",
@@ -469,6 +469,17 @@
     "slug": "miniflux",
     "name": "Miniflux",
     "repo": "miniflux/v2",
+    "latestVersion": "2.3.2",
+    "changelogSummary": "Miniflux 2.3.2 delivers a meaningful search upgrade — full-text queries now support quoted phrases, OR operators, and negation via PostgreSQL's websearch_to_tsquery. The API gains new endpoints for paginated entry ID retrieval, bulk starring, and tag-based filtering. On the security side, login timing differences that could leak valid usernames are patched, and FIPS-mode PostgreSQL installations are now supported via SHA-256 instead of MD5 — though this raises the minimum required PostgreSQL version to 11. A broad set of bug fixes addresses enclosure proxying, nil pointer dereferences, API error codes, and localization formatting.",
+    "safeToUpdate": "caution",
+    "rationale": "The FIPS-mode fix replaces MD5 with SHA-256 for enclosure uniqueness and explicitly raises the minimum supported PostgreSQL version to 11; anyone on PostgreSQL 10 or below must upgrade their database first. All other changes are additive features, performance improvements, or bug fixes with no stated migration steps.",
+    "sourceUrl": "https://github.com/miniflux/v2/releases/tag/2.3.2",
+    "lastChecked": "2026-07-13"
+  },
+  {
+    "slug": "vikunja",
+    "name": "Vikunja",
+    "repo": "go-vikunja/vikunja",
     "latestVersion": null,
     "changelogSummary": null,
     "safeToUpdate": null,
@@ -477,9 +488,9 @@
     "lastChecked": null
   },
   {
-    "slug": "vikunja",
-    "name": "Vikunja",
-    "repo": "go-vikunja/vikunja",
+    "slug": "tubearchivist",
+    "name": "TubeArchivist",
+    "repo": "tubearchivist/tubearchivist",
     "latestVersion": null,
     "changelogSummary": null,
     "safeToUpdate": null,
