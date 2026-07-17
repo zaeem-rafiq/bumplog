@@ -798,5 +798,62 @@
     "citations": [
       "https://github.com/miniflux/v2/releases/tag/2.3.2"
     ]
+  },
+  "grocy": {
+    "slug": "grocy",
+    "angle": "Build initial page: latest release, changelog summary, and breaking-change flag with emphasis on any database migration or config format changes across recent versions.",
+    "name": "Grocy",
+    "tagName": "v4.6.0",
+    "publishedAt": "2026-03-06T17:35:19Z",
+    "contentHash": "1d71801c8e81d034ae61e4403cf334c756e5518aaf8622bc0144f8b122d23ad7",
+    "provenance": {
+      "source": "github",
+      "url": "https://github.com/grocy/grocy/releases/tag/v4.6.0",
+      "fetchedAt": "2026-07-17T13:01:29.816Z"
+    },
+    "summary": "v4.6.0 raises the minimum runtime to PHP 8.5 with SQLite 3.40+, dropping support for all earlier PHP versions. On the stock side, quantity-unit handling is significantly improved — units can now be freely changed before a product ever enters stock, and missing 1:1 conversions are auto-created, which streamlines barcode-lookup plugin workflows. A handful of long-standing bugs are fixed across stock, shopping lists, chores, userfields, and the date-shorthand input parser. FreeBSD users on SQLite 3.41+ also receive a targeted SQL workaround.",
+    "safeToUpdate": "breaking",
+    "rationale": "The release notes explicitly flag (with a ⚠️ warning) that PHP 8.5 with SQLite 3.40+ is now the only supported runtime, making this a hard infrastructure prerequisite. Self-hosters running any earlier PHP version must upgrade their runtime before updating Grocy, constituting a required manual upgrade step. All other changes in the release are additive features or bug fixes with no additional migration notes.",
+    "citations": [
+      "https://github.com/grocy/grocy/releases/tag/v4.6.0"
+    ]
+  },
+  "vikunja": {
+    "slug": "vikunja",
+    "angle": "Build initial page: latest release, summarized changelog, and safe-to-update classification noting any API changes or data-format migrations.",
+    "name": "Vikunja",
+    "tagName": "v2.3.0",
+    "publishedAt": "2026-04-09T19:53:25Z",
+    "contentHash": "5df71cf0a7bfc4e778b259b310758bddbd7f7e23904522a62922b33d72f477b0",
+    "provenance": {
+      "source": "github",
+      "url": "https://github.com/go-vikunja/vikunja/releases/tag/v2.3.0",
+      "fetchedAt": "2026-07-17T13:01:48.655Z"
+    },
+    "summary": "v2.3.0 ships 11 security fixes, making prompt upgrading strongly advisable. It introduces a new plugin system, adds Vikunja itself as an OAuth 2.0 provider, and brings WeKan and CSV import options. Desktop users gain a quick-entry window for faster task capture. The release spans 277 commits, reflecting a substantial cycle of improvements alongside the security work.",
+    "safeToUpdate": "caution",
+    "rationale": "No explicit breaking changes or required migration steps are called out in the notes, but the introduction of a plugin system and OAuth 2.0 provider mode are significant architectural additions that may affect existing integrations or configuration. The 11 security fixes make upgrading urgent, so reviewing the full changelog at the linked URL before deploying is prudent.",
+    "citations": [
+      "https://github.com/go-vikunja/vikunja/releases/tag/v2.3.0"
+    ]
+  },
+  "tubearchivist": {
+    "slug": "tubearchivist",
+    "angle": "Build initial page: latest release, changelog summary, and breaking-change badge with focus on Elasticsearch version requirements or config-breaking changes.",
+    "name": "TubeArchivist",
+    "tagName": "v0.5.10",
+    "publishedAt": "2026-03-28T04:25:33Z",
+    "contentHash": "5fd5827540f1373e791bda51408b54088d15eb142597ea4c3e4c9a27b7d85211",
+    "provenance": {
+      "source": "github",
+      "url": "https://github.com/tubearchivist/tubearchivist/releases/tag/v0.5.10",
+      "fetchedAt": "2026-07-17T13:02:03.310Z"
+    },
+    "summary": "v0.5.10 adds the ability to load secrets from a file rather than environment variables, improving deployment security for sensitive configurations. The release also cleans up deprecated app-config keys automatically on startup. Several internal improvements ship alongside: the redownload workflow now uses reindex for better metadata preservation, the POT plugin installation method has been overhauled to fix runtime loading into yt-dlp, and download error handling is stricter — a bot error now halts the task entirely rather than continuing silently. Four bug fixes round out the release, including ES9 compatibility for newer Elasticsearch alias APIs and a fix for video deletion from playlists when out of sync.",
+    "safeToUpdate": "caution",
+    "rationale": "Two behavioral changes warrant attention before upgrading: the stricter download error handling (bot errors now stop the entire task) may surface failures that previously passed silently, and the overhauled POT plugin installation method could affect existing setups that relied on the prior loading path. The automatic cleanup of deprecated appconfig keys is also a one-way migration step. No explicit breaking changes or manual migration steps are documented, but these behavioral shifts are worth reading before applying the update.",
+    "citations": [
+      "https://github.com/tubearchivist/tubearchivist/releases/tag/v0.5.10"
+    ]
   }
 }

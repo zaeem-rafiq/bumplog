@@ -1,0 +1,83 @@
+{
+  "date": "2026-07-15",
+  "status": "error",
+  "mode": "live",
+  "trace": [
+    {
+      "step": "auth-guard",
+      "at": "2026-07-15T13:00:20.263Z",
+      "ok": true
+    },
+    {
+      "step": "verify-locks",
+      "at": "2026-07-15T13:00:20.264Z",
+      "ok": true,
+      "failures": []
+    },
+    {
+      "step": "pull-metrics",
+      "at": "2026-07-15T13:00:34.192Z",
+      "primary_metric": 0,
+      "engaged_uniques": 2,
+      "max_source_share": 0.5
+    },
+    {
+      "step": "feedback",
+      "at": "2026-07-15T13:00:34.196Z",
+      "count": 4,
+      "flagged": [
+        {
+          "id": "fb-injection-probe",
+          "reason": "injection-shaped content"
+        }
+      ]
+    },
+    {
+      "step": "gate",
+      "at": "2026-07-15T13:00:34.198Z",
+      "stage": "transition",
+      "day_index": 19,
+      "leading": {
+        "engaged_uniques": 2,
+        "distinct_sources": 2,
+        "max_source_share": 0.5,
+        "channel_cap_ok": true,
+        "on_track": true
+      },
+      "lagging": {
+        "returning_engaged_median": 0,
+        "target": 3,
+        "on_track": false
+      },
+      "channel_cap": 0.5,
+      "channel_cap_ok": true,
+      "gated_on_track": null
+    }
+  ],
+  "day_index": 19,
+  "start_date": "2026-06-27",
+  "gate": {
+    "stage": "transition",
+    "day_index": 19,
+    "leading": {
+      "engaged_uniques": 2,
+      "distinct_sources": 2,
+      "max_source_share": 0.5,
+      "channel_cap_ok": true,
+      "on_track": true
+    },
+    "lagging": {
+      "returning_engaged_median": 0,
+      "target": 3,
+      "on_track": false
+    },
+    "channel_cap": 0.5,
+    "channel_cap_ok": true,
+    "gated_on_track": null
+  },
+  "error": "Error: claude -p failed (exit 1, claude-sonnet-4-6): Failed to authenticate: OAuth session expired and could not be refreshed\n    at runLLM (file:///Users/zaeemkhan/Projects/bumplog/harness/lib/llm.mjs:128:13)\n    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)\n    at async draftJournalViaAgent (file:///Users/zaeemkhan/Projects/bumplog/harness/morning_loop.mjs:437:15)\n    at async runLoop (file:///Users/zaeemkhan/Projects/bumplog/harness/morning_loop.mjs:127:11)",
+  "budget": {
+    "turns": 55,
+    "minutes": 29.736083333333333
+  }
+}

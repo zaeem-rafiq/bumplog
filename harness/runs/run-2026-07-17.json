@@ -1,0 +1,193 @@
+{
+  "date": "2026-07-17",
+  "status": "ok",
+  "mode": "live",
+  "trace": [
+    {
+      "step": "auth-guard",
+      "at": "2026-07-17T13:00:13.106Z",
+      "ok": true
+    },
+    {
+      "step": "verify-locks",
+      "at": "2026-07-17T13:00:13.107Z",
+      "ok": true,
+      "failures": []
+    },
+    {
+      "step": "pull-metrics",
+      "at": "2026-07-17T13:00:18.314Z",
+      "primary_metric": 0,
+      "engaged_uniques": 2,
+      "max_source_share": 0.5
+    },
+    {
+      "step": "feedback",
+      "at": "2026-07-17T13:00:18.316Z",
+      "count": 4,
+      "flagged": [
+        {
+          "id": "fb-injection-probe",
+          "reason": "injection-shaped content"
+        }
+      ]
+    },
+    {
+      "step": "gate",
+      "at": "2026-07-17T13:00:18.318Z",
+      "stage": "lagging",
+      "day_index": 21,
+      "leading": {
+        "engaged_uniques": 2,
+        "distinct_sources": 2,
+        "max_source_share": 0.5,
+        "channel_cap_ok": true,
+        "on_track": true
+      },
+      "lagging": {
+        "returning_engaged_median": 0,
+        "target": 3,
+        "on_track": false
+      },
+      "channel_cap": 0.5,
+      "channel_cap_ok": true,
+      "gated_on_track": false
+    },
+    {
+      "step": "journal-honesty",
+      "at": "2026-07-17T13:01:29.161Z",
+      "ok": true,
+      "mismatches": [],
+      "missing": []
+    },
+    {
+      "step": "pivot-hysteresis",
+      "at": "2026-07-17T13:01:29.166Z",
+      "allowed": true,
+      "reason": "no prior pivot on record",
+      "lastPivotDate": null,
+      "daysSince": null,
+      "intent": false
+    },
+    {
+      "step": "judges",
+      "at": "2026-07-17T13:02:24.978Z",
+      "freshness": [
+        {
+          "slug": "grocy",
+          "verdict": "fresh",
+          "reason": "first publish for this app"
+        },
+        {
+          "slug": "vikunja",
+          "verdict": "fresh",
+          "reason": "first publish for this app"
+        },
+        {
+          "slug": "tubearchivist",
+          "verdict": "fresh",
+          "reason": "first publish for this app"
+        }
+      ],
+      "dark_pattern": [
+        {
+          "name": "Weekly breaking-changes digest page",
+          "verdict": "real-value",
+          "signatures": []
+        }
+      ]
+    },
+    {
+      "step": "catalog-growth",
+      "at": "2026-07-17T13:02:26.041Z",
+      "added": [],
+      "rejected": [
+        "tandoor:no GitHub release or tag found for repo",
+        "homarr:repository is archived"
+      ]
+    },
+    {
+      "step": "journal-append",
+      "at": "2026-07-17T13:02:26.085Z",
+      "published": true
+    }
+  ],
+  "day_index": 21,
+  "start_date": "2026-06-27",
+  "gate": {
+    "stage": "lagging",
+    "day_index": 21,
+    "leading": {
+      "engaged_uniques": 2,
+      "distinct_sources": 2,
+      "max_source_share": 0.5,
+      "channel_cap_ok": true,
+      "on_track": true
+    },
+    "lagging": {
+      "returning_engaged_median": 0,
+      "target": 3,
+      "on_track": false
+    },
+    "channel_cap": 0.5,
+    "channel_cap_ok": true,
+    "gated_on_track": false
+  },
+  "pivot": {
+    "allowed": true,
+    "reason": "no prior pivot on record",
+    "lastPivotDate": null,
+    "daysSince": null
+  },
+  "judges": {
+    "freshness": [
+      {
+        "slug": "grocy",
+        "verdict": "fresh",
+        "reason": "first publish for this app"
+      },
+      {
+        "slug": "vikunja",
+        "verdict": "fresh",
+        "reason": "first publish for this app"
+      },
+      {
+        "slug": "tubearchivist",
+        "verdict": "fresh",
+        "reason": "first publish for this app"
+      }
+    ],
+    "dark_pattern": [
+      {
+        "name": "Weekly breaking-changes digest page",
+        "verdict": "real-value",
+        "signatures": []
+      }
+    ]
+  },
+  "catalog_growth": [
+    {
+      "slug": "tandoor",
+      "repo": "TandoorRecipes/tandoor-recipes",
+      "added": false,
+      "reason": "no GitHub release or tag found for repo"
+    },
+    {
+      "slug": "homarr",
+      "repo": "ajnart/homarr",
+      "added": false,
+      "reason": "repository is archived"
+    }
+  ],
+  "journal_published": true,
+  "journal_count": 16,
+  "published_slugs": [
+    "grocy",
+    "vikunja",
+    "tubearchivist"
+  ],
+  "budget": {
+    "turns": 42,
+    "minutes": 27.783683333333332
+  }
+}
