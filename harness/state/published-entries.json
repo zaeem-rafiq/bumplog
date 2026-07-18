@@ -1,21 +1,21 @@
 {
   "immich": {
     "slug": "immich",
-    "angle": "First build — classify latest release as safe/caution/breaking; call out any DB migration steps or breaking API changes explicitly; summarize what upgraders actually need to know.",
+    "angle": "Check for newest release; lead with DB migration status and flag any required migration steps as a first-class item in the breaking-change assessment",
     "name": "Immich",
-    "tagName": "v2.7.5",
-    "publishedAt": "2026-04-13T14:53:55Z",
-    "contentHash": "f81399794254dfd9f7fbebefcfb85bf4bfd4b752c778f4916f25ba64a6c158b5",
+    "tagName": "v3.0.3",
+    "publishedAt": "2026-07-15T14:34:25Z",
+    "contentHash": "62266bcada09c9178febc9c1afb1ca82e2a8f6bf06ac1a143842aed1487071ab",
     "provenance": {
       "source": "github",
-      "url": "https://github.com/immich-app/immich/releases/tag/v2.7.5",
-      "fetchedAt": "2026-06-27T14:03:20.785Z"
+      "url": "https://github.com/immich-app/immich/releases/tag/v3.0.3",
+      "fetchedAt": "2026-07-18T13:01:41.769Z"
     },
-    "summary": "v2.7.5 is a small maintenance release with two changes. The main fix adds rate limiting and deduplication to the server's version-check mechanism, preventing unnecessary repeated requests. Translation strings for the web interface were also refreshed.",
-    "safeToUpdate": "safe",
-    "rationale": "v2.7.5 contains only a server-side bug fix (rate limiting and deduplication on version checks) and a translation update. The release notes call out no breaking changes, required migrations, manual upgrade steps, deprecations, or configuration changes.",
+    "summary": "v3.0.3 is a bug-fix release addressing several mobile and web issues. The F-Droid distribution channel is moving to FUTO's own F-Droid repo, so users who installed via F-Droid should update their source. Live Photo background uploads are fixed, though a side-effect could leave some newly uploaded Live Photos with broken thumbnails — running the missing-thumbnails job resolves this. Additional fixes cover album owner permissions, search visibility, hardware-accelerated video encoding tags, zoom state on asset swap, and minor UI polish on Android.",
+    "safeToUpdate": "caution",
+    "rationale": "No database migrations or breaking API changes are noted, but users relying on F-Droid must switch their repo source to the FUTO repo going forward. The Live Photo thumbnail side-effect requires a manual remediation step (run the 'missing' thumbnails job) if broken thumbnails appear, making it worth reading the notes before upgrading.",
     "citations": [
-      "https://github.com/immich-app/immich/releases/tag/v2.7.5"
+      "https://github.com/immich-app/immich/releases/tag/v3.0.3"
     ]
   },
   "jellyfin": {
@@ -269,21 +269,21 @@
   },
   "n8n": {
     "slug": "n8n",
-    "angle": "Is it safe to update n8n? Focus on workflow-breaking node changes, credential-schema changes, and any self-hosted-specific migration notes with provenance.",
+    "angle": "Check for newest release; surface workflow-breaking API or node changes with a caution or breaking badge; note minimum Node version if it changed",
     "name": "n8n",
-    "tagName": "n8n@2.28.5",
-    "publishedAt": "2026-07-02T08:27:15Z",
-    "contentHash": "f5ef7f430e5f9c13bb7953bfe4f7ce828e88ed3bafb59f74fe6eb39456b5fd35",
+    "tagName": "n8n@2.30.7",
+    "publishedAt": "2026-07-17T08:07:59Z",
+    "contentHash": "2da12e840e885186774d92d31883177ff383c59d1257ad66ff6c5aa8ae330332",
     "provenance": {
       "source": "github",
-      "url": "https://github.com/n8n-io/n8n/releases/tag/n8n%402.28.5",
-      "fetchedAt": "2026-07-02T13:01:45.882Z"
+      "url": "https://github.com/n8n-io/n8n/releases/tag/n8n%402.30.7",
+      "fetchedAt": "2026-07-18T13:02:02.096Z"
     },
-    "summary": "n8n@2.28.5 delivers three targeted bug fixes. Date values passed to the expression isolate are now correctly preserved, preventing silent type coercions in workflow expressions. The node creator panel correctly displays Free credits badges for Tool-variant nodes. Salesforce users on the JWT authentication path will no longer encounter errors caused by empty 204 responses, which are now handled gracefully.",
+    "summary": "n8n@2.30.7 is a small patch release containing two bug fixes. Community packages are now linted against their provenance-attested source, tightening supply-chain integrity checks. SES email requests have also been corrected to sign with the proper 'ses' service name, which resolves authentication failures when using AWS SES for sending emails. No new features or user-facing behavioral changes are included.",
     "safeToUpdate": "safe",
-    "rationale": "The release contains only bug fixes with no breaking changes, required migrations, deprecations, or manual upgrade steps mentioned in the notes. All three fixes are narrow and corrective in nature.",
+    "rationale": "The release contains only two targeted bug fixes with no breaking changes, required migrations, or deprecation notices called out in the notes. The SES signing fix may restore expected behavior for users relying on AWS SES, but requires no manual action. All other workflows are unaffected.",
     "citations": [
-      "https://github.com/n8n-io/n8n/releases/tag/n8n%402.28.5"
+      "https://github.com/n8n-io/n8n/releases/tag/n8n%402.30.7"
     ]
   },
   "sonarr": {

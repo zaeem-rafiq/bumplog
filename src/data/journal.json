@@ -1,5 +1,19 @@
 [
   {
+    "date": "2026-07-18",
+    "title": "Day 22: deepening the breaking-change signal for a return-worthy habit",
+    "stage": "lagging",
+    "day_index": 22,
+    "body": "We are in the final third of the experiment, where returning and engaged visitors are the signal that matters. The focus today is on high-velocity apps where a breaking change or migration warning makes the biggest practical difference to someone managing a home lab.\n\nFeedback from the Immich page confirms what the data suggests: database migration warnings are the content people bookmark and return to verify before upgrading. Today's Immich refresh will lead with that angle, checking for any new release and flagging migration steps prominently in the safe-to-update assessment.\n\nRounding out today's queue are n8n and Jellyfin. The n8n project moves fast, and workflow-breaking API or node changes matter to people running automations who need a clear caution signal before updating. Jellyfin visitors are asking for plugin compatibility context alongside the safety badge, which release notes often contain and is worth surfacing explicitly.\n\nTwo new apps are proposed for the catalog: ntfy, a widely used push notification server with an active release cadence, and Maybe, a self-hosted personal finance app that has seen strong community growth and ships frequent updates.",
+    "metrics": {
+      "primary_metric": 0,
+      "returning_engaged_today": 0,
+      "raw_pageviews": 14,
+      "total_uniques": 4,
+      "max_source_share": 0.5
+    }
+  },
+  {
     "date": "2026-07-17",
     "title": "Day 21: finishing the catalog and sharpening migration safety",
     "stage": "lagging",

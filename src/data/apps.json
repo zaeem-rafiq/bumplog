@@ -3,12 +3,12 @@
     "slug": "immich",
     "name": "Immich",
     "repo": "immich-app/immich",
-    "latestVersion": "v2.7.5",
-    "changelogSummary": "v2.7.5 is a small maintenance release with two changes. The main fix adds rate limiting and deduplication to the server's version-check mechanism, preventing unnecessary repeated requests. Translation strings for the web interface were also refreshed.",
-    "safeToUpdate": "safe",
-    "sourceUrl": "https://github.com/immich-app/immich/releases/tag/v2.7.5",
-    "lastChecked": "2026-06-27",
-    "rationale": "v2.7.5 contains only a server-side bug fix (rate limiting and deduplication on version checks) and a translation update. The release notes call out no breaking changes, required migrations, manual upgrade steps, deprecations, or configuration changes."
+    "latestVersion": "v3.0.3",
+    "changelogSummary": "v3.0.3 is a bug-fix release addressing several mobile and web issues. The F-Droid distribution channel is moving to FUTO's own F-Droid repo, so users who installed via F-Droid should update their source. Live Photo background uploads are fixed, though a side-effect could leave some newly uploaded Live Photos with broken thumbnails — running the missing-thumbnails job resolves this. Additional fixes cover album owner permissions, search visibility, hardware-accelerated video encoding tags, zoom state on asset swap, and minor UI polish on Android.",
+    "safeToUpdate": "caution",
+    "sourceUrl": "https://github.com/immich-app/immich/releases/tag/v3.0.3",
+    "lastChecked": "2026-07-18",
+    "rationale": "No database migrations or breaking API changes are noted, but users relying on F-Droid must switch their repo source to the FUTO repo going forward. The Live Photo thumbnail side-effect requires a manual remediation step (run the 'missing' thumbnails job) if broken thumbnails appear, making it worth reading the notes before upgrading."
   },
   {
     "slug": "jellyfin",
@@ -246,12 +246,12 @@
     "slug": "n8n",
     "name": "n8n",
     "repo": "n8n-io/n8n",
-    "latestVersion": "n8n@2.28.5",
-    "changelogSummary": "n8n@2.28.5 delivers three targeted bug fixes. Date values passed to the expression isolate are now correctly preserved, preventing silent type coercions in workflow expressions. The node creator panel correctly displays Free credits badges for Tool-variant nodes. Salesforce users on the JWT authentication path will no longer encounter errors caused by empty 204 responses, which are now handled gracefully.",
+    "latestVersion": "n8n@2.30.7",
+    "changelogSummary": "n8n@2.30.7 is a small patch release containing two bug fixes. Community packages are now linted against their provenance-attested source, tightening supply-chain integrity checks. SES email requests have also been corrected to sign with the proper 'ses' service name, which resolves authentication failures when using AWS SES for sending emails. No new features or user-facing behavioral changes are included.",
     "safeToUpdate": "safe",
-    "rationale": "The release contains only bug fixes with no breaking changes, required migrations, deprecations, or manual upgrade steps mentioned in the notes. All three fixes are narrow and corrective in nature.",
-    "sourceUrl": "https://github.com/n8n-io/n8n/releases/tag/n8n%402.28.5",
-    "lastChecked": "2026-07-02"
+    "rationale": "The release contains only two targeted bug fixes with no breaking changes, required migrations, or deprecation notices called out in the notes. The SES signing fix may restore expected behavior for users relying on AWS SES, but requires no manual action. All other workflows are unaffected.",
+    "sourceUrl": "https://github.com/n8n-io/n8n/releases/tag/n8n%402.30.7",
+    "lastChecked": "2026-07-18"
   },
   {
     "slug": "dockge",
@@ -497,5 +497,16 @@
     "rationale": "Two behavioral changes warrant attention before upgrading: the stricter download error handling (bot errors now stop the entire task) may surface failures that previously passed silently, and the overhauled POT plugin installation method could affect existing setups that relied on the prior loading path. The automatic cleanup of deprecated appconfig keys is also a one-way migration step. No explicit breaking changes or manual migration steps are documented, but these behavioral shifts are worth reading before applying the update.",
     "sourceUrl": "https://github.com/tubearchivist/tubearchivist/releases/tag/v0.5.10",
     "lastChecked": "2026-07-17"
+  },
+  {
+    "slug": "ntfy",
+    "name": "ntfy",
+    "repo": "binwiederhier/ntfy",
+    "latestVersion": null,
+    "changelogSummary": null,
+    "safeToUpdate": null,
+    "rationale": null,
+    "sourceUrl": null,
+    "lastChecked": null
   }
 ]

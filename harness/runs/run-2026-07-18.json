@@ -1,0 +1,200 @@
+{
+  "date": "2026-07-18",
+  "status": "ok",
+  "mode": "live",
+  "trace": [
+    {
+      "step": "auth-guard",
+      "at": "2026-07-18T13:00:08.461Z",
+      "ok": true
+    },
+    {
+      "step": "verify-locks",
+      "at": "2026-07-18T13:00:08.462Z",
+      "ok": true,
+      "failures": []
+    },
+    {
+      "step": "pull-metrics",
+      "at": "2026-07-18T13:00:29.091Z",
+      "primary_metric": 0,
+      "engaged_uniques": 2,
+      "max_source_share": 0.5
+    },
+    {
+      "step": "feedback",
+      "at": "2026-07-18T13:00:29.095Z",
+      "count": 4,
+      "flagged": [
+        {
+          "id": "fb-injection-probe",
+          "reason": "injection-shaped content"
+        }
+      ]
+    },
+    {
+      "step": "gate",
+      "at": "2026-07-18T13:00:29.098Z",
+      "stage": "lagging",
+      "day_index": 22,
+      "leading": {
+        "engaged_uniques": 2,
+        "distinct_sources": 2,
+        "max_source_share": 0.5,
+        "channel_cap_ok": true,
+        "on_track": true
+      },
+      "lagging": {
+        "returning_engaged_median": 0,
+        "target": 3,
+        "on_track": false
+      },
+      "channel_cap": 0.5,
+      "channel_cap_ok": true,
+      "gated_on_track": false
+    },
+    {
+      "step": "journal-honesty",
+      "at": "2026-07-18T13:01:41.191Z",
+      "ok": true,
+      "mismatches": [],
+      "missing": []
+    },
+    {
+      "step": "pivot-hysteresis",
+      "at": "2026-07-18T13:01:41.192Z",
+      "allowed": true,
+      "reason": "no prior pivot on record",
+      "lastPivotDate": null,
+      "daysSince": null,
+      "intent": false
+    },
+    {
+      "step": "freshness-theater",
+      "at": "2026-07-18T13:02:26.415Z",
+      "slug": "jellyfin",
+      "blocked": true,
+      "reason": "source unchanged; non-source fields differ but no upstream change to report"
+    },
+    {
+      "step": "judges",
+      "at": "2026-07-18T13:02:38.775Z",
+      "freshness": [
+        {
+          "slug": "immich",
+          "verdict": "fresh",
+          "reason": "source contentHash changed (real upstream change)"
+        },
+        {
+          "slug": "n8n",
+          "verdict": "fresh",
+          "reason": "source contentHash changed (real upstream change)"
+        },
+        {
+          "slug": "jellyfin",
+          "verdict": "theater",
+          "reason": "source unchanged; non-source fields differ but no upstream change to report"
+        }
+      ],
+      "dark_pattern": [
+        {
+          "name": "Weekly breaking-change digest",
+          "verdict": "real-value",
+          "signatures": []
+        }
+      ]
+    },
+    {
+      "step": "catalog-growth",
+      "at": "2026-07-18T13:02:39.671Z",
+      "added": [
+        "ntfy"
+      ],
+      "rejected": [
+        "maybe:repository is archived"
+      ]
+    },
+    {
+      "step": "journal-append",
+      "at": "2026-07-18T13:02:39.679Z",
+      "published": true
+    }
+  ],
+  "day_index": 22,
+  "start_date": "2026-06-27",
+  "gate": {
+    "stage": "lagging",
+    "day_index": 22,
+    "leading": {
+      "engaged_uniques": 2,
+      "distinct_sources": 2,
+      "max_source_share": 0.5,
+      "channel_cap_ok": true,
+      "on_track": true
+    },
+    "lagging": {
+      "returning_engaged_median": 0,
+      "target": 3,
+      "on_track": false
+    },
+    "channel_cap": 0.5,
+    "channel_cap_ok": true,
+    "gated_on_track": false
+  },
+  "pivot": {
+    "allowed": true,
+    "reason": "no prior pivot on record",
+    "lastPivotDate": null,
+    "daysSince": null
+  },
+  "judges": {
+    "freshness": [
+      {
+        "slug": "immich",
+        "verdict": "fresh",
+        "reason": "source contentHash changed (real upstream change)"
+      },
+      {
+        "slug": "n8n",
+        "verdict": "fresh",
+        "reason": "source contentHash changed (real upstream change)"
+      },
+      {
+        "slug": "jellyfin",
+        "verdict": "theater",
+        "reason": "source unchanged; non-source fields differ but no upstream change to report"
+      }
+    ],
+    "dark_pattern": [
+      {
+        "name": "Weekly breaking-change digest",
+        "verdict": "real-value",
+        "signatures": []
+      }
+    ]
+  },
+  "catalog_growth": [
+    {
+      "slug": "ntfy",
+      "repo": "binwiederhier/ntfy",
+      "added": true,
+      "reason": "added"
+    },
+    {
+      "slug": "maybe",
+      "repo": "maybe-finance/maybe",
+      "added": false,
+      "reason": "repository is archived"
+    }
+  ],
+  "journal_published": true,
+  "journal_count": 17,
+  "published_slugs": [
+    "immich",
+    "n8n"
+  ],
+  "budget": {
+    "turns": 42,
+    "minutes": 27.4797
+  }
+}
