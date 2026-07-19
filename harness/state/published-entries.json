@@ -855,5 +855,24 @@
     "citations": [
       "https://github.com/tubearchivist/tubearchivist/releases/tag/v0.5.10"
     ]
+  },
+  "ntfy": {
+    "slug": "ntfy",
+    "angle": "First build: pull the latest release, summarize the changelog, classify breaking changes, set the safe-to-update badge. ntfy has an active release cadence so there is substantive content to work with.",
+    "name": "ntfy",
+    "tagName": "v2.26.0",
+    "publishedAt": "2026-07-09T18:46:27Z",
+    "contentHash": "9c57c526b2a7d6340215ab8d1fcc025b8cf783e6cd210879916024afbed0f883",
+    "provenance": {
+      "source": "github",
+      "url": "https://github.com/binwiederhier/ntfy/releases/tag/v2.26.0",
+      "fetchedAt": "2026-07-19T13:01:16.847Z"
+    },
+    "summary": "v2.26.0 patches a CPU denial-of-service vulnerability in message template execution by introducing a hard-capped timeout, making this a security-relevant release for anyone using the `Template: yes` feature. The web app gains configurable date and time formats (ISO 8601, DMY, MDY, 12/24-hour clock) that default to the system locale and sync across devices when signed in. A web rendering bug that allowed unsafe URL protocols like `javascript:` and `data:` in Markdown messages has been fixed, closing a potential XSS vector. Additional polish includes smoother page transitions, and the account view now reads from the primary database to avoid showing stale data after changes.",
+    "safeToUpdate": "safe",
+    "rationale": "The release notes call out no breaking changes, required migrations, or manual upgrade steps. The security fix (template DoS timeout) and XSS-class URL-stripping fix are strictly defensive hardening — both reduce risk without altering user-visible behavior in a breaking way. All other changes are opt-in features or polish.",
+    "citations": [
+      "https://github.com/binwiederhier/ntfy/releases/tag/v2.26.0"
+    ]
   }
 }

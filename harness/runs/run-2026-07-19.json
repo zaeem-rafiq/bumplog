@@ -1,0 +1,205 @@
+{
+  "date": "2026-07-19",
+  "status": "ok",
+  "mode": "live",
+  "trace": [
+    {
+      "step": "auth-guard",
+      "at": "2026-07-19T13:00:09.688Z",
+      "ok": true
+    },
+    {
+      "step": "verify-locks",
+      "at": "2026-07-19T13:00:09.690Z",
+      "ok": true,
+      "failures": []
+    },
+    {
+      "step": "pull-metrics",
+      "at": "2026-07-19T13:00:19.506Z",
+      "primary_metric": 0,
+      "engaged_uniques": 2,
+      "max_source_share": 0.5
+    },
+    {
+      "step": "feedback",
+      "at": "2026-07-19T13:00:19.532Z",
+      "count": 4,
+      "flagged": [
+        {
+          "id": "fb-injection-probe",
+          "reason": "injection-shaped content"
+        }
+      ]
+    },
+    {
+      "step": "gate",
+      "at": "2026-07-19T13:00:19.546Z",
+      "stage": "lagging",
+      "day_index": 23,
+      "leading": {
+        "engaged_uniques": 2,
+        "distinct_sources": 2,
+        "max_source_share": 0.5,
+        "channel_cap_ok": true,
+        "on_track": true
+      },
+      "lagging": {
+        "returning_engaged_median": 0,
+        "target": 3,
+        "on_track": false
+      },
+      "channel_cap": 0.5,
+      "channel_cap_ok": true,
+      "gated_on_track": false
+    },
+    {
+      "step": "journal-honesty",
+      "at": "2026-07-19T13:01:16.321Z",
+      "ok": true,
+      "mismatches": [],
+      "missing": []
+    },
+    {
+      "step": "pivot-hysteresis",
+      "at": "2026-07-19T13:01:16.322Z",
+      "allowed": true,
+      "reason": "no prior pivot on record",
+      "lastPivotDate": null,
+      "daysSince": null,
+      "intent": false
+    },
+    {
+      "step": "freshness-theater",
+      "at": "2026-07-19T13:01:37.930Z",
+      "slug": "immich",
+      "blocked": true,
+      "reason": "source unchanged; non-source fields differ but no upstream change to report"
+    },
+    {
+      "step": "freshness-theater",
+      "at": "2026-07-19T13:01:45.463Z",
+      "slug": "jellyfin",
+      "blocked": true,
+      "reason": "source unchanged; non-source fields differ but no upstream change to report"
+    },
+    {
+      "step": "judges",
+      "at": "2026-07-19T13:01:58.608Z",
+      "freshness": [
+        {
+          "slug": "ntfy",
+          "verdict": "fresh",
+          "reason": "first publish for this app"
+        },
+        {
+          "slug": "immich",
+          "verdict": "theater",
+          "reason": "source unchanged; non-source fields differ but no upstream change to report"
+        },
+        {
+          "slug": "jellyfin",
+          "verdict": "theater",
+          "reason": "source unchanged; non-source fields differ but no upstream change to report"
+        }
+      ],
+      "dark_pattern": [
+        {
+          "name": "Migration alert callout",
+          "verdict": "real-value",
+          "signatures": []
+        }
+      ]
+    },
+    {
+      "step": "catalog-growth",
+      "at": "2026-07-19T13:01:59.837Z",
+      "added": [],
+      "rejected": [
+        "forgejo:no GitHub release or tag found for repo",
+        "readarr:repository is archived"
+      ]
+    },
+    {
+      "step": "journal-append",
+      "at": "2026-07-19T13:01:59.848Z",
+      "published": true
+    }
+  ],
+  "day_index": 23,
+  "start_date": "2026-06-27",
+  "gate": {
+    "stage": "lagging",
+    "day_index": 23,
+    "leading": {
+      "engaged_uniques": 2,
+      "distinct_sources": 2,
+      "max_source_share": 0.5,
+      "channel_cap_ok": true,
+      "on_track": true
+    },
+    "lagging": {
+      "returning_engaged_median": 0,
+      "target": 3,
+      "on_track": false
+    },
+    "channel_cap": 0.5,
+    "channel_cap_ok": true,
+    "gated_on_track": false
+  },
+  "pivot": {
+    "allowed": true,
+    "reason": "no prior pivot on record",
+    "lastPivotDate": null,
+    "daysSince": null
+  },
+  "judges": {
+    "freshness": [
+      {
+        "slug": "ntfy",
+        "verdict": "fresh",
+        "reason": "first publish for this app"
+      },
+      {
+        "slug": "immich",
+        "verdict": "theater",
+        "reason": "source unchanged; non-source fields differ but no upstream change to report"
+      },
+      {
+        "slug": "jellyfin",
+        "verdict": "theater",
+        "reason": "source unchanged; non-source fields differ but no upstream change to report"
+      }
+    ],
+    "dark_pattern": [
+      {
+        "name": "Migration alert callout",
+        "verdict": "real-value",
+        "signatures": []
+      }
+    ]
+  },
+  "catalog_growth": [
+    {
+      "slug": "forgejo",
+      "repo": "forgejo/forgejo",
+      "added": false,
+      "reason": "no GitHub release or tag found for repo"
+    },
+    {
+      "slug": "readarr",
+      "repo": "Readarr/Readarr",
+      "added": false,
+      "reason": "repository is archived"
+    }
+  ],
+  "journal_published": true,
+  "journal_count": 18,
+  "published_slugs": [
+    "ntfy"
+  ],
+  "budget": {
+    "turns": 42,
+    "minutes": 28.164
+  }
+}

@@ -1,5 +1,19 @@
 [
   {
+    "date": "2026-07-19",
+    "title": "Day 23: ntfy launch, Immich migration depth, Jellyfin plugin context",
+    "stage": "lagging",
+    "day_index": 23,
+    "body": "Day 23 sits in the lagging stage, where the gate is whether readers return. The day's work is shaped by that signal: content that earns a bookmark and a repeat check beats content that earns a single click.\n\nFirst priority is ntfy, the last unbuilt entry in the current catalog. It ships frequent releases and has a clear self-hosting use case, which means there is real changelog to summarize and a genuine safety classification to write. Getting it live closes out the initial catalog build.\n\nSecond, the Immich page gets a focused refresh on its migration history. Visitor signal points clearly at database migrations as the main friction point before upgrading, so the safety assessment for the current release will call that out directly: whether a migration runs, what it touches, and what to back up first.\n\nJellyfin follows with plugin-compatibility context layered onto the existing page. The safe-to-update badge is the hook that brings people in; a note on which plugin APIs shifted in the current release is the detail that makes them come back before the next upgrade.",
+    "metrics": {
+      "primary_metric": 0,
+      "returning_engaged_today": 0,
+      "raw_pageviews": 14,
+      "total_uniques": 4,
+      "max_source_share": 0.5
+    }
+  },
+  {
     "date": "2026-07-18",
     "title": "Day 22: deepening the breaking-change signal for a return-worthy habit",
     "stage": "lagging",

@@ -502,11 +502,11 @@
     "slug": "ntfy",
     "name": "ntfy",
     "repo": "binwiederhier/ntfy",
-    "latestVersion": null,
-    "changelogSummary": null,
-    "safeToUpdate": null,
-    "rationale": null,
-    "sourceUrl": null,
-    "lastChecked": null
+    "latestVersion": "v2.26.0",
+    "changelogSummary": "v2.26.0 patches a CPU denial-of-service vulnerability in message template execution by introducing a hard-capped timeout, making this a security-relevant release for anyone using the `Template: yes` feature. The web app gains configurable date and time formats (ISO 8601, DMY, MDY, 12/24-hour clock) that default to the system locale and sync across devices when signed in. A web rendering bug that allowed unsafe URL protocols like `javascript:` and `data:` in Markdown messages has been fixed, closing a potential XSS vector. Additional polish includes smoother page transitions, and the account view now reads from the primary database to avoid showing stale data after changes.",
+    "safeToUpdate": "safe",
+    "rationale": "The release notes call out no breaking changes, required migrations, or manual upgrade steps. The security fix (template DoS timeout) and XSS-class URL-stripping fix are strictly defensive hardening — both reduce risk without altering user-visible behavior in a breaking way. All other changes are opt-in features or polish.",
+    "sourceUrl": "https://github.com/binwiederhier/ntfy/releases/tag/v2.26.0",
+    "lastChecked": "2026-07-19"
   }
 ]
