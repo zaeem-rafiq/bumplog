@@ -12,7 +12,7 @@
 //   set -a; source .env; set +a            # load creds (optional for phase 1)
 //   node harness/dry_run.mjs
 
-import { writeFileSync, existsSync, statSync, mkdtempSync } from 'node:fs';
+import { writeFileSync, existsSync, statSync, mkdtempSync, chmodSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -97,14 +97,27 @@ async function main() {
 
   // 5 & 6) lock write-block + sha256 ----------------------------------------
   if (locksFrozen) {
+    // Git preserves only the executable bit, so a fresh checkout/worktree
+    // materializes the frozen locks as 0644 — the write probe below would then
+    // clobber them. Restore the manifest-documented 0444 before probing; the
+    // sha256 check remains the authoritative witness on the CONTENT either way.
+    for (const path of [CONTRACT_LOCK, GUARDRAILS_LOCK]) {
+      if (statSync(path).mode & 0o222) chmodSync(path, 0o444);
+    }
     add('verify_locks_sha', verifyLocks().ok ? 'pass' : 'fail', JSON.stringify(verifyLocks().failures));
     for (const [id, path, label] of [['contract_lock_blocked', CONTRACT_LOCK, 'contract.lock.json'], ['guardrails_lock_blocked', GUARDRAILS_LOCK, 'guardrails.lock.json']]) {
       const mode = statSync(path).mode & 0o777;
+      const frozenBytes = readFileSync(path);
       let blocked = false;
       let detail = `mode=${mode.toString(8)}`;
       try {
         writeFileSync(path, '{"tampered":true}');
         detail += '; WRITE SUCCEEDED (NOT read-only!)';
+        // The probe landed (e.g. running as root): the invariant still FAILS,
+        // but restore the frozen bytes so one failure can't cascade into
+        // lock-mismatch failures in every downstream check.
+        writeFileSync(path, frozenBytes);
+        chmodSync(path, 0o444);
       } catch (err) {
         blocked = true;
         detail += `; write rejected: ${err.code ?? err.message}`;
