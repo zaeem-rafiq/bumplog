@@ -76,7 +76,7 @@ None of the existing safeguards was broken — each did its job, and the failure
 
 ## Solution
 
-Commit `692780b` ("fix(harness): alert on failed daily runs + fail fast on expired OAuth") on branch `claude/eager-noether-ca27f4`. **Merge state, as of this writing (2026-07-20): not merged to main, no PR** — the SHA is branch-local and will change if the branch is squash- or rebase-merged; update this citation once a PR exists. launchd runs the main checkout at `/Users/zaeemkhan/Projects/bumplog`, so the fix is inert in production until the branch merges — the daily job is still running the pre-fix script.
+Commit `692780b` ("fix(harness): alert on failed daily runs + fail fast on expired OAuth"), authored on branch `claude/eager-noether-ca27f4`. **Merge state: fast-forwarded into main on 2026-07-20** (the SHA is stable). launchd runs the main checkout at `/Users/zaeemkhan/Projects/bumplog`, so the fix is live for daily runs from the merge onward; the three lost cycles predate it.
 
 ### 1. `run-daily.sh` — a visible failure alert for `status: "error"` runs
 
