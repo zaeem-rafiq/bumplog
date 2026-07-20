@@ -164,6 +164,32 @@ export async function runLLM(opts) {
 }
 
 /**
+ * Cheap OAuth-validity pre-check for the daily loop's auth guard (step 0b in
+ * morning_loop.mjs). ONE minimal Haiku ping through the same `claude -p` path
+ * as real steps, with a SHORT timeout, so an expired/unrefreshable OAuth
+ * session (or a missing CLI) fails fast at the guard with a clear reason
+ * instead of mid-run at the first expensive LLM step. No --system-prompt: the
+ * ping must stay cheap and independent of the content pipeline.
+ * @param {{ timeoutMs?: number }} [opts]
+ * @returns {Promise<{ok:true} | {ok:false, kind:'rate-limit'|'billing'|'error', detail:string}>}
+ */
+export async function pingClaudeAuth(opts = {}) {
+  const auth = assertSubscriptionAuth();
+  if (!auth.ok) return { ok: false, kind: 'billing', detail: auth.reason };
+  const args = [
+    '-p', 'Reply with the single word: ok',
+    '--model', MODELS.routine,
+    '--output-format', 'json',
+    '--allowed-tools', '',
+    '--max-budget-usd', '1',
+    '--setting-sources', 'project,local',
+  ];
+  const { stdout, code, stderr } = await spawnCapture('claude', args, opts.timeoutMs ?? 60_000);
+  const verdict = classifyResult({ code, stdout, stderr });
+  return verdict.kind === 'ok' ? { ok: true } : { ok: false, kind: verdict.kind, detail: verdict.detail };
+}
+
+/**
  * Classify a finished `claude -p --output-format json` invocation from BOTH
  * streams. `claude -p` reports failures in STDOUT (the envelope's is_error /
  * subtype / api_error_status / result); transport problems land on stderr — so

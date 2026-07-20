@@ -26,7 +26,7 @@ import { canPivot, recordPivot } from './lib/hysteresis.mjs';
 import { judgeFreshness } from './judges/freshness_theater.mjs';
 import { judgeDarkPattern } from './judges/dark_pattern.mjs';
 import { experimentDay, getPublishedEntry, appendJournalEntry, emitRunRecord, setPublishedEntry, syncSiteApp, addSiteApp } from './lib/store.mjs';
-import { runLLM } from './lib/llm.mjs';
+import { runLLM, pingClaudeAuth } from './lib/llm.mjs';
 
 function todayUTC(now = new Date()) {
   return now.toISOString().slice(0, 10);
@@ -65,6 +65,22 @@ export async function runLoop(opts = {}) {
     log('auth-guard', { ok: auth.ok, reason: auth.reason });
     if (!auth.ok) {
       throw haltErr(auth.reason, 'reprice', safeWriteBlocker('reprice', { reason: auth.reason }));
+    }
+
+    // ── Step 0b: OAuth-validity pre-check (live runs only) ───────────────────
+    // A minimal `claude -p` ping so an expired/unrefreshable OAuth session
+    // fails HERE with a clear reason instead of mid-run at the first real LLM
+    // step (2026-07-14..16 burned three cycles that way). Rate-limit/billing
+    // verdicts keep their governed-halt classification; any other ping failure
+    // is status 'error' so run-daily.sh raises a visible alert.
+    if (!dryRun) {
+      const ping = await (opts.authPing ?? pingClaudeAuth)();
+      log('auth-ping', ping.ok ? { ok: true } : { ok: false, kind: ping.kind, detail: oneLine(ping.detail) });
+      if (!ping.ok) {
+        if (ping.kind === 'rate-limit') throw new RateLimitError(`auth ping: ${oneLine(ping.detail)}`);
+        if (ping.kind === 'billing') throw new BillingChangeError(`auth ping: ${oneLine(ping.detail)}`);
+        throw new Error(`OAuth pre-check failed — claude -p ping did not succeed: ${oneLine(ping.detail)}`);
+      }
     }
 
     // ── Step 1: verify frozen locks ──────────────────────────────────────────
@@ -316,6 +332,11 @@ function haltErr(reason, code, blocker) {
   e.code = code;
   e.blocker = blocker;
   return e;
+}
+
+/** Flatten a (possibly multi-line) failure detail to one bounded line for trace/error text. */
+function oneLine(s) {
+  return String(s ?? '(no detail)').replace(/\s*\n\s*/g, ' | ').slice(0, 300);
 }
 
 function stripRaw(entry) {
